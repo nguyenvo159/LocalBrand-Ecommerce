@@ -3,6 +3,6 @@
 public class SizeDto
 {
     public string Name { get; set; } = string.Empty;
-    // public int Inventory { get; set; }
+    public int Inventory { get; set; }
 
 }
