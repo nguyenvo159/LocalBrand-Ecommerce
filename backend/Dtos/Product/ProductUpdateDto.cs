@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using backend.Dto.Size;
 
-namespace backend.Dto.Product;
+namespace backend;
 
-public class ProductCreateDto
+public class ProductUpdateDto
 {
+    [Required]
+    public Guid Id { get; set; }
+
     [Required]
     [StringLength(100)]
     public string Name { get; set; } = string.Empty;
@@ -18,7 +21,7 @@ public class ProductCreateDto
     [Required]
     public Guid CategoryId { get; set; }
 
-    [Url(ErrorMessage = "Invalid Image URL format.")]
     public List<string> ImageUrl { get; set; }
     public List<SizeDto> Sizes { get; set; }
+
 }

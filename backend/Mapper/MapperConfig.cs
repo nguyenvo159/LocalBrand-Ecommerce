@@ -10,9 +10,12 @@ public class MapperConfig : Profile
     public MapperConfig()
     {
         CreateMap<Size, SizeDto>();
+        CreateMap<ProductUpdateDto, Product>()
+                .ForMember(dest => dest.ProductImages, opt => opt.Ignore())
+                .ForMember(dest => dest.Sizes, opt => opt.Ignore());
         CreateMap<ProductCreateDto, Product>()
                 .ForMember(dest => dest.ProductImages, opt => opt.Ignore())
-                .ForMember(dest => dest.Sizes, opt => opt.Ignore()); ;
+                .ForMember(dest => dest.Sizes, opt => opt.Ignore());
         CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(s => s.Category.Name))
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ProductImages.Select(pi => pi.ImageUrl)))

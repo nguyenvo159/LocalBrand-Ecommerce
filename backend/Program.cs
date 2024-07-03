@@ -28,10 +28,10 @@ builder.Services.AddScoped<IProductService, ProductService>();
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
+builder.Services.AddScoped<IRepository<Size>, Repository<Size>>();
 builder.Services.AddScoped<IRepository<ProductInventory>, Repository<ProductInventory>>();
 builder.Services.AddScoped<IRepository<ProductImage>, Repository<ProductImage>>();
 
-builder.Services.AddScoped<ISizeRepository, SizeRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 var app = builder.Build();
 

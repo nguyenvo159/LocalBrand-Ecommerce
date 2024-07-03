@@ -38,6 +38,41 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
         return product;
     }
+    public async Task<Product> UpdateAsync(Product product)
+    {
+        var existingProduct = await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Sizes)
+                .ThenInclude(s => s.Size)
+            .Include(p => p.ProductImages)
+            .FirstOrDefaultAsync(p => p.Id == product.Id);
+        if (existingProduct == null)
+        {
+            return null;
+        }
+
+        existingProduct.Name = product.Name;
+        existingProduct.Description = product.Description;
+        existingProduct.Price = product.Price;
+        existingProduct.CategoryId = product.CategoryId;
+        // Update Sizes
+        _context.ProductInventories.RemoveRange(existingProduct.Sizes);
+        foreach (var size in product.Sizes)
+        {
+            existingProduct.Sizes.Add(size);
+        }
+
+        // Update Images
+        _context.ProductImages.RemoveRange(existingProduct.ProductImages);
+        foreach (var image in product.ProductImages)
+        {
+            existingProduct.ProductImages.Add(image);
+        }
+
+        _context.Products.Update(existingProduct);
+        await _context.SaveChangesAsync();
+        return existingProduct;
+    }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
@@ -50,4 +85,6 @@ public class ProductRepository : IProductRepository
         }
         return false;
     }
+
+
 }

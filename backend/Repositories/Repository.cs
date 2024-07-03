@@ -1,4 +1,5 @@
 ﻿
+using System.Linq.Expressions;
 using backend.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,5 +53,9 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet.Remove(entity);
         await _context.SaveChangesAsync();
         return true;
+    }
+    public async Task<T> FindAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
     }
 }

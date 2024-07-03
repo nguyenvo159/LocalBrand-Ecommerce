@@ -73,4 +73,46 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(Guid id, [FromBody] ProductUpdateDto productUpdateDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (id != productUpdateDto.Id)
+        {
+            return BadRequest("Product ID mismatch");
+        }
+
+        var updatedProduct = await _productService.Update(productUpdateDto);
+        if (updatedProduct == null)
+        {
+            return NotFound();
+        }
+        return CreatedAtAction(nameof(Get), new { id = updatedProduct.Id }, updatedProduct);
+    }
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        try
+        {
+            var product = await _productService.GetById(id);
+            if (product == null)
+            {
+                return NotFound("Found not product");
+            }
+            if (!await _productService.Delete(id))
+            {
+                return BadRequest("Error while delete product.");
+            }
+            return Ok("Delete product successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
 }
