@@ -31,6 +31,17 @@ public class ProductRepository : IProductRepository
             .Include(p => p.ProductImages)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
+    public async Task<List<Product>> GetByCategoryAsync(Guid categoryId)
+    {
+        return await _context.Products
+            .Where(p => p.CategoryId == categoryId)
+            .Include(p => p.Category)
+            .Include(p => p.Sizes)
+                .ThenInclude(s => s.Size)
+            .Include(p => p.ProductImages)
+            .ToListAsync();
+    }
+
 
     public async Task<Product> CreateAsync(Product product)
     {

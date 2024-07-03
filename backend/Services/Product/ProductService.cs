@@ -11,7 +11,7 @@ public class ProductService : IProductService
     private readonly IProductRepository _productRepository;
     private readonly IRepository<Category> _categoryRepository;
     private readonly IRepository<ProductImage> _productImageRepository;
-    private readonly IRepository<Size> _sizeRepository1;
+    private readonly IRepository<Size> _sizeRepository;
     private readonly IRepository<ProductInventory> _productInventoryRepository;
     private readonly IMapper _mapper;
 
@@ -25,7 +25,7 @@ public class ProductService : IProductService
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
         _productImageRepository = productImageRepository;
-        _sizeRepository1 = sizeRepository1;
+        _sizeRepository = sizeRepository1;
         _productInventoryRepository = productInventoryRepository;
         _mapper = mapper;
     }
@@ -42,6 +42,13 @@ public class ProductService : IProductService
         if (product == null)
             return null;
         return _mapper.Map<ProductDto>(product);
+    }
+
+    public async Task<List<ProductDto>> GetByCategory(string categoryName)
+    {
+        var category = _categoryRepository.FindAsync(x => x.Name == categoryName).Result;
+        var products = await _productRepository.GetByCategoryAsync(category.Id);
+        return _mapper.Map<List<ProductDto>>(products);
     }
     public async Task<ProductDto> Create(ProductCreateDto productDto)
     {
@@ -77,7 +84,7 @@ public class ProductService : IProductService
 
             foreach (var sizeDto in productDto.Sizes)
             {
-                var size = await _sizeRepository1.FindAsync(s => s.Name == sizeDto.Name);
+                var size = await _sizeRepository.FindAsync(s => s.Name == sizeDto.Name);
 
                 if (size != null)
                 {
@@ -137,7 +144,7 @@ public class ProductService : IProductService
         {
             foreach (var sizeDto in productDto.Sizes)
             {
-                var size = await _sizeRepository1.FindAsync(s => s.Name == sizeDto.Name);
+                var size = await _sizeRepository.FindAsync(s => s.Name == sizeDto.Name);
                 if (size != null)
                 {
                     var existingInventory = await _productInventoryRepository.FindAsync(pi =>

@@ -49,6 +49,23 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpGet("category/{name}")]
+    public async Task<IActionResult> GetByCategory(string name)
+    {
+        try
+        {
+            var products = await _productService.GetByCategory(name);
+            if (products == null)
+            {
+                return NotFound("Product not found by category");
+            }
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
     [HttpPost]
     public async Task<ActionResult<Product>> Create(ProductCreateDto productCreateDTO)
     {
