@@ -22,12 +22,20 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var productDtos = await _productService.GetAll();
-        if (productDtos == null)
+        try
         {
-            return NotFound("Product not found.");
+            var productDtos = await _productService.GetAll();
+            if (productDtos == null)
+            {
+                return NotFound("Product not found.");
+            }
+            return Ok(productDtos);
         }
-        return Ok(productDtos);
+        catch (Exception ex)
+        {
+
+            throw new Exception("Error:", ex);
+        }
     }
 
     [HttpGet]
@@ -37,15 +45,11 @@ public class ProductController : ControllerBase
         try
         {
             var product = await _productService.GetById(id);
-            if (product == null)
-            {
-                return NotFound("Found not product");
-            }
             return Ok(product);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            throw new Exception("Error: ", ex);
         }
     }
 

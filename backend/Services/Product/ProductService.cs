@@ -33,6 +33,10 @@ public class ProductService : IProductService
     public async Task<List<ProductDto>> GetAll()
     {
         var products = await _productRepository.GetAllAsync();
+        if (products.Count == 0 || products == null)
+        {
+            throw new Exception("Not found product");
+        }
         return _mapper.Map<List<ProductDto>>(products);
     }
 
@@ -40,13 +44,19 @@ public class ProductService : IProductService
     {
         var product = await _productRepository.GetByIdAsync(id);
         if (product == null)
-            return null;
+        {
+            throw new Exception("Not found product");
+        }
         return _mapper.Map<ProductDto>(product);
     }
 
     public async Task<List<ProductDto>> GetByCategory(string categoryName)
     {
         var category = _categoryRepository.FindAsync(x => x.Name == categoryName).Result;
+        if (category == null)
+        {
+            throw new Exception("Category is not valid");
+        }
         var products = await _productRepository.GetByCategoryAsync(category.Id);
         return _mapper.Map<List<ProductDto>>(products);
     }

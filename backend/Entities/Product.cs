@@ -23,7 +23,7 @@ public record class Product
     [Required]
     public Guid CategoryId { get; set; }
 
-    public Category Category { get; set; }
+    public Category Category { get; set; } = new Category();
 
     public List<ProductInventory> Sizes { get; set; } = new List<ProductInventory>();
     public List<CartItem> CartItems { get; set; } = new List<CartItem>();
