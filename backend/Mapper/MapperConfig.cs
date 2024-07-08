@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using backend.Dto.Product;
 using backend.Dto.Size;
+using backend.Dto.User;
 using backend.Entity;
 
 namespace backend.Mapper;
@@ -25,6 +26,9 @@ public class MapperConfig : Profile
                     Inventory = s.Inventory
                 })));
 
+        // User
+        CreateMap<UserRegisterDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
     }
 
 }

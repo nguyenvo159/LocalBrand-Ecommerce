@@ -3,10 +3,11 @@ using backend.Data;
 using backend.Dto.Product;
 using backend.Entity;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend;
+namespace backend.Controller;
 
 [Route("api/product")]
 [ApiController]
@@ -47,9 +48,9 @@ public class ProductController : ControllerBase
             var product = await _productService.GetById(id);
             return Ok(product);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw new Exception("Error: ", ex);
+            return NotFound("Not found product ");
         }
     }
 
@@ -71,6 +72,7 @@ public class ProductController : ControllerBase
         }
     }
     [HttpPost]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<ActionResult<Product>> Create(ProductCreateDto productCreateDTO)
     {
         try
@@ -95,6 +97,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<ActionResult> Update(Guid id, [FromBody] ProductUpdateDto productUpdateDto)
     {
         if (!ModelState.IsValid)
@@ -116,6 +119,7 @@ public class ProductController : ControllerBase
     }
     [HttpDelete]
     [Route("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try

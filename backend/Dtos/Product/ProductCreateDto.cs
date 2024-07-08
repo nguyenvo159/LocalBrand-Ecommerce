@@ -18,7 +18,6 @@ public class ProductCreateDto
     [Required]
     public Guid CategoryId { get; set; }
 
-    [Url(ErrorMessage = "Invalid Image URL format.")]
     public List<string> ImageUrl { get; set; }
     public List<SizeDto> Sizes { get; set; }
 }

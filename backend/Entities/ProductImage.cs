@@ -12,7 +12,6 @@ public record class ProductImage
     public Product? Product { get; set; }
 
     [Required]
-    [Url(ErrorMessage = "Invalid Image URL format.")]
     public string? ImageUrl { get; set; }
     public float[]? ImageVector { get; set; }
 

@@ -22,7 +22,7 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 
-    public async Task<Product> GetByIdAsync(Guid id)
+    public async Task<Product?> GetByIdAsync(Guid id)
     {
         return await _context.Products
             .Include(p => p.Category)
@@ -49,7 +49,7 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
         return product;
     }
-    public async Task<Product> UpdateAsync(Product product)
+    public async Task<Product?> UpdateAsync(Product product)
     {
         var existingProduct = await _context.Products
             .Include(p => p.Category)
