@@ -2,8 +2,10 @@
 
 namespace backend.Dto.User;
 
-public class UserRegisterDto
+public class UserUpdateDto
 {
+    [Required]
+    public Guid Id { get; set; }
 
     [Required]
     [StringLength(100)]
@@ -19,7 +21,10 @@ public class UserRegisterDto
     [StringLength(20)]
     public string Phone { get; set; } = string.Empty;
 
-    [Required]
     [StringLength(100)]
-    public string Password { get; set; } = string.Empty;
+    public string? Password { get; set; } = string.Empty;
+
+    [StringLength(50)]
+    public string? Role { get; set; } = string.Empty;
+
 }

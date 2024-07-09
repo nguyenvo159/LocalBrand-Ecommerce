@@ -28,6 +28,8 @@ public class UserService : IUserService
         _passwordHasher = passwordHasher;
     }
 
+
+
     public async Task<string> Login(UserLoginDto userLoginDto)
     {
         var user = await _userRepository.GetByEmailAsync(userLoginDto.Email);
@@ -48,12 +50,34 @@ public class UserService : IUserService
         }
 
         var user = _mapper.Map<User>(userRegisterDto);
+        user.Role = "User";
         user.PasswordHash = _passwordHasher.HashPassword(user, userRegisterDto.Password);
 
         await _userRepository.CreateUserAsync(user);
 
         return GenerateToken(user);
     }
+
+    public async Task<UserDto> GetById(Guid id)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null)
+        {
+            throw new ApplicationException("User not found");
+        }
+        return _mapper.Map<UserDto>(user);
+    }
+
+    public async Task<UserDto> GetByEmail(string email)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+        {
+            throw new ApplicationException("User not found");
+        }
+        return _mapper.Map<UserDto>(user);
+    }
+
     private string GenerateToken(User user)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -77,4 +101,38 @@ public class UserService : IUserService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public async Task<UserDto> Update(UserUpdateDto userUpdateDto)
+    {
+        var existingUser = await _userRepository.GetByIdAsync(userUpdateDto.Id);
+        if (existingUser == null)
+        {
+            throw new ApplicationException("User not found");
+        }
+
+        _mapper.Map(userUpdateDto, existingUser);
+
+        if (!string.IsNullOrEmpty(userUpdateDto.Password))
+        {
+            existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, userUpdateDto.Password);
+        }
+        if (!string.IsNullOrEmpty(userUpdateDto.Role))
+        {
+            existingUser.Role = userUpdateDto.Role;
+        }
+
+        await _userRepository.UpdateUserAsync(existingUser);
+        return _mapper.Map<UserDto>(existingUser);
+    }
+    public async Task<bool> Delete(Guid id)
+    {
+        var existingUser = await _userRepository.GetByIdAsync(id);
+        if (existingUser == null)
+        {
+            throw new ApplicationException("User not found");
+        }
+        return await _userRepository.DeleteUserAsync(id);
+    }
+
+
 }
