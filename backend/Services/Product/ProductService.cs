@@ -45,7 +45,7 @@ public class ProductService : IProductService
         var product = await _productRepository.GetByIdAsync(id);
         if (product == null)
         {
-            throw new Exception("Not found product");
+            throw new ApplicationException("Product not found");
         }
         return _mapper.Map<ProductDto>(product);
     }
@@ -55,9 +55,14 @@ public class ProductService : IProductService
         var category = _categoryRepository.FindAsync(x => x.Name == categoryName).Result;
         if (category == null)
         {
-            throw new Exception("Category is not valid");
+            throw new ApplicationException("Category is not valid");
         }
         var products = await _productRepository.GetByCategoryAsync(category.Id);
+        if (products == null)
+        {
+            throw new ApplicationException("Product not found");
+        }
+
         return _mapper.Map<List<ProductDto>>(products);
     }
     public async Task<ProductDto> Create(ProductCreateDto productDto)
@@ -66,7 +71,7 @@ public class ProductService : IProductService
         var category = await _categoryRepository.GetByIdAsync(productDto.CategoryId);
         if (category == null)
         {
-            throw new ApplicationException("Category not found");
+            throw new ApplicationException("Category is not valid");
         }
         var product = _mapper.Map<Product>(productDto);
 
@@ -120,6 +125,11 @@ public class ProductService : IProductService
 
     public async Task<bool> Delete(Guid id)
     {
+        var product = await _productRepository.GetByIdAsync(id);
+        if (product == null)
+        {
+            throw new ApplicationException("Product not found");
+        }
         return await _productRepository.DeleteAsync(id);
     }
 
@@ -128,10 +138,16 @@ public class ProductService : IProductService
         var category = await _categoryRepository.GetByIdAsync(productDto.CategoryId);
         if (category == null)
         {
-            throw new ApplicationException("Category not found");
+            throw new ApplicationException("Category is not valid");
+        }
+        var existsProduct = await _productRepository.GetByIdAsync(productDto.Id);
+        if (existsProduct == null)
+        {
+            throw new ApplicationException("Product not found");
         }
 
         var product = _mapper.Map<Product>(productDto);
+
 
         // Update product details
         var updatedProduct = await _productRepository.UpdateAsync(product);

@@ -99,6 +99,10 @@ public class UserController : ControllerBase
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var user = await _userService.Update(userUpdateDto);
             return Ok(user);
         }
@@ -124,7 +128,6 @@ public class UserController : ControllerBase
         catch (ApplicationException ex)
         {
             return BadRequest(new { Message = ex.Message });
-
         }
     }
 

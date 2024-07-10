@@ -48,9 +48,10 @@ public class ProductController : ControllerBase
             var product = await _productService.GetById(id);
             return Ok(product);
         }
-        catch (Exception)
+        catch (ApplicationException ex)
         {
-            return NotFound("Not found product ");
+            return BadRequest(new { Message = ex.Message });
+
         }
     }
 
@@ -60,19 +61,16 @@ public class ProductController : ControllerBase
         try
         {
             var products = await _productService.GetByCategory(name);
-            if (products == null)
-            {
-                return NotFound("Product not found by category");
-            }
             return Ok(products);
         }
-        catch (Exception ex)
+        catch (ApplicationException ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            return BadRequest(new { Message = ex.Message });
+
         }
     }
     [HttpPost]
-    [Authorize(Roles = "Admin, Staff")]
+    //    [Authorize(Roles = "Admin, Staff")]
     public async Task<ActionResult<Product>> Create(ProductCreateDto productCreateDTO)
     {
         try
@@ -88,7 +86,8 @@ public class ProductController : ControllerBase
         }
         catch (ApplicationException ex)
         {
-            return NotFound(ex.Message);
+            return BadRequest(new { Message = ex.Message });
+
         }
         catch (Exception ex)
         {
@@ -96,44 +95,52 @@ public class ProductController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Admin, Staff")]
-    public async Task<ActionResult> Update(Guid id, [FromBody] ProductUpdateDto productUpdateDto)
+    [HttpPut]
+    //[Authorize(Roles = "Admin, Staff")]
+    public async Task<ActionResult> Update([FromBody] ProductUpdateDto productUpdateDto)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedProduct = await _productService.Update(productUpdateDto);
+            if (updatedProduct == null)
+            {
+                return BadRequest("Error while updating product");
+            }
+            return CreatedAtAction(nameof(Get), new { id = updatedProduct.Id }, updatedProduct);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
 
-        if (id != productUpdateDto.Id)
-        {
-            return BadRequest("Product ID mismatch");
-        }
-
-        var updatedProduct = await _productService.Update(productUpdateDto);
-        if (updatedProduct == null)
-        {
-            return NotFound();
-        }
-        return CreatedAtAction(nameof(Get), new { id = updatedProduct.Id }, updatedProduct);
     }
     [HttpDelete]
     [Route("{id}")]
-    [Authorize(Roles = "Admin, Staff")]
+    //[Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
-            var product = await _productService.GetById(id);
-            if (product == null)
-            {
-                return NotFound("Found not product");
-            }
             if (!await _productService.Delete(id))
             {
                 return BadRequest("Error while delete product.");
             }
             return Ok("Delete product successfully.");
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
         }
         catch (Exception ex)
         {
