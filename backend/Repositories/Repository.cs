@@ -21,7 +21,7 @@ public class Repository<T> : IRepository<T> where T : class
         return await _dbSet.ToListAsync();
     }
 
-    public async Task<T> GetByIdAsync(Guid id)
+    public async Task<T?> GetByIdAsync(Guid id)
     {
         return await _dbSet.FindAsync(id);
     }
@@ -54,7 +54,7 @@ public class Repository<T> : IRepository<T> where T : class
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task<T> FindAsync(Expression<Func<T, bool>> predicate)
+    public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
     {
         return await _dbSet.FirstOrDefaultAsync(predicate);
     }

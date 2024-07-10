@@ -35,7 +35,7 @@ public class ProductService : IProductService
         var products = await _productRepository.GetAllAsync();
         if (products.Count == 0 || products == null)
         {
-            throw new Exception("Not found product");
+            throw new Exception("Not found any product");
         }
         return _mapper.Map<List<ProductDto>>(products);
     }
@@ -123,16 +123,6 @@ public class ProductService : IProductService
 
     }
 
-    public async Task<bool> Delete(Guid id)
-    {
-        var product = await _productRepository.GetByIdAsync(id);
-        if (product == null)
-        {
-            throw new ApplicationException("Product not found");
-        }
-        return await _productRepository.DeleteAsync(id);
-    }
-
     public async Task<ProductDto> Update(ProductUpdateDto productDto)
     {
         var category = await _categoryRepository.GetByIdAsync(productDto.CategoryId);
@@ -152,7 +142,7 @@ public class ProductService : IProductService
         // Update product details
         var updatedProduct = await _productRepository.UpdateAsync(product);
 
-        if (productDto.ImageUrl != null && productDto.ImageUrl.Any())
+        if (productDto.ImageUrl != null && productDto.ImageUrl.Any() && updatedProduct != null)
         {
             var productImages = productDto.ImageUrl.Select(url => new ProductImage
             {
@@ -166,7 +156,7 @@ public class ProductService : IProductService
             }
         }
 
-        if (productDto.Sizes != null && productDto.Sizes.Any())
+        if (productDto.Sizes != null && productDto.Sizes.Any() && updatedProduct != null)
         {
             foreach (var sizeDto in productDto.Sizes)
             {
@@ -186,10 +176,29 @@ public class ProductService : IProductService
                         };
                         await _productInventoryRepository.AddAsync(productInventory);
                     }
+                    else
+                    {
+                        existingInventory.Inventory = sizeDto.Inventory;
+                        await _productInventoryRepository.UpdateAsync(existingInventory);
+                    }
+                }
+                else
+                {
+                    throw new ApplicationException("Size not found");
                 }
             }
         }
 
         return _mapper.Map<ProductDto>(updatedProduct);
+    }
+
+    public async Task<bool> Delete(Guid id)
+    {
+        var product = await _productRepository.GetByIdAsync(id);
+        if (product == null)
+        {
+            throw new ApplicationException("Product not found");
+        }
+        return await _productRepository.DeleteAsync(id);
     }
 }

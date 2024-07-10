@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Data;
 
 #nullable disable
@@ -18,18 +18,18 @@ namespace backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("backend.Entity.Cart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -43,19 +43,19 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CartId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("SizeId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -72,12 +72,11 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -86,47 +85,47 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3b82e3bb-9e75-47b0-b746-44ad479bb9fc"),
+                            Id = new Guid("d734a571-0a22-43b6-8921-776c45655152"),
                             Name = "Shirt"
                         },
                         new
                         {
-                            Id = new Guid("c2a5dbb4-45df-4af1-b832-1b75d4f9ac6a"),
+                            Id = new Guid("25c6c711-e551-4d38-9168-6fc5b698f520"),
                             Name = "T-Shirt"
                         },
                         new
                         {
-                            Id = new Guid("4349a1bb-863a-4d53-8ca5-038f4580148a"),
+                            Id = new Guid("89a79c3a-e844-48b6-888a-8c05137c270b"),
                             Name = "Polo"
                         },
                         new
                         {
-                            Id = new Guid("a772851b-75c0-4a5e-bfe9-656be931a214"),
+                            Id = new Guid("da72cd63-ab62-4786-ac8e-790a880ae84f"),
                             Name = "Hoodie"
                         },
                         new
                         {
-                            Id = new Guid("b0139787-2c30-4006-bfed-9180113debb1"),
+                            Id = new Guid("330ee085-780c-4bd3-880b-6c9facd68164"),
                             Name = "Jacket"
                         },
                         new
                         {
-                            Id = new Guid("55ea8b18-22b6-4c5a-b4b1-57a5cda56fec"),
+                            Id = new Guid("2850f4b1-c171-4bf8-913f-91606b4a60e2"),
                             Name = "Short"
                         },
                         new
                         {
-                            Id = new Guid("33e2f8fb-ab07-462d-931f-e12e0b2899e7"),
+                            Id = new Guid("246bb759-0ea5-429d-bad0-5c9af8a7dd99"),
                             Name = "Jean"
                         },
                         new
                         {
-                            Id = new Guid("145b5f07-4c0c-467f-b7dc-6de42bf99f0d"),
+                            Id = new Guid("3c3be5bc-1ef2-418f-b44d-f0ad8018bfb1"),
                             Name = "Balo"
                         },
                         new
                         {
-                            Id = new Guid("3f3caf91-5d67-4634-accf-94d38a27f273"),
+                            Id = new Guid("9e9fcc33-66bb-44ac-8862-3a20fecb8cf6"),
                             Name = "Accessory"
                         });
                 });
@@ -135,16 +134,16 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -159,29 +158,27 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -194,17 +191,16 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<string>("ImageVector")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<float[]>("ImageVector")
+                        .HasColumnType("real[]");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -217,16 +213,16 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Inventory")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("SizeId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -241,27 +237,26 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -276,12 +271,11 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -290,32 +284,32 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("580ad9d5-28ed-46c9-b2dd-3442fb19cfda"),
+                            Id = new Guid("97c59bf0-80d8-4e9d-bf43-3b128ee784f8"),
                             Name = "S"
                         },
                         new
                         {
-                            Id = new Guid("338b7be5-0ef6-4ca7-ad53-22ded93e6abd"),
+                            Id = new Guid("5f8bd87e-efe8-4bf7-98a0-0ac3be8039f6"),
                             Name = "M"
                         },
                         new
                         {
-                            Id = new Guid("e63de726-61b6-49aa-ad5c-e555b20297c5"),
+                            Id = new Guid("f3124826-33a4-4ff1-aaec-74b281d63c7e"),
                             Name = "L"
                         },
                         new
                         {
-                            Id = new Guid("2b20faec-76f9-4554-a551-d48069b1f7f3"),
+                            Id = new Guid("fccb6a3c-5130-4d09-b527-9d24f16e8b41"),
                             Name = "XL"
                         },
                         new
                         {
-                            Id = new Guid("c9d2db7e-e95f-4a36-9ad3-68c7110d5ded"),
+                            Id = new Guid("8b8026ea-0f10-45a2-958d-13defbf316bc"),
                             Name = "XXL"
                         },
                         new
                         {
-                            Id = new Guid("2e14040a-1cfe-4831-87ac-838dce132dbf"),
+                            Id = new Guid("63995edb-1288-4d08-bd8f-3c6c913edbbf"),
                             Name = "free-size"
                         });
                 });
@@ -324,38 +318,33 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -366,29 +355,27 @@ namespace backend.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 

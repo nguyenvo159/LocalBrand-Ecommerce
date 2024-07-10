@@ -32,6 +32,11 @@ public class ProductController : ControllerBase
             }
             return Ok(productDtos);
         }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
         catch (Exception ex)
         {
 

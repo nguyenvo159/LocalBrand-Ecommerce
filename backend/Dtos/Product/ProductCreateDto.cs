@@ -18,6 +18,6 @@ public class ProductCreateDto
     [Required]
     public Guid CategoryId { get; set; }
 
-    public List<string> ImageUrl { get; set; }
-    public List<SizeDto> Sizes { get; set; }
+    public List<string> ImageUrl { get; set; } = new List<string>();
+    public List<SizeDto> Sizes { get; set; } = new List<SizeDto>();
 }
