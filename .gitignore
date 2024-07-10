@@ -1,0 +1,7 @@
+# Visual Studio files
+.vscode/
+*.suo
+*.ntvs*
+*~npdf/
+*.user
+*.sln.docstates
