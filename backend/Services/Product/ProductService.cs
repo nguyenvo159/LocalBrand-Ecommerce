@@ -67,7 +67,11 @@ public class ProductService : IProductService
     }
     public async Task<ProductDto> Create(ProductCreateDto productDto)
     {
-
+        var existsProduct = await _productRepository.GetByNameAsync(productDto.Name);
+        if (existsProduct != null)
+        {
+            throw new ApplicationException("Product is exist.");
+        }
         var category = await _categoryRepository.GetByIdAsync(productDto.CategoryId);
         if (category == null)
         {

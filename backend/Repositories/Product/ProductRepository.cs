@@ -41,6 +41,15 @@ public class ProductRepository : IProductRepository
             .Include(p => p.ProductImages)
             .ToListAsync();
     }
+    public async Task<Product?> GetByNameAsync(string name)
+    {
+        return await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Sizes)
+                .ThenInclude(s => s.Size)
+            .Include(p => p.ProductImages)
+            .FirstOrDefaultAsync(p => p.Name == name);
+    }
 
 
     public async Task<Product> CreateAsync(Product product)
@@ -96,4 +105,5 @@ public class ProductRepository : IProductRepository
         }
         return false;
     }
+
 }

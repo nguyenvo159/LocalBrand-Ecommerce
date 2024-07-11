@@ -3,7 +3,7 @@ namespace backend.Entity;
 
 public record class Review
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
     public Guid ProductId { get; set; }
 
@@ -16,7 +16,7 @@ public record class Review
     public int Rating { get; set; }
 
     public string Comment { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
 }
