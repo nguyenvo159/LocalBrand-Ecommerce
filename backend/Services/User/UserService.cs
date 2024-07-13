@@ -12,12 +12,12 @@ namespace backend.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IRepository<User> _userRepository;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserService(IUserRepository userRepository,
+    public UserService(IRepository<User> userRepository,
             IConfiguration configuration,
             IMapper mapper,
             IPasswordHasher<User> passwordHasher)
@@ -29,35 +29,15 @@ public class UserService : IUserService
     }
 
 
-
-    public async Task<string> Login(UserLoginDto userLoginDto)
+    public async Task<List<UserDto>> GetAll()
     {
-        var user = await _userRepository.GetByEmailAsync(userLoginDto.Email);
-        if (user == null || !await _userRepository.CheckPasswordAsync(user, userLoginDto.Password))
+        var users = await _userRepository.GetAllAsync();
+        if (users == null)
         {
-            throw new ApplicationException("Invalid email or password.");
+            throw new ApplicationException("No users found");
         }
-
-        return GenerateToken(user);
+        return _mapper.Map<List<UserDto>>(users);
     }
-
-    public async Task<string> Register(UserRegisterDto userRegisterDto)
-    {
-        var existingUser = await _userRepository.GetByEmailAsync(userRegisterDto.Email);
-        if (existingUser != null)
-        {
-            throw new ApplicationException("User already exists");
-        }
-
-        var user = _mapper.Map<User>(userRegisterDto);
-        user.Role = "User";
-        user.PasswordHash = _passwordHasher.HashPassword(user, userRegisterDto.Password);
-
-        await _userRepository.CreateUserAsync(user);
-
-        return GenerateToken(user);
-    }
-
     public async Task<UserDto> GetById(Guid id)
     {
         var user = await _userRepository.GetByIdAsync(id);
@@ -70,12 +50,71 @@ public class UserService : IUserService
 
     public async Task<UserDto> GetByEmail(string email)
     {
-        var user = await _userRepository.GetByEmailAsync(email);
+        var user = await _userRepository.FindAsync(u => u.Email == email);
         if (user == null)
         {
             throw new ApplicationException("User not found");
         }
         return _mapper.Map<UserDto>(user);
+    }
+
+    public async Task<string> Login(UserLoginDto userLoginDto)
+    {
+        var user = await _userRepository.FindAsync(u => u.Email == userLoginDto.Email);
+
+        if (user == null || !await CheckPasswordAsync(user, userLoginDto.Password))
+        {
+            throw new ApplicationException("Invalid email or password.");
+        }
+
+        return GenerateToken(user);
+    }
+
+    public Task<bool> CheckPasswordAsync(User user, string password)
+    {
+        var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        return Task.FromResult(result == PasswordVerificationResult.Success);
+    }
+
+    public async Task<string> Register(UserRegisterDto userRegisterDto)
+    {
+        var existingUser = await _userRepository.FindAsync(u => u.Email == userRegisterDto.Email);
+        if (existingUser != null)
+        {
+            throw new ApplicationException("User already exists");
+        }
+
+        var user = _mapper.Map<User>(userRegisterDto);
+        user.Role = "User";
+        user.PasswordHash = _passwordHasher.HashPassword(user, userRegisterDto.Password);
+
+        await _userRepository.AddAsync(user);
+
+        return GenerateToken(user);
+    }
+
+    public async Task<UserDto> Update(UserUpdateDto userUpdateDto)
+    {
+        var existingUser = await _userRepository.GetByIdAsync(userUpdateDto.Id);
+        if (existingUser == null)
+        {
+            throw new ApplicationException("User not found");
+        }
+
+        _mapper.Map(userUpdateDto, existingUser);
+
+        if (!string.IsNullOrEmpty(userUpdateDto.Password))
+        {
+            existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, userUpdateDto.Password);
+        }
+        if (!string.IsNullOrEmpty(userUpdateDto.Role))
+        {
+            existingUser.Role = userUpdateDto.Role;
+        }
+
+        await _userRepository.UpdateAsync(existingUser);
+        return _mapper.Map<UserDto>(existingUser);
     }
 
     private string GenerateToken(User user)
@@ -102,28 +141,7 @@ public class UserService : IUserService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public async Task<UserDto> Update(UserUpdateDto userUpdateDto)
-    {
-        var existingUser = await _userRepository.GetByIdAsync(userUpdateDto.Id);
-        if (existingUser == null)
-        {
-            throw new ApplicationException("User not found");
-        }
 
-        _mapper.Map(userUpdateDto, existingUser);
-
-        if (!string.IsNullOrEmpty(userUpdateDto.Password))
-        {
-            existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, userUpdateDto.Password);
-        }
-        if (!string.IsNullOrEmpty(userUpdateDto.Role))
-        {
-            existingUser.Role = userUpdateDto.Role;
-        }
-
-        await _userRepository.UpdateUserAsync(existingUser);
-        return _mapper.Map<UserDto>(existingUser);
-    }
     public async Task<bool> Delete(Guid id)
     {
         var existingUser = await _userRepository.GetByIdAsync(id);
@@ -131,8 +149,7 @@ public class UserService : IUserService
         {
             throw new ApplicationException("User not found");
         }
-        return await _userRepository.DeleteUserAsync(id);
+        return await _userRepository.DeleteAsync(id);
     }
-
 
 }

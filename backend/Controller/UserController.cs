@@ -30,6 +30,22 @@ public class UserController : ControllerBase
         var user = await _userService.GetById(Guid.Parse(userId));
         return Ok(user);
     }
+
+    [HttpGet]
+    [Route("all")]
+    public async Task<IActionResult> GetAll()
+    {
+        try
+        {
+            var users = await _userService.GetAll();
+            return Ok(users);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
     [HttpPost("register")]
     public async Task<IActionResult> Register(UserRegisterDto userRegisterDto)
     {
@@ -65,6 +81,26 @@ public class UserController : ControllerBase
             return Unauthorized(new { Message = ex.Message });
         }
     }
+
+    [HttpPut]
+    [Route("update")]
+    public async Task<IActionResult> Update([FromBody] UserUpdateDto userUpdateDto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userService.Update(userUpdateDto);
+            return Ok(user);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
@@ -94,23 +130,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UserUpdateDto userUpdateDto)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var user = await _userService.Update(userUpdateDto);
-            return Ok(user);
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-    }
+
 
     [HttpDelete]
     [Route("{id}")]

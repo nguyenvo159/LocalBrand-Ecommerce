@@ -97,9 +97,9 @@ builder.Services.AddScoped<IRepository<ProductInventory>, Repository<ProductInve
 builder.Services.AddScoped<IRepository<ProductImage>, Repository<ProductImage>>();
 builder.Services.AddScoped<IRepository<Cart>, Repository<Cart>>();
 builder.Services.AddScoped<IRepository<CartItem>, Repository<CartItem>>();
+builder.Services.AddScoped<IRepository<User>, Repository<User>>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 builder.Services.AddAuthorization();
