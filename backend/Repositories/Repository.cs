@@ -1,6 +1,7 @@
 ﻿
 using System.Linq.Expressions;
 using backend.Data;
+using backend.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories;
@@ -24,6 +25,11 @@ public class Repository<T> : IRepository<T> where T : class
     public async Task<T?> GetByIdAsync(Guid id)
     {
         return await _dbSet.FindAsync(id);
+    }
+
+    public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
     }
 
     public async Task<T> AddAsync(T entity)
@@ -54,8 +60,28 @@ public class Repository<T> : IRepository<T> where T : class
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
+    public async Task<bool> DeleteIfAsync(Expression<Func<T, bool>> predicate)
     {
-        return await _dbSet.FirstOrDefaultAsync(predicate);
+        var entities = await _dbSet.Where(predicate).ToListAsync();
+        if (!entities.Any())
+        {
+            return false;
+        }
+
+        _dbSet.RemoveRange(entities);
+        await _context.SaveChangesAsync();
+        return true;
     }
+
+
+    //Specialize
+    public async Task<Cart?> GetCartAsync(Expression<Func<Cart, bool>> predicate)
+    {
+        return await _context.Carts.Include(c => c.CartItems)
+                                   .ThenInclude(ci => ci.Product)
+                                   .Include(c => c.CartItems)
+                                   .ThenInclude(ci => ci.Size)
+                                   .FirstOrDefaultAsync(predicate);
+    }
+
 }

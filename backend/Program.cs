@@ -86,6 +86,7 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
@@ -94,6 +95,8 @@ builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
 builder.Services.AddScoped<IRepository<Size>, Repository<Size>>();
 builder.Services.AddScoped<IRepository<ProductInventory>, Repository<ProductInventory>>();
 builder.Services.AddScoped<IRepository<ProductImage>, Repository<ProductImage>>();
+builder.Services.AddScoped<IRepository<Cart>, Repository<Cart>>();
+builder.Services.AddScoped<IRepository<CartItem>, Repository<CartItem>>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using backend.Dto.Cart;
 using backend.Dto.Product;
 using backend.Dto.Review;
 using backend.Dto.Size;
@@ -44,6 +45,14 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
                         .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty));
 
+                //Cart
+
+                CreateMap<CartItem, CartItemDto>()
+                        .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                        .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product.Price))
+                        .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size.Name));
+                CreateMap<Cart, CartDto>();
+                CreateMap<CartItemCreateDto, CartItem>();
         }
 
 }
