@@ -13,6 +13,10 @@ public record class OrderItem
 
     public Product? Product { get; set; }
 
+    public Guid SizeId { get; set; }
+
+    public Size? Size { get; set; }
+
     public int Quantity { get; set; }
 
 }

@@ -84,4 +84,23 @@ public class Repository<T> : IRepository<T> where T : class
                                    .FirstOrDefaultAsync(predicate);
     }
 
+    public async Task<Order?> GetOrderAsync(Expression<Func<Order, bool>> predicate)
+    {
+        return await _context.Orders.Include(o => o.OrderItems)
+                              .ThenInclude(oi => oi.Product)
+                              .Include(o => o.OrderItems)
+                              .ThenInclude(oi => oi.Size)
+                              .FirstOrDefaultAsync(predicate);
+    }
+
+    public async Task<List<Order>> GetAllOrderAsync(Expression<Func<Order, bool>> predicate)
+    {
+        var orders = await _context.Orders.Include(o => o.OrderItems)
+                              .ThenInclude(oi => oi.Product)
+                              .Include(o => o.OrderItems)
+                              .ThenInclude(oi => oi.Size)
+                              .Where(predicate)
+                              .ToListAsync();
+        return orders;
+    }
 }

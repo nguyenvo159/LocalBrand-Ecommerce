@@ -8,11 +8,19 @@ public record class Order
 
     public Guid UserId { get; set; }
 
-    public User User { get; set; } = new User();
+    public User? User { get; set; }
+
+    public string UserName { get; set; } = string.Empty;
+
+    public string UserPhone { get; set; } = string.Empty;
+
+    public string UserEmail { get; set; } = string.Empty;
 
     public decimal TotalAmount { get; set; }
 
     public string Address { get; set; } = string.Empty;
+
+    public string Note { get; set; } = string.Empty;
 
     public string OrderStatus { get; set; } = string.Empty;
 

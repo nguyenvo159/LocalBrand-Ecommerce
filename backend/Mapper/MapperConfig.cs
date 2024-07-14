@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using backend.Dto.Cart;
+using backend.Dto.Order;
 using backend.Dto.Product;
 using backend.Dto.Review;
 using backend.Dto.Size;
@@ -35,6 +36,7 @@ public class MapperConfig : Profile
                 CreateMap<UserRegisterDto, User>()
                         .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
                 CreateMap<UserUpdateDto, User>()
+                        .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
                         .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                         .ForMember(dest => dest.Role, opt => opt.Ignore());
 
@@ -46,13 +48,29 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty));
 
                 //Cart
-
                 CreateMap<CartItem, CartItemDto>()
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
                         .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
                         .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
                 CreateMap<Cart, CartDto>();
                 CreateMap<CartItemCreateDto, CartItem>();
+
+                //Order
+                CreateMap<OrderItem, OrderItemDto>()
+                        .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
+                        .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+                        .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
+                CreateMap<Order, OrderDto>()
+                        .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
+                        .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.OrderItems.Sum(oi => oi.Product.Price * oi.Quantity)));
+                CreateMap<OrderCreateDto, Order>();
+                CreateMap<OrderUpdateDto, Order>()
+                        .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+                CreateMap<CartItem, OrderItem>()
+                        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                        .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                        .ForMember(dest => dest.SizeId, opt => opt.MapFrom(src => src.SizeId))
+                        .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
         }
 
 }

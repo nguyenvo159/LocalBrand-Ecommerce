@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Data;
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240713110340_AddCollumSizeIdInOrderItem")]
+    partial class AddCollumSizeIdInOrderItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,47 +88,47 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("18bee9e6-a531-4152-90f2-d2d71b68f0e2"),
+                            Id = new Guid("e2dada2b-0489-4b57-a143-904c9d28e225"),
                             Name = "shirt"
                         },
                         new
                         {
-                            Id = new Guid("4eb4e5a4-0beb-4bc7-845a-a676a99e19b6"),
+                            Id = new Guid("c269c783-dcb6-4c9d-bc27-f82b2a2c3383"),
                             Name = "t-shirt"
                         },
                         new
                         {
-                            Id = new Guid("f6754fb6-eef3-4bb7-b503-c8e051955229"),
+                            Id = new Guid("3971bbf6-5c1d-450e-9508-0ce0e3b52745"),
                             Name = "polo"
                         },
                         new
                         {
-                            Id = new Guid("5f024423-5399-499a-9cac-ad8f104a2389"),
+                            Id = new Guid("f3815324-9f9f-4875-a417-5c487031c5ea"),
                             Name = "hoodie"
                         },
                         new
                         {
-                            Id = new Guid("f5ef6f19-f1e0-4f94-b33a-3a5d796c7ced"),
+                            Id = new Guid("08686db3-8b47-47bd-bce2-8f929fcd38be"),
                             Name = "jacket"
                         },
                         new
                         {
-                            Id = new Guid("451b2542-dbb4-4ceb-bca3-b2e6bbac5cea"),
+                            Id = new Guid("140cd5ac-7107-4208-ab81-2dbfb84c6717"),
                             Name = "short"
                         },
                         new
                         {
-                            Id = new Guid("4af9dbb9-4398-4af1-930d-be0444b01f69"),
+                            Id = new Guid("7e0717f7-4e8a-42ff-a574-c4fb50bd0c9c"),
                             Name = "jean"
                         },
                         new
                         {
-                            Id = new Guid("4a28623c-2aee-4544-b6e6-7ece5ad6d5c5"),
+                            Id = new Guid("6a6ebe03-1612-4e4d-84f0-3690f7526b49"),
                             Name = "balo"
                         },
                         new
                         {
-                            Id = new Guid("ff10219b-4db3-475e-9a3d-82c12dbd8e0c"),
+                            Id = new Guid("fc1d31b2-94ce-4a0c-8ef2-034ea982dcfa"),
                             Name = "accessory"
                         });
                 });
@@ -289,32 +292,32 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6cf441fc-6d73-4d16-a20f-5350d4c2ab6e"),
+                            Id = new Guid("fd88a91f-2347-42fa-8eeb-3db9058d8c5d"),
                             Name = "s"
                         },
                         new
                         {
-                            Id = new Guid("5ee7e41f-cde0-44c8-af98-f558cb5adeaa"),
+                            Id = new Guid("d4b7126f-81e2-4e35-83e6-59e78f97a41c"),
                             Name = "m"
                         },
                         new
                         {
-                            Id = new Guid("9db002d8-8d0a-4593-b90e-220026d0f022"),
+                            Id = new Guid("c14f9f64-fa85-4139-8a1c-3eb9afcb2d7e"),
                             Name = "l"
                         },
                         new
                         {
-                            Id = new Guid("ad8d0ed8-3606-4af4-9799-911c961bbe73"),
+                            Id = new Guid("9bd627c0-723a-4a84-9cd5-95975df83381"),
                             Name = "xl"
                         },
                         new
                         {
-                            Id = new Guid("3c8a4b97-2d1b-4765-80a2-15ea9f010f84"),
+                            Id = new Guid("4d195e7d-9a64-492a-839b-9f71116a4537"),
                             Name = "xxl"
                         },
                         new
                         {
-                            Id = new Guid("abf94301-999b-402f-aec0-23a32df1579b"),
+                            Id = new Guid("0f2203ac-0ec4-42e3-8284-8b75f38dfe82"),
                             Name = "free-size"
                         });
                 });
@@ -369,10 +372,6 @@ namespace backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("OrderStatus")
                         .IsRequired()
                         .HasColumnType("text");
@@ -383,20 +382,8 @@ namespace backend.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserPhone")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

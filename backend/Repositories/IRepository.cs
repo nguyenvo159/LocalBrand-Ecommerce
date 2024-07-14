@@ -15,4 +15,6 @@ public interface IRepository<T> where T : class
 
     //Special
     Task<Cart?> GetCartAsync(Expression<Func<Cart, bool>> predicate);
+    Task<Order?> GetOrderAsync(Expression<Func<Order, bool>> predicate);
+    Task<List<Order>> GetAllOrderAsync(Expression<Func<Order, bool>> predicate);
 }

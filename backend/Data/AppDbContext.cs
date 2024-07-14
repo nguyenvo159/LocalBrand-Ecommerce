@@ -27,24 +27,24 @@ public class AppDbContext : DbContext
 
         // Seed data cho Categories
         modelBuilder.Entity<Category>().HasData(
-            new Category { Id = Guid.NewGuid(), Name = "Shirt" },
-            new Category { Id = Guid.NewGuid(), Name = "T-Shirt" },
-            new Category { Id = Guid.NewGuid(), Name = "Polo" },
-            new Category { Id = Guid.NewGuid(), Name = "Hoodie" },
-            new Category { Id = Guid.NewGuid(), Name = "Jacket" },
-            new Category { Id = Guid.NewGuid(), Name = "Short" },
-            new Category { Id = Guid.NewGuid(), Name = "Jean" },
-            new Category { Id = Guid.NewGuid(), Name = "Balo" },
-            new Category { Id = Guid.NewGuid(), Name = "Accessory" }
+            new Category { Id = Guid.NewGuid(), Name = "shirt" },
+            new Category { Id = Guid.NewGuid(), Name = "t-shirt" },
+            new Category { Id = Guid.NewGuid(), Name = "polo" },
+            new Category { Id = Guid.NewGuid(), Name = "hoodie" },
+            new Category { Id = Guid.NewGuid(), Name = "jacket" },
+            new Category { Id = Guid.NewGuid(), Name = "short" },
+            new Category { Id = Guid.NewGuid(), Name = "jean" },
+            new Category { Id = Guid.NewGuid(), Name = "balo" },
+            new Category { Id = Guid.NewGuid(), Name = "accessory" }
         );
 
         // Seed data cho Sizes
         modelBuilder.Entity<Size>().HasData(
-            new Size { Id = Guid.NewGuid(), Name = "S" },
-            new Size { Id = Guid.NewGuid(), Name = "M" },
-            new Size { Id = Guid.NewGuid(), Name = "L" },
-            new Size { Id = Guid.NewGuid(), Name = "XL" },
-            new Size { Id = Guid.NewGuid(), Name = "XXL" },
+            new Size { Id = Guid.NewGuid(), Name = "s" },
+            new Size { Id = Guid.NewGuid(), Name = "m" },
+            new Size { Id = Guid.NewGuid(), Name = "l" },
+            new Size { Id = Guid.NewGuid(), Name = "xl" },
+            new Size { Id = Guid.NewGuid(), Name = "xxl" },
             new Size { Id = Guid.NewGuid(), Name = "free-size" }
         );
 
