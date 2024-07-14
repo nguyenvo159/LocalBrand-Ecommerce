@@ -60,6 +60,21 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpGet("image/{id}")]
+    public async Task<IActionResult> GetImageByProductId(Guid id)
+    {
+        try
+        {
+            var images = await _productService.GetImageByProductId(id);
+            return Ok(images);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
     [HttpGet("category/{name}")]
     public async Task<IActionResult> GetByCategory(string name)
     {

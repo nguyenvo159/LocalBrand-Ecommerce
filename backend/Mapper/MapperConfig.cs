@@ -62,7 +62,7 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
                 CreateMap<Order, OrderDto>()
                         .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
-                        .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.OrderItems.Sum(oi => oi.Product.Price * oi.Quantity)));
+                        .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.OrderItems.Sum(oi => oi.Product != null ? oi.Product.Price : 0 * oi.Quantity)));
                 CreateMap<OrderCreateDto, Order>();
                 CreateMap<OrderUpdateDto, Order>()
                         .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));

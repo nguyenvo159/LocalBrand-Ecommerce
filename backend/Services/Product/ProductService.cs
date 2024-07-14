@@ -65,6 +65,17 @@ public class ProductService : IProductService
 
         return _mapper.Map<List<ProductDto>>(products);
     }
+
+    public async Task<List<string?>> GetImageByProductId(Guid productId)
+    {
+        var imgUrls = await _productImageRepository.FindAllAsync(i => i.ProductId == productId);
+        if (imgUrls == null || imgUrls.Count == 0)
+        {
+            throw new ApplicationException("Image not found");
+        }
+        return imgUrls.Select(i => i.ImageUrl).Where(url => url != null).ToList();
+    }
+
     public async Task<ProductDto> Create(ProductCreateDto productDto)
     {
         var existsProduct = await _productRepository.GetByNameAsync(productDto.Name);

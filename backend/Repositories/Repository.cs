@@ -32,6 +32,13 @@ public class Repository<T> : IRepository<T> where T : class
         return await _dbSet.FirstOrDefaultAsync(predicate);
     }
 
+
+    public Task<List<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
+    {
+        var result = _dbSet.Where(predicate).ToListAsync();
+        return result;
+    }
+
     public async Task<T> AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity);
