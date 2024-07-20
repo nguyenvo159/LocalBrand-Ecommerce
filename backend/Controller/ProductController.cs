@@ -157,6 +157,31 @@ public class ProductController : ControllerBase
             }
             return Ok("Delete product successfully.");
         }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
+    [HttpPost("import")]
+    public async Task<IActionResult> ImportProducts(IFormFile file)
+    {
+        try
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            var (successCount, successNames, failedNames) = await _productService.Import(file);
+
+            return Ok(new
+            {
+                SuccessCount = successCount,
+                SuccessNames = successNames,
+                FailedNames = failedNames
+            });
+        }
         catch (ApplicationException ex)
         {
             return BadRequest(new { Message = ex.Message });

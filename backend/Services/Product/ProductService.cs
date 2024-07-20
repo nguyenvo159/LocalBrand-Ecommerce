@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using backend.Dto.Product;
+using backend.Dto.Size;
 using backend.Entity;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
+using OfficeOpenXml;
 
 namespace backend.Services;
 
@@ -91,6 +93,10 @@ public class ProductService : IProductService
         var product = _mapper.Map<Product>(productDto);
 
         var result = await _productRepository.CreateAsync(product);
+        if (result == null)
+        {
+            throw new ApplicationException("Product not created");
+        }
 
         //Add img
         if (productDto.ImageUrl != null && productDto.ImageUrl.Any())
@@ -216,4 +222,75 @@ public class ProductService : IProductService
         }
         return await _productRepository.DeleteAsync(id);
     }
+
+    //Import
+    public async Task<(int successCount, List<string> successNames, List<string> failedNames)> Import(IFormFile file)
+    {
+        var successCount = 0;
+        var failedNames = new List<string>();
+        var successNames = new List<string>();
+
+        using (var stream = new MemoryStream())
+        {
+            await file.CopyToAsync(stream);
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                var rowCount = worksheet.Dimension.Rows;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var name = worksheet.Cells[row, 1].Text;
+                    var description = worksheet.Cells[row, 2].Text;
+                    var price = decimal.TryParse(worksheet.Cells[row, 3].Text.Trim(), out decimal priceValue) ? priceValue : 0;
+
+                    //Category
+                    var categoryName = worksheet.Cells[row, 4].Text.Trim().ToLower();
+                    var categoryId = await _categoryRepository.FindAsync(c => c.Name == categoryName).ContinueWith(t => t.Result?.Id) ?? Guid.Empty;
+                    var imageUrl = worksheet.Cells[row, 5].Text.Trim().Split(',').ToList();
+                    var sizes = new List<SizeDto>();
+
+                    for (int col = 6; col <= 12; col++)
+                    {
+                        var sizeName = worksheet.Cells[1, col].Text.ToLower();
+                        var inventory = int.TryParse(worksheet.Cells[row, col].Text.Trim(), out int inventoryValue) ? inventoryValue : -1;
+
+                        if (inventory >= 0)
+                        {
+                            sizes.Add(new SizeDto { Name = sizeName, Inventory = inventory });
+                        }
+                    }
+
+                    var productDto = new ProductCreateDto
+                    {
+                        Name = name,
+                        Description = description,
+                        Price = price,
+                        CategoryId = categoryId,
+                        ImageUrl = imageUrl,
+                        Sizes = sizes
+                    };
+
+                    try
+                    {
+                        var temp = await Create(productDto);
+                        if (temp != null)
+                        {
+                            successCount++;
+                            successNames.Add(name);
+                        }
+                        else
+                            failedNames.Add(name);
+                    }
+                    catch (Exception)
+                    {
+                        failedNames.Add(productDto.Name);
+                    }
+                }
+            }
+        }
+
+        return (successCount, successNames, failedNames);
+    }
+
 }
