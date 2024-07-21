@@ -25,29 +25,6 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Seed data cho Categories
-        modelBuilder.Entity<Category>().HasData(
-            new Category { Id = Guid.NewGuid(), Name = "shirt" },
-            new Category { Id = Guid.NewGuid(), Name = "t-shirt" },
-            new Category { Id = Guid.NewGuid(), Name = "polo" },
-            new Category { Id = Guid.NewGuid(), Name = "hoodie" },
-            new Category { Id = Guid.NewGuid(), Name = "jacket" },
-            new Category { Id = Guid.NewGuid(), Name = "short" },
-            new Category { Id = Guid.NewGuid(), Name = "jean" },
-            new Category { Id = Guid.NewGuid(), Name = "balo" },
-            new Category { Id = Guid.NewGuid(), Name = "accessory" }
-        );
-
-        // Seed data cho Sizes
-        modelBuilder.Entity<Size>().HasData(
-            new Size { Id = Guid.NewGuid(), Name = "s" },
-            new Size { Id = Guid.NewGuid(), Name = "m" },
-            new Size { Id = Guid.NewGuid(), Name = "l" },
-            new Size { Id = Guid.NewGuid(), Name = "xl" },
-            new Size { Id = Guid.NewGuid(), Name = "xxl" },
-            new Size { Id = Guid.NewGuid(), Name = "free-size" }
-        );
-
         // Quan hệ 1-1 giữa User và Cart
         modelBuilder.Entity<User>()
             .HasOne(u => u.Cart)
@@ -112,7 +89,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Product>()
             .HasMany(p => p.OrderItems)
             .WithOne(oi => oi.Product)
-            .HasForeignKey(oi => oi.ProductId);
+            .HasForeignKey(oi => oi.ProductId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
 
         // Quan hệ 1-n giữa Cart và CartItem
         modelBuilder.Entity<Cart>()

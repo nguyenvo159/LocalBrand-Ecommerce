@@ -16,14 +16,10 @@ public class OrderCreateDto
     [Required]
     public string UserEmail { get; set; } = string.Empty;
 
-    public decimal TotalAmount { get; set; }
-
-
     [Required]
     public string Address { get; set; } = string.Empty;
 
     public string? Note { get; set; } = string.Empty;
-
 
     public string OrderStatus { get; set; } = "Pending";
 }

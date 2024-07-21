@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Data;
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240720131435_UpdateCartItemProductRelationship")]
+    partial class UpdateCartItemProductRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,6 +84,53 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c7bccdd3-f3b7-4422-a9f4-5b96f650685f"),
+                            Name = "shirt"
+                        },
+                        new
+                        {
+                            Id = new Guid("6005c799-6d86-4072-bcf7-7e223204b92c"),
+                            Name = "t-shirt"
+                        },
+                        new
+                        {
+                            Id = new Guid("b7dd8a27-51c7-48b3-9468-c5c2e2bd64b9"),
+                            Name = "polo"
+                        },
+                        new
+                        {
+                            Id = new Guid("502f2540-507f-4682-9f87-a1e36a1a975f"),
+                            Name = "hoodie"
+                        },
+                        new
+                        {
+                            Id = new Guid("fb426796-9ce2-49de-ad74-3bc510608c1c"),
+                            Name = "jacket"
+                        },
+                        new
+                        {
+                            Id = new Guid("705f15b9-6afc-4eac-aa06-50a9f9b8f4bd"),
+                            Name = "short"
+                        },
+                        new
+                        {
+                            Id = new Guid("e38da372-4102-4717-a6ce-543dcb144ad6"),
+                            Name = "jean"
+                        },
+                        new
+                        {
+                            Id = new Guid("538def02-901e-42e5-aca3-269f4b23cb00"),
+                            Name = "balo"
+                        },
+                        new
+                        {
+                            Id = new Guid("49c95dcd-6647-44f3-8c8e-37de31d9d478"),
+                            Name = "accessory"
+                        });
                 });
 
             modelBuilder.Entity("backend.Entity.OrderItem", b =>
@@ -92,7 +142,7 @@ namespace backend.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ProductId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Quantity")
@@ -238,6 +288,38 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Sizes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("616854bc-4acf-4c8b-ba76-fefa18b8a1ed"),
+                            Name = "s"
+                        },
+                        new
+                        {
+                            Id = new Guid("ea3cd87a-8ff4-44ff-b948-60e76cbdceee"),
+                            Name = "m"
+                        },
+                        new
+                        {
+                            Id = new Guid("8026f28e-9977-4397-8c86-779a7b064353"),
+                            Name = "l"
+                        },
+                        new
+                        {
+                            Id = new Guid("a1898308-50a4-4991-8125-f9090922d086"),
+                            Name = "xl"
+                        },
+                        new
+                        {
+                            Id = new Guid("6bc43822-3407-4d6d-bbc8-71c78da30626"),
+                            Name = "xxl"
+                        },
+                        new
+                        {
+                            Id = new Guid("e10c4d0e-4966-4888-a266-3c624c7ee7d2"),
+                            Name = "free-size"
+                        });
                 });
 
             modelBuilder.Entity("backend.Entity.User", b =>
@@ -375,7 +457,8 @@ namespace backend.Migrations
                     b.HasOne("backend.Entity.Product", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("backend.Entity.Size", "Size")
                         .WithMany()

@@ -11,16 +11,20 @@ public class OrderService : IOrderService
     private readonly IRepository<Order> _orderRepository;
     private readonly IRepository<OrderItem> _orderItemRepository;
     private readonly IRepository<Cart> _cartRepository;
+
+    private readonly ICartService _cartService;
     private readonly IMapper _mapper;
 
     public OrderService(IRepository<Order> orderRepository,
     IRepository<OrderItem> orderItemRepository,
     IRepository<Cart> cartRepository,
+    ICartService cartService,
     IMapper mapper)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _cartRepository = cartRepository;
+        _cartService = cartService;
         _mapper = mapper;
     }
 
@@ -76,6 +80,7 @@ public class OrderService : IOrderService
         }
 
         //Clear cart
+        await _cartService.ClearCart(cart.Id);
         return _mapper.Map<OrderDto>(order);
 
     }
