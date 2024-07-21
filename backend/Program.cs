@@ -2,6 +2,7 @@ using System.Text;
 using backend;
 using backend.Data;
 using backend.Entity;
+using backend.Extensions;
 using backend.Mapper;
 using backend.Repositories;
 using backend.Services;
@@ -79,6 +80,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
+
+//SMTP
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
 
 
 //Service
