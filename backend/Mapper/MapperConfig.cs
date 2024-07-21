@@ -70,6 +70,9 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                         .ForMember(dest => dest.SizeId, opt => opt.MapFrom(src => src.SizeId))
                         .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+                //Discount
+                CreateMap<DiscountCreateDto, Discount>();
         }
 
 }

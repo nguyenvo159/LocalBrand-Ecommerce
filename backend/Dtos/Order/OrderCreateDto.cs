@@ -21,5 +21,7 @@ public class OrderCreateDto
 
     public string? Note { get; set; } = string.Empty;
 
+    public string? Code { get; set; } = string.Empty;
+
     public string OrderStatus { get; set; } = "Pending";
 }

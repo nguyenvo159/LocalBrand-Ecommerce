@@ -88,6 +88,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IDiscountService, DiscountService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
@@ -101,6 +102,7 @@ builder.Services.AddScoped<IRepository<CartItem>, Repository<CartItem>>();
 builder.Services.AddScoped<IRepository<User>, Repository<User>>();
 builder.Services.AddScoped<IRepository<Order>, Repository<Order>>();
 builder.Services.AddScoped<IRepository<OrderItem>, Repository<OrderItem>>();
+builder.Services.AddScoped<IRepository<Discount>, Repository<Discount>>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
