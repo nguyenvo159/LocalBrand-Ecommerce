@@ -88,4 +88,16 @@ public class ProductRepository : IProductRepository
         return false;
     }
 
+    public Task<List<Product>> SearchAsync(string search)
+    {
+        var keywords = search.ToLower().Split(' ');
+        var products = _context.Products
+            .Where(p => keywords.Any(keyword =>
+                p.Name.ToLower().Contains(keyword) ||
+                p.Description.ToLower().Contains(keyword) ||
+                p.Category.Name.ToLower() == keyword))
+            .ToListAsync();
+        return products;
+    }
+
 }

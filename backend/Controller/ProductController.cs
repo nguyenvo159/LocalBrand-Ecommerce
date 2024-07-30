@@ -163,6 +163,21 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpGet("search/{keyword}")]
+    public async Task<IActionResult> Search(string keyword)
+    {
+        try
+        {
+            var products = await _productService.Search(keyword);
+            return Ok(products);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
     [HttpPost("import")]
     public async Task<IActionResult> ImportProducts(IFormFile file)
     {

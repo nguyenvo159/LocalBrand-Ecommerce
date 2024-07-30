@@ -11,5 +11,6 @@ public interface IProductRepository
     Task<Product> CreateAsync(Product product);
     Task<Product?> UpdateAsync(Product product);
     Task<bool> DeleteAsync(Guid id);
+    Task<List<Product>> SearchAsync(string search);
 
 }

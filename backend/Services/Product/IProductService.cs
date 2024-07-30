@@ -11,6 +11,7 @@ public interface IProductService
     Task<ProductDto> Create(ProductCreateDto productDto);
     Task<ProductDto> Update(ProductUpdateDto productDto);
     Task<bool> Delete(Guid id);
+    Task<List<ProductDto>> Search(string keyword);
 
     Task<(int successCount, List<string> successNames, List<string> failedNames)> Import(IFormFile file);
 }

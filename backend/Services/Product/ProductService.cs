@@ -293,4 +293,9 @@ public class ProductService : IProductService
         return (successCount, successNames, failedNames);
     }
 
+    public async Task<List<ProductDto>> Search(string keyword)
+    {
+        var products = await _productRepository.SearchAsync(keyword);
+        return _mapper.Map<List<ProductDto>>(products);
+    }
 }
