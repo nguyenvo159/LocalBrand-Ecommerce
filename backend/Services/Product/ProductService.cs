@@ -104,7 +104,7 @@ public class ProductService : IProductService
             var productImages = productDto.ImageUrl.Select(url => new ProductImage
             {
                 ProductId = product.Id,
-                ImageUrl = url
+                ImageUrl = url.Trim()
             }).ToList();
 
             foreach (var image in productImages)

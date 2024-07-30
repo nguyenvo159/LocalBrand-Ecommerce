@@ -16,11 +16,11 @@ public record class Product
 
     public Guid CategoryId { get; set; }
 
-    public Category? Category { get; set; }
+    public virtual Category? Category { get; set; }
 
-    public List<ProductInventory> Sizes { get; set; } = new List<ProductInventory>();
-    public List<CartItem> CartItems { get; set; } = new List<CartItem>();
-    public List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
-    public List<Review> Reviews { get; set; } = new List<Review>();
-    public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual List<ProductInventory> Sizes { get; set; } = new List<ProductInventory>();
+    public virtual List<CartItem> CartItems { get; set; } = new List<CartItem>();
+    public virtual List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public virtual List<Review> Reviews { get; set; } = new List<Review>();
+    public virtual List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

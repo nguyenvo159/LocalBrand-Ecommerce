@@ -8,7 +8,7 @@ public record class Order
 
     public Guid UserId { get; set; }
 
-    public User? User { get; set; }
+    public virtual User? User { get; set; }
 
     public string UserName { get; set; } = string.Empty;
 
@@ -27,5 +27,5 @@ public record class Order
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

@@ -22,6 +22,13 @@ public class AppDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Discount> Discounts { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseNpgsql("Host=localhost;Port=5432;Database=local-brand;Username=postgres;Password=2518700146");
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

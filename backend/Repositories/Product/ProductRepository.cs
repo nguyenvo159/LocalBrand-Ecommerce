@@ -14,40 +14,22 @@ public class ProductRepository : IProductRepository
 
     public async Task<List<Product>> GetAllAsync()
     {
-        return await _context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Sizes)
-                .ThenInclude(s => s.Size)
-            .Include(p => p.ProductImages)
-            .ToListAsync();
+        return await _context.Products.ToListAsync();
     }
 
     public async Task<Product?> GetByIdAsync(Guid id)
     {
-        return await _context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Sizes)
-                .ThenInclude(s => s.Size)
-            .Include(p => p.ProductImages)
-            .FirstOrDefaultAsync(p => p.Id == id);
+        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
     }
     public async Task<List<Product>> GetByCategoryAsync(Guid categoryId)
     {
         return await _context.Products
             .Where(p => p.CategoryId == categoryId)
-            .Include(p => p.Category)
-            .Include(p => p.Sizes)
-                .ThenInclude(s => s.Size)
-            .Include(p => p.ProductImages)
             .ToListAsync();
     }
     public async Task<Product?> GetByNameAsync(string name)
     {
         return await _context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Sizes)
-                .ThenInclude(s => s.Size)
-            .Include(p => p.ProductImages)
             .FirstOrDefaultAsync(p => p.Name == name);
     }
 

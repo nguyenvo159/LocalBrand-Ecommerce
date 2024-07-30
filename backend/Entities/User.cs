@@ -17,7 +17,7 @@ public record class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public Cart Cart { get; set; } = new Cart();
-    public List<Order> Orders { get; set; } = new List<Order>();
-    public List<Review> Reviews { get; set; } = new List<Review>();
+    public virtual Cart Cart { get; set; } = new Cart();
+    public virtual List<Order> Orders { get; set; } = new List<Order>();
+    public virtual List<Review> Reviews { get; set; } = new List<Review>();
 }

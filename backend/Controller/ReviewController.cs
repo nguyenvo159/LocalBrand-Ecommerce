@@ -25,7 +25,7 @@ public class ReviewController : ControllerBase
                 return BadRequest(ModelState);
             }
             var review = await _reviewService.Create(reviewCreateDto);
-            return Ok(review);
+            return CreatedAtAction(nameof(GetById), new { id = review.Id }, review);
         }
         catch (ApplicationException ex)
         {

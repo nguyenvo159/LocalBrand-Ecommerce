@@ -14,12 +14,13 @@ public class CartService : ICartService
     private readonly IRepository<ProductInventory> _inventoryRepository;
     private readonly IMapper _mapper;
 
-    public CartService(IRepository<Cart> cartRepository,
-    IRepository<CartItem> cartItemRepository,
-    IProductRepository productRepository,
-    IRepository<Size> sizeRepository,
-    IRepository<ProductInventory> inventoryRepository,
-    IMapper mapper)
+    public CartService(
+        IRepository<Cart> cartRepository,
+        IRepository<CartItem> cartItemRepository,
+        IProductRepository productRepository,
+        IRepository<Size> sizeRepository,
+        IRepository<ProductInventory> inventoryRepository,
+        IMapper mapper)
     {
         _cartRepository = cartRepository;
         _cartItemRepository = cartItemRepository;
@@ -33,27 +34,27 @@ public class CartService : ICartService
 
     public async Task<CartDto?> GetById(Guid id)
     {
-        var cart = await _cartRepository.GetCartAsync(u => u.Id == id);
+        var cart = await _cartRepository.FindAsync(u => u.Id == id);
         if (cart == null)
         {
             throw new ApplicationException("Cart not found");
         }
         await AutoUpdateInventory(cart.CartItems);
-        cart = await _cartRepository.GetCartAsync(u => u.Id == id);
+        cart = await _cartRepository.FindAsync(u => u.Id == id);
 
         return _mapper.Map<CartDto>(cart);
     }
 
     public async Task<CartDto?> GetByUserId(Guid userId)
     {
-        var cart = await _cartRepository.GetCartAsync(u => u.UserId == userId);
+        var cart = await _cartRepository.FindAsync(u => u.UserId == userId);
         if (cart == null)
         {
             throw new ApplicationException("Cart not found");
         }
 
         await AutoUpdateInventory(cart.CartItems);
-        cart = await _cartRepository.GetCartAsync(u => u.UserId == userId);
+        cart = await _cartRepository.FindAsync(u => u.UserId == userId);
         return _mapper.Map<CartDto>(cart);
     }
 
@@ -143,7 +144,7 @@ public class CartService : ICartService
 
     public async Task ClearCart(Guid id)
     {
-        var cart = await _cartRepository.GetCartAsync(u => u.Id == id);
+        var cart = await _cartRepository.FindAsync(u => u.Id == id);
         if (cart == null)
         {
             throw new ApplicationException("Cart not found");
@@ -164,23 +165,23 @@ public class CartService : ICartService
 
     public async Task AutoUpdateInventory(List<CartItem>? cartItem)
     {
-        if (cartItem == null || cartItem.Count == 0)
+        if (cartItem != null && cartItem.Count > 0)
         {
-            throw new ApplicationException("Cart item not found");
-        }
-        foreach (var item in cartItem)
-        {
-            var inventory = await _inventoryRepository.FindAsync(i => i.ProductId == item.ProductId && i.SizeId == item.SizeId);
-            if (inventory != null)
+            foreach (var item in cartItem)
             {
-                if (inventory.Inventory == 0)
+                var inventory = await _inventoryRepository.FindAsync(i => i.ProductId == item.ProductId && i.SizeId == item.SizeId);
+                if (inventory != null)
                 {
-                    await _cartItemRepository.DeleteAsync(item.Id);
-                    continue;
+                    if (inventory.Inventory == 0)
+                    {
+                        await _cartItemRepository.DeleteAsync(item.Id);
+                        continue;
+                    }
+                    item.Quantity = Math.Min(item.Quantity, inventory.Inventory);
+                    await _cartItemRepository.UpdateAsync(item);
                 }
-                item.Quantity = Math.Min(item.Quantity, inventory.Inventory);
-                await _cartItemRepository.UpdateAsync(item);
             }
         }
+
     }
 }

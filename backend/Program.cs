@@ -100,6 +100,7 @@ builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepository<Review>, Repository<Review>>();
 builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
 builder.Services.AddScoped<IRepository<Size>, Repository<Size>>();
+builder.Services.AddScoped<IRepository<Product>, Repository<Product>>();
 builder.Services.AddScoped<IRepository<ProductInventory>, Repository<ProductInventory>>();
 builder.Services.AddScoped<IRepository<ProductImage>, Repository<ProductImage>>();
 builder.Services.AddScoped<IRepository<Cart>, Repository<Cart>>();
@@ -110,7 +111,6 @@ builder.Services.AddScoped<IRepository<OrderItem>, Repository<OrderItem>>();
 builder.Services.AddScoped<IRepository<Discount>, Repository<Discount>>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 builder.Services.AddAuthorization();
 

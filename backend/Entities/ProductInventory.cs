@@ -7,11 +7,11 @@ public record class ProductInventory
 
     public Guid ProductId { get; set; }
 
-    public Product? Product { get; set; }
+    public virtual Product? Product { get; set; }
 
     public Guid SizeId { get; set; }
 
-    public Size? Size { get; set; }
+    public virtual Size? Size { get; set; }
 
     public int Inventory { get; set; } = 999;
 }

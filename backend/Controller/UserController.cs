@@ -82,6 +82,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut]
     [Route("update")]
     public async Task<IActionResult> Update([FromBody] UserUpdateDto userUpdateDto)
@@ -101,6 +102,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Staff")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
@@ -115,6 +117,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin, Staff")]
     [HttpGet]
     [Route("email/{email}")]
     public async Task<IActionResult> GetByEmail([FromRoute] string email)
@@ -132,6 +135,7 @@ public class UserController : ControllerBase
 
 
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
