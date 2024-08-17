@@ -14,10 +14,14 @@ namespace backend.Controller;
 public class ProductController : ControllerBase
 {
     private readonly IProductService _productService;
+    private readonly ICloudService _cloudinaryService;
 
-    public ProductController(IProductService productService)
+
+    public ProductController(IProductService productService, ICloudService cloudinaryService)
     {
         _productService = productService;
+        _cloudinaryService = cloudinaryService;
+
     }
 
     [HttpGet]
@@ -207,4 +211,21 @@ public class ProductController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadImage(List<IFormFile> files)
+    {
+        if (files == null || files.Count == 0)
+        {
+            return BadRequest("File is empty.");
+        }
+        files = files.Take(5).ToList();
+
+        var imageUrls = await _cloudinaryService.UploadImageAsync(files);
+        return Ok(imageUrls);
+    }
 }
+// [
+//   "https://res.cloudinary.com/dmmdx9nao/image/upload/v1723126959/utibqxplzd3jcnac0jkh.webp",
+//   "https://res.cloudinary.com/dmmdx9nao/image/upload/v1723126960/pllfhhutvumw3filshh0.jpg"
+// ]

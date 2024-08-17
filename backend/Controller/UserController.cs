@@ -46,42 +46,6 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(UserRegisterDto userRegisterDto)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var token = await _userService.Register(userRegisterDto);
-            return Ok(new { Token = token });
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(UserLoginDto userLoginDto)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var token = await _userService.Login(userLoginDto);
-            return Ok(new { Token = token });
-        }
-        catch (ApplicationException ex)
-        {
-            return Unauthorized(new { Message = ex.Message });
-        }
-    }
-
     [Authorize(Roles = "Admin")]
     [HttpPut]
     [Route("update")]

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using backend.Dto.User;
+using backend.Dtos.User;
 using backend.Entity;
 using backend.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -94,6 +95,22 @@ public class UserService : IUserService
         return GenerateToken(user);
     }
 
+    public async Task ChangePassword(Guid id, UserChangePassDto userChangePassDto)
+    {
+        var user = await _userRepository.FindAsync(u => u.Id == id);
+        if (user == null)
+        {
+            throw new ApplicationException("User not found");
+        }
+        if (!await CheckPasswordAsync(user, userChangePassDto.OldPassword))
+        {
+            throw new ApplicationException("Invalid old password");
+        }
+        user.PasswordHash = _passwordHasher.HashPassword(user, userChangePassDto.NewPassword);
+
+        await _userRepository.UpdateAsync(user);
+    }
+
     public async Task<UserDto> Update(UserUpdateDto userUpdateDto)
     {
         var existingUser = await _userRepository.GetByIdAsync(userUpdateDto.Id);
@@ -151,5 +168,6 @@ public class UserService : IUserService
         }
         return await _userRepository.DeleteAsync(id);
     }
+
 
 }

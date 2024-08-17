@@ -30,7 +30,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter 'Bearer' [space] and then your token in the text input below.\n\nExample: \"Bearer ey8asd....\""
+        Description = "Enter 'Bearer {Token}'"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -84,6 +84,8 @@ builder.Services.AddAuthentication(options =>
 //SMTP
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
+//Cloudinary
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 
 
 //Service
@@ -94,6 +96,7 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
+builder.Services.AddScoped<ICloudService, CloudService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
