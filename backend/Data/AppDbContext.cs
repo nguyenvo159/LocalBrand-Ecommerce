@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Entity;
 
 namespace backend.Data;
@@ -31,7 +32,8 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        modelBuilder.HasPostgresExtension("vector");
+
 
         // Quan hệ 1-1 giữa User và Cart
         modelBuilder.Entity<User>()

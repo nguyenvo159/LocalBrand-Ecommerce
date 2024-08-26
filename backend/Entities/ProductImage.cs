@@ -1,4 +1,7 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+using Pgvector;
+
 namespace backend.Entity;
 
 public record class ProductImage
@@ -9,6 +12,6 @@ public record class ProductImage
     public virtual Product? Product { get; set; }
 
     public string? ImageUrl { get; set; }
-    public float[]? ImageVector { get; set; }
+    public Vector? ImageVector { get; set; }
 
 }

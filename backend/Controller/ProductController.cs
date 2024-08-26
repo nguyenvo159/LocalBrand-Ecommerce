@@ -212,18 +212,6 @@ public class ProductController : ControllerBase
         }
     }
 
-    [HttpPost("upload")]
-    public async Task<IActionResult> UploadImage(List<IFormFile> files)
-    {
-        if (files == null || files.Count == 0)
-        {
-            return BadRequest("File is empty.");
-        }
-        files = files.Take(5).ToList();
-
-        var imageUrls = await _cloudinaryService.UploadImageAsync(files);
-        return Ok(imageUrls);
-    }
 }
 // [
 //   "https://res.cloudinary.com/dmmdx9nao/image/upload/v1723126959/utibqxplzd3jcnac0jkh.webp",

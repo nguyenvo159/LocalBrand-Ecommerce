@@ -80,6 +80,11 @@ public class Repository<T> : IRepository<T> where T : class
         return true;
     }
 
+    public IQueryable<T> AsQueryable()
+    {
+        return _context.Set<T>().AsQueryable();
+    }
+
 
     //Specialize
     // public async Task<Cart?> GetCartAsync(Expression<Func<Cart, bool>> predicate)

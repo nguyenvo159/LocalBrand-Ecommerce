@@ -1,4 +1,3 @@
-using System.Text;
 using backend;
 using backend.Data;
 using backend.Entity;
@@ -6,11 +5,14 @@ using backend.Extensions;
 using backend.Mapper;
 using backend.Repositories;
 using backend.Services;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,14 +51,17 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 //AutoMapper
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 //DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o => o.UseVector());
 });
 
 // JWT Configuration
@@ -97,6 +102,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<ICloudService, CloudService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));

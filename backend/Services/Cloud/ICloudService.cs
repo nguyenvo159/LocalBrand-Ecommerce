@@ -2,5 +2,5 @@
 
 public interface ICloudService
 {
-    Task<List<string>> UploadImageAsync(List<IFormFile> files);
+    Task<string> UploadImageAsync(IFormFile file);
 }

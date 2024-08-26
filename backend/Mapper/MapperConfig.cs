@@ -73,6 +73,24 @@ public class MapperConfig : Profile
 
                 //Discount
                 CreateMap<DiscountCreateDto, Discount>();
+
+                //Image - Product
+
+                CreateMap<ProductImage, ProductDto>()
+                        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId))
+                        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
+                        .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product != null ? src.Product.Description : string.Empty))
+                        .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+                        .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Product != null ? src.Product.CreatedAt : DateTime.UtcNow))
+                        .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.Product != null ? src.Product.UpdatedAt : DateTime.UtcNow))
+                        .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Product != null ? src.Product.CategoryId : Guid.Empty))
+                        .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Category.Name : string.Empty))
+                        .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductImages.Select(pi => pi.ImageUrl) : new List<string>()))
+                        .ForMember(dest => dest.Sizes, opt => opt.MapFrom(src => src.Product != null ? src.Product.Sizes.Select(s => new SizeDto
+                        {
+                                Name = s.Size != null ? s.Size.Name : string.Empty,
+                                Inventory = s.Inventory
+                        }) : new List<SizeDto>()));
         }
 
 }

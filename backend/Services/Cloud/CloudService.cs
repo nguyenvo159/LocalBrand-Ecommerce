@@ -18,20 +18,19 @@ public class CloudService : ICloudService
         _cloudinary = new Cloudinary(account);
     }
 
-    public async Task<List<string>> UploadImageAsync(List<IFormFile> files)
+    public async Task<string> UploadImageAsync(IFormFile file)
     {
-        var uploadResult = new List<string>();
-        foreach (var file in files)
+
+        var uploadParams = new ImageUploadParams()
         {
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(file.FileName, file.OpenReadStream())
-            };
+            File = new FileDescription(file.FileName, file.OpenReadStream())
+        };
 
-            var url = await _cloudinary.UploadAsync(uploadParams);
-            uploadResult.Add(url.SecureUrl.ToString());
-        }
+        var url = await _cloudinary.UploadAsync(uploadParams);
 
-        return uploadResult;
+
+        return url.SecureUrl.ToString();
     }
+
+
 }
