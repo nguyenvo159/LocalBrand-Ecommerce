@@ -1,22 +1,30 @@
 import axios from "axios";
 
 
-const getToken = () => {
-    const token = localStorage.getItem('token');
-    return token ? `Bearer ${token}` : '';
-};
-
-const commonConfig = {
-    headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: getToken()
-    },
-};
-
-export default (baseURL) => {
-    return axios.create({
+const createApi = (baseURL) => {
+    const api = axios.create({
         baseURL,
-        ...commonConfig,
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
     });
+
+    // Sử dụng interceptor để thêm token vào mỗi request
+    api.interceptors.request.use(
+        (config) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
+        }
+    );
+
+    return api;
 };
+
+export default createApi;

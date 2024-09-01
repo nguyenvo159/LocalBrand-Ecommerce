@@ -6,14 +6,14 @@
                 <h1 class="mb-4">Quản lý Người Dùng </h1>
 
                 <div class="d-flex">
-                    <InputSearch v-model="searchText" />
+                    <!-- <InputSearch v-model="searchText" /> -->
 
                     <button class="btn pb-4 ml-3 m" style="box-shadow: none;" @click="refreshList()">
                         <i class="main-hover fa-solid fa-rotate-right" style="font-size: 24px;"></i></button>
 
                 </div>
 
-                <table class="table shadow bg-white">
+                <table class="table table-hover shadow bg-white">
                     <thead class="thead-light">
                         <tr>
                             <th class="align-middle text-center">STT</th>
@@ -32,10 +32,10 @@
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.phone }}</td>
-                            <td>{{ user.role}}</td>
+                            <td>{{ user.role }}</td>
                             <td>
-                                <a class="cursor-pointer mr-2" data-toggle="modal" data-target="#update-user"
-                                    @click="confirmUpdate(user)">Sửa</a>
+                                <a class="cursor-pointer mr-3" data-toggle="modal" data-target="#update-user"
+                                    @click="confirmUpdate(user)">Sửa </a>
                                 <a class="cursor-pointer" data-toggle="modal" data-target="#delete-user"
                                     @click="confirmDelete(user)">Xóa</a>
                             </td>
@@ -45,8 +45,8 @@
 
                 </table>
                 <!-- Sửa thông tin User -->
-                <InputUser :user="user" @submit:user="updateUser" @close="closeModal" title="Cập Nhật Tài Khoản"
-                    modalId="update-user" />
+                <!-- <InputUser :user="user" @submit:user="updateUser" @close="closeModal" title="Cập Nhật Tài Khoản" -->
+                    <!-- modalId="update-user" /> -->
                 <!-- Thông báo -->
                 <NotificationModal modalId="delete-user" title="Xác Nhận Xóa" :message="message"
                     :confirmAction="deleteUser" :idToDelete="userToDelete" />
@@ -57,17 +57,17 @@
 
 <script>
 import UserService from '@/services/user.service';
-import InputSearch from '@/components/InputSearch.vue';
-import InputUser from '@/components/admin/InputUser.vue';
-import NotificationModal from '@/components/NotificationModal.vue';
-import DashBoard from './DashBoard.vue';
+// import InputSearch from '@/components/InputSearch.vue';
+// import InputUser from '@/components/admin/InputUser.vue';
+import NotificationModal from '@/components/notify/NotificationModal.vue';
+import DashBoard from '@/components/admin/DashBoard.vue';
 
 export default {
     components: {
         DashBoard,
-        InputSearch,
-        InputUser,
-        InputSearch,
+        // InputSearch,
+        // InputUser,
+        // InputSearch,
         NotificationModal,
     },
     data() {
@@ -114,7 +114,7 @@ export default {
         },
 
         confirmDelete(user) {
-            this.userToDelete = user._id;
+            this.userToDelete = user.id;
             this.message = `Bạn có chắn chắn muốn xóa \"${user ? user.name : ''}\" ?`;
         },
         confirmUpdate(user) {
@@ -125,8 +125,8 @@ export default {
             try {
                 this.users = await UserService.getAll();
                 this.users.sort((a, b) => {
-                    const pqA = a.isAdmin ? 'Admin' : 'User';
-                    const pqB = b.isAdmin ? 'Admin' : 'User';
+                    const pqA = a.role ;
+                    const pqB = b.role ;
                     return pqA.localeCompare(pqB);
                 });
             } catch (error) {

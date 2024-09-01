@@ -19,10 +19,16 @@
     methods: {
       logout() {
         this.$store.dispatch('logout');
+        this.$router.push('/auth/login');
       }
     },
-    mounted() {
-      this.$store.dispatch('loadUser');
+    beforeRouteEnter(to, from, next) {
+      // Trước khi vào route Home, gọi action loadUser
+      next(vm => {
+        vm.$store.dispatch('loadUser').then(() => {
+          next();
+        });
+      });
     }
   }
   </script>

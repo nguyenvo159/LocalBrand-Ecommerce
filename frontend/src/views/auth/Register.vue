@@ -158,6 +158,7 @@ export default {
         if (response) {
             const token = response.token;
             await localStorage.setItem("token", token);
+            await this.$store.dispatch('loadUser');
             this.$router.push("/");
         }
       } catch (error) {
