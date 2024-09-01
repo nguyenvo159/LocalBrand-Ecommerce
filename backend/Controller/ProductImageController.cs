@@ -15,8 +15,22 @@ public class ProductImageController : ControllerBase
         _imageService = imageService;
     }
 
-    [HttpPost]
+    [HttpPost("upload")]
     public async Task<IActionResult> UploadImage(List<IFormFile> files, Guid productId)
+    {
+        try
+        {
+            await _imageService.UploadImage(files, productId);
+            return Ok("Added image successfully");
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+
+    }
+    [HttpPost("upload-no-vector")]
+    public async Task<IActionResult> UploadImageNoVector(List<IFormFile> files, Guid productId)
     {
         try
         {
@@ -35,6 +49,5 @@ public class ProductImageController : ControllerBase
         var products = await _imageService.SearchImageAsync(file);
         return Ok(products);
     }
-
 
 }

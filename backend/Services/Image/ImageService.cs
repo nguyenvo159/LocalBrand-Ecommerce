@@ -47,6 +47,7 @@ public class ImageService : IImageService
                 await file.CopyToAsync(stream);
             }
             Vector? vectorStr = await GetImageVectorAsync(filePath);
+            File.Delete(filePath);
 
             var productImage = new ProductImage
             {
@@ -55,7 +56,27 @@ public class ImageService : IImageService
                 ImageVector = vectorStr
             };
             await _productImageRepository.AddAsync(productImage);
-            File.Delete(filePath);
+
+        }
+    }
+
+    public async Task UploadImageNoVector(List<IFormFile> files, Guid productId)
+    {
+        var product = await _productRepository.GetByIdAsync(productId);
+        if (product == null)
+        {
+            throw new ApplicationException("Product not found");
+        }
+        foreach (var file in files)
+        {
+            var url = await _cloudService.UploadImageAsync(file);
+
+            var productImage = new ProductImage
+            {
+                ProductId = productId,
+                ImageUrl = url
+            };
+            await _productImageRepository.AddAsync(productImage);
 
         }
     }

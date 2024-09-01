@@ -33,7 +33,7 @@ public class AuthenticationController : ControllerBase
         }
         catch (ApplicationException ex)
         {
-            return BadRequest(new { Message = ex.Message });
+            return Ok(ex.Message.ToString());
         }
     }
 
