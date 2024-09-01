@@ -5,3 +5,5 @@
 *~npdf/
 *.user
 *.sln.docstates
+
+node_modules/
