@@ -87,7 +87,10 @@ public class UserService : IUserService
         }
 
         var user = _mapper.Map<User>(userRegisterDto);
-        user.Role = "User";
+        if (userRegisterDto.Role.IsNullOrEmpty())
+        {
+            user.Role = "User";
+        }
         user.PasswordHash = _passwordHasher.HashPassword(user, userRegisterDto.Password);
 
         await _userRepository.AddAsync(user);
@@ -117,6 +120,14 @@ public class UserService : IUserService
         if (existingUser == null)
         {
             throw new ApplicationException("User not found");
+        }
+        if (existingUser.Email != userUpdateDto.Email)
+        {
+            var existingEmail = await _userRepository.FindAllAsync(u => u.Email == userUpdateDto.Email);
+            if (existingEmail.Count > 0)
+            {
+                throw new ApplicationException("Email already exists");
+            }
         }
 
         _mapper.Map(userUpdateDto, existingUser);

@@ -22,4 +22,6 @@ public class UserRegisterDto
     [Required]
     [StringLength(100)]
     public string Password { get; set; } = string.Empty;
+
+    public string? Role { get; set; }
 }
