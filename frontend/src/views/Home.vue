@@ -1,19 +1,29 @@
 <template>
-    <div class="p-4">
-      <h1 v-if="user">Xin chào, {{ user.name }}</h1>
+    <div class="">
+      <SearchEngine />
+      <h1 v-if="user">Xin chào, {{ user.name }} , {{ user.role }} 
+        , Đã đăng nhập: {{ isLogged }}</h1>
       <p v-else>Vui lòng 
             <router-link :to="{ name: 'Login' }">Đăng nhập</router-link>
       </p>
       <br>
-      <button @click="logout" class="btn btn-primary">Log out</button>
+      <button @click="logout" class="btn btn-primary">Log out</button> <br>
+      <router-link class="btn btn-success" :to="{name: 'UserManage'}">Admin</router-link>
     </div>
   </template>
   
   <script>
+  import SearchEngine from '@/components/SearchEngine.vue';
   export default {
+    components: {
+      SearchEngine
+    },
     computed: {
       user() {
         return this.$store.getters.getUser;
+      },
+      isLogged(){
+        return this.$store.getters.isLogged;
       }
     },
     methods: {

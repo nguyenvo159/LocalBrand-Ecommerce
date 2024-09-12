@@ -17,4 +17,9 @@
 
 .error-feedback {
     color: red;
-  }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+

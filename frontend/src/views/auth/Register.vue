@@ -22,27 +22,12 @@
           <Form @submit="registerUser" :validation-schema="validationSchema">
             <div class="form-group mt-2">
               <label for="name">Họ và tên:</label>
-              <Field
-                type="text"
-                class="form-control rounded-0"
-                id="name"
-                v-model="user.name"
-                name="name"
-                autocomplete="off"
-              />
+              <Field type="text" class="form-control rounded-0" id="name" v-model="user.name" name="name" autocomplete="off"/>
               <ErrorMessage class="error-feedback" name="name" />
             </div>
             <div class="form-group mt-2">
               <label for="email">Email:</label>
-              <Field
-                type="email"
-                class="form-control rounded-0"
-                id="email"
-                v-model="user.email"
-                name="email"
-                autocomplete="off"
-                @focus="isEmailExists = false"
-              />
+              <Field type="email" class="form-control rounded-0" id="email" v-model="user.email" name="email" autocomplete="off" @focus="isEmailExists = false"/>
               <ErrorMessage class="error-feedback" name="email" />
               <div v-if="isEmailExists" class="error-feedback">
                 Email đã tồn tại.
@@ -50,37 +35,17 @@
             </div>
             <div class="form-group mt-2">
               <label for="phone">Số điện thoại:</label>
-              <Field
-                type="text"
-                class="form-control rounded-0"
-                id="phone"
-                v-model="user.phone"
-                name="phone"
-                autocomplete="off"
-              />
+              <Field type="text" class="form-control rounded-0" id="phone" v-model="user.phone" name="phone" autocomplete="off" />
               <ErrorMessage class="error-feedback" name="phone" />
             </div>
             <div class="form-group mt-2">
               <label for="password">Mật khẩu:</label>
-              <Field
-                type="password"
-                class="form-control rounded-0"
-                id="password"
-                v-model="user.password"
-                name="password"
-                autocomplete="off"
-              />
+              <Field type="password" class="form-control rounded-0" id="password" v-model="user.password" name="password" autocomplete="off" />
               <ErrorMessage class="error-feedback" name="password" />
             </div>
             <div class="form-group mt-2">
               <label for="re-password">Nhập lại mật khẩu:</label>
-              <Field
-                type="password"
-                class="form-control rounded-0"
-                id="re-password"
-                name="re-password"
-                autocomplete="off"
-              />
+              <Field type="password" class="form-control rounded-0" id="re-password" name="re-password" autocomplete="off" />
               <ErrorMessage class="error-feedback" name="re-password" />
             </div>
             <button type="submit" class="w-100 mt-3 btn btn-primary rounded-0">Đăng ký</button>

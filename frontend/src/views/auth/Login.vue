@@ -97,7 +97,6 @@ export default {
           const token = result.token;
           await localStorage.setItem("token", token);
           
-          await this.$store.dispatch('loadUser');
           this.$router.push("/");
         } else {
           this.loginError = "Sai thông tin tài khoản. Vui lòng nhập lại";

@@ -1,15 +1,15 @@
 <template>
 
     <!-- Admin Sidebar -->
-    <div class="col-lg-3 admin-sidebar" style="border-radius: 0 25px 0 0;">
+    <div class="col-lg-3 admin-sidebar">
 
         <h3 style="height: 52px;"><span>Quản Trị</span></h3>
 
-        <!-- <router-link :to="{name: 'Analytics'}" :class="{'active': type == 'Analytics'}"><i class="fas fa-chart-bar"></i><span>Analytics</span></router-link> -->
-        <router-link :to="{name: 'UserManager'}" :class="{'active': type == 'User'}"><i class="fas fa-user"></i><span>User</span></router-link>
-        <!-- <router-link :to="{name: 'ProductManager'}" :class="{'active': type == 'Product'}"><i class="fas fa-box"></i><span>Product</span></router-link> -->
-        <!-- <router-link :to="{name: 'OrderManager'}"  :class="{'active': type == 'Order'}"><i class="fas fa-shopping-cart"></i><span>Order</span></router-link> -->
-        <!-- <router-link :to="{name: 'Home'}" class=""><i class="fas fa-sign-out-alt"></i><span>Logout</span></router-link> -->
+        <!-- <router-link :to="{name: 'Analytics'}" :class="{'active': type == 'Analytics'}"><i class="fas fa-chart-bar"></i><span>Thống kê</span></router-link> -->
+        <router-link :to="{name: 'UserManage'}" :class="{'active': type == 'User'}"><i class="fas fa-user"></i><span>Người dùng</span></router-link>
+        <router-link :to="{name: 'ProductManage'}" :class="{'active': type == 'Product'}"><i class="fas fa-box"></i><span>Sản phẩm</span></router-link>
+        <!-- <router-link :to="{name: 'OrderManage'}"  :class="{'active': type == 'Order'}"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></router-link> -->
+        <router-link :to="{name: 'Home'}" class=""><i class="fas fa-sign-out-alt"></i><span>Thoát</span></router-link>
     </div>
 
     <!-- <ProductManager /> -->
