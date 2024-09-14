@@ -1,45 +1,263 @@
 <template>
-    <div class="">
-      <SearchEngine />
-      <h1 v-if="user">Xin chào, {{ user.name }} , {{ user.role }} 
-        , Đã đăng nhập: {{ isLogged }}</h1>
-      <p v-else>Vui lòng 
-            <router-link :to="{ name: 'Login' }">Đăng nhập</router-link>
-      </p>
-      <br>
-      <button @click="logout" class="btn btn-primary">Log out</button> <br>
-      <router-link class="btn btn-success" :to="{name: 'UserManage'}">Admin</router-link>
+  <header id="header" class="vh-100 carousel slide" data-ride="carousel"
+    style="padding-top: 104px; background-image: url('https://amiri.com/cdn/shop/files/Slideshow-Banner_Desktop_AW23-Mens-6D.jpg');">
+
+    <div class="container h-100 d-flex align-items-center carousel-inner">
+      <div class="text-center carousel-item active">
+        <h2 class="text-capitalize text-white">Best collection</h2>
+        <h1 class="text-uppercase py-2 fw-bold text-white">Modern fashion</h1>
+        <a href="#" class="btn btn-outline-secondary mt-3 text-uppercase text-white">Buy now</a>
+      </div>
+      <div class="text-center carousel-item">
+        <h2 class="text-capitalize text-white">best price & offer</h2>
+        <h1 class="text-uppercase py-2 fw-bold text-white">New Season</h1>
+        <a href="#" class="btn btn-outline-secondary mt-3 text-uppercase text-white">buy now</a>
+      </div>
     </div>
-  </template>
-  
-  <script>
-  import SearchEngine from '@/components/SearchEngine.vue';
-  export default {
-    components: {
-      SearchEngine
+
+    <button class="carousel-control-prev" type="button" data-target="#header" data-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-target="#header" data-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </header>
+
+  <!-- Collection -->
+  <section id="collection" class="py-5">
+    <div class="container">
+      <div class="title text-center">
+        <h2 class="position-relative d-inline-block">New Collection</h2>
+      </div>
+
+      <div class="row g-0">
+        <div class="d-flex flex-wrap justify-content-center mt-3 filter-button-group">
+          <button type="button" class="btn rounded-pill py-2 px-3 m-2 btn-outline-dark text-capitalize"
+            :class="{ 'active-filter-btn': activeFilter === '*' }" @click="setFilter('*')">All</button>
+
+          <button v-for="category in categories" :key="category.name" type="button"
+            class="btn rounded-pill py-2 px-3 m-2 btn-outline-dark text-capitalize"
+            :class="{ 'active-filter-btn': activeFilter === category.name }" @click="setFilter(category.name)">
+            {{ category.name }}
+          </button>
+        </div>
+
+        <transition-group name="list" tag="div" class="collection-list row gx-0 gy-1">
+          <div v-for="item in filteredCollections" :key="item.id"
+            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2', item.categoryName]">
+            <div class="collection-img position-relative">
+              <img :src="item.imageUrls[0]" class="w-100">
+            </div>
+            <div class="text-center">
+              <p class="text-capitalize my-1"><router-link class="title-product"
+                  :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
+                    item.name }}</router-link></p>
+              <span class="price">{{ item.price }}đ</span>
+            </div>
+          </div>
+        </transition-group>
+      </div>
+
+      <div class="container-fluid mt-5 mb-5 d-flex justify-content-center">
+        <div class="row justify-content-center align-items-center w-50">
+          <h2 class="text-center">Enjoy Your Youth!</h2>
+          <div class="col-12 text-center text-justify">
+            <p class="">Không chỉ là thời trang, Amiri còn là “phòng thí nghiệm” của tuổi trẻ - nơi
+              nghiên cứu và cho ra đời nguồn năng lượng mang tên “Youth”. Chúng mình luôn muốn tạo nên
+              những trải nghiệm vui vẻ, năng động và trẻ trung.</p>
+            <br>
+          </div>
+        </div>
+        <br><br><br><br>
+      </div>
+    </div>
+  </section>
+
+  <!-- Offer -->
+  <section id="offers" class="py-5">
+    <div class="container">
+      <div
+        class="row d-flex align-items-center justify-content-center text-center justify-content-lg-start text-lg-start">
+        <div class="offers-content">
+          <span class="text-white">Discount Up To 40%</span>
+          <h2 class="mt-2 mb-4 text-white">Grand Sale Offer!</h2>
+          <a href="#" class="btn btn-outline-dark text-capitalize text-white border-white rounded-pill mt-3 py-2 px-3 ">
+            buy now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog -->
+  <section id="blogs" class="py-5">
+    <div class="container">
+      <div class="title text-center py-5">
+        <h2 class="position-relative d-inline-block">Our Latest Blog</h2>
+      </div>
+
+      <div class="row g-3">
+        <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
+          <img class="img-fluid" style="max-height: 300px; object-fit: contain; "
+            src="https://scontent.fvca1-2.fna.fbcdn.net/v/t39.30808-6/458337148_557832580090764_58506317940912344_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_ohc=CeOnnGgMdGYQ7kNvgFNaSZZ&_nc_ht=scontent.fvca1-2.fna&_nc_gid=AoDak7Z8Bx7PO6fWAAe4zCv&oh=00_AYDbVF4fOLevntBJBLa52LYzm9OoR7L20caV1JTOrwckOg&oe=66EAA155"
+            alt="">
+          <div class="card-body px-0">
+            <h4 class="card-title">AMIRI's Autumn-Winter 2024 Đại sứ toàn cầu</h4>
+            <p class="card-text mt-3 text-muted">“AMIRI's Autumn-Winter 2024 là sàn diễn đầu tiên của tôi và đây cũng
+              là chiến dịch đầu tiên của tôi. Sự giao thoa giữa niềm đam mê mà tôi chia sẻ về cả âm nhạc và thời trang,
+              sẽ mở ra mối liên kết của tôi với Mike Amiri, chiến dịch này giống như một cách hoàn hảo để tôi bắt đầu
+              vai trò Đại sứ thương hiệu AMIRI”</p>
+            <p class="card-text">
+              <small class="text-muted">
+                <span class="fw-bold">Author: </span>Sunwoo
+              </small>
+            </p>
+            <a href="#" class="btn btn-outline-dark">Read More</a>
+          </div>
+        </div>
+
+        <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
+          <img
+            src="file:///C:/Users/nguye/OneDrive/Documents/A%20Lu%E1%BA%ADn%20V%C4%83n/attire-shopping-site-using-bootstrap-5-master/attire-shopping-site-using-bootstrap-5-master/images/blog_1.jpg"
+            alt="">
+          <div class="card-body px-0">
+            <h4 class="card-title">Lorem ipsum, dolor sit amet consectetur adipisicing</h4>
+            <p class="card-text mt-3 text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
+              aspernatur repudiandae nostrum dolorem molestias odio. Sit fugit adipisci omnis quia itaque ratione iusto
+              sapiente reiciendis, numquam officiis aliquid ipsam fuga.</p>
+            <p class="card-text">
+              <small class="text-muted">
+                <span class="fw-bold">Author: </span>John Doe
+              </small>
+            </p>
+            <a href="#" class="btn btn-outline-dark">Read More</a>
+          </div>
+        </div>
+
+        <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
+          <img
+            src="file:///C:/Users/nguye/OneDrive/Documents/A%20Lu%E1%BA%ADn%20V%C4%83n/attire-shopping-site-using-bootstrap-5-master/attire-shopping-site-using-bootstrap-5-master/images/blog_1.jpg"
+            alt="">
+          <div class="card-body px-0">
+            <h4 class="card-title">Lorem ipsum, dolor sit amet consectetur adipisicing</h4>
+            <p class="card-text mt-3 text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
+              aspernatur repudiandae nostrum dolorem molestias odio. Sit fugit adipisci omnis quia itaque ratione iusto
+              sapiente reiciendis, numquam officiis aliquid ipsam fuga.</p>
+            <p class="card-text">
+              <small class="text-muted">
+                <span class="fw-bold">Author: </span>John Doe
+              </small>
+            </p>
+            <a href="" class="btn btn-outline-dark">Read More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular -->
+  <section id="popular" class="py-5">
+    <div class="container">
+      <div class="title text-center pt-3 pb-5">
+        <h2 class="position-relative d-inline-block ms-4">Popular</h2>
+      </div>
+
+      <div class="row align-items-start">
+        <div class="col-md-6 col-lg-4 row g-3">
+          <h3 class="fs-5">Top Rated</h3>
+          <div v-for="product in bestRate" class="d-flex align-items-start justify-content-start">
+            <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
+            <div style="font-size: 12px; text-align: justify;">
+              <p class="mb-0">{{ product.name }}</p>
+              <span class="price">{{ product.price }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 row g-3">
+          <h3 class="fs-5">Best Selling</h3>
+          <div v-for="product in bestSeller" class="d-flex align-items-start justify-content-start">
+            <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
+            <div style="font-size: 12px; text-align: justify;">
+              <p class="mb-0">{{ product.name }}</p>
+              <span class="price">{{ product.price }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 row g-3">
+          <h3 class="fs-5">Lastest</h3>
+          <div v-for="product in lastest" class="d-flex align-items-start justify-content-start">
+            <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
+            <div style="font-size: 12px; text-align: justify;">
+              <p class="mb-0">{{ product.name }}</p>
+              <span class="price">{{ product.price }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</template>
+
+<script>
+import productService from '@/services/product.service';
+
+export default {
+  data() {
+    return {
+      collections: [],
+      categories: [],
+      bestRate: [],
+      bestSeller: [],
+      lastest: [],
+      activeFilter: '*',
+    };
+  },
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
     },
-    computed: {
-      user() {
-        return this.$store.getters.getUser;
-      },
-      isLogged(){
-        return this.$store.getters.isLogged;
+    isLogged() {
+      return this.$store.getters.isLogged;
+    },
+    filteredCollections() {
+      if (this.activeFilter === '*') {
+        return this.collections;
       }
-    },
-    methods: {
-      logout() {
-        this.$store.dispatch('logout');
-        this.$router.push('/auth/login');
-      }
-    },
-    beforeRouteEnter(to, from, next) {
-      // Trước khi vào route Home, gọi action loadUser
-      next(vm => {
-        vm.$store.dispatch('loadUser').then(() => {
-          next();
-        });
-      });
+      return this.collections.filter(item => item.categoryName === this.activeFilter);
     }
+  },
+  mounted() {
+    this.fetchCollection();
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('logout');
+      this.$router.push('/auth/login');
+    },
+    async fetchCollection() {
+      this.collections = await productService.getAll();
+      this.categories = this.collections.reduce((acc, item) => {
+        if (!acc.find((category) => category.name === item.categoryName)) {
+          acc.push({ name: item.categoryName });
+        }
+        return acc;
+      }, []);
+      this.bestRate = await productService.getBestRate();
+      this.bestSeller = await productService.getBestSeller();
+      this.lastest = this.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+    },
+    setFilter(filter) {
+      this.activeFilter = filter;
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.$store.dispatch('loadUser').then(() => {
+        next();
+      });
+    });
   }
-  </script>
-  
+}
+</script>

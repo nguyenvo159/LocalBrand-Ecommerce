@@ -41,6 +41,24 @@ class ProductService {
         }
     }
 
+    async getBestRate(){
+        try {
+            const response = await this.api.get("/rate");
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getBestSeller(){
+        try {
+            const response = await this.api.get("/best-sell");
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async search(keyword) {
         try {
             const response = await this.api.get(`/search/${keyword}`);

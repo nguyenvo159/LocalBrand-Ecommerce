@@ -1,52 +1,98 @@
 <template>
-    <div style = "padding-bottom: 104px;">
-        <nav class = "navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top">
-            <div class = "container">
-                <a class = "navbar-brand d-flex justify-content-between align-items-center order-lg-0" href = "/" style="letter-spacing: 10px;">
-                    <span class = "text-uppercase fw-lighter ms-2">AMEE</span>
-                </a>
+    <div v-if="!isAdmin" class="" style="padding-bottom: 72px;">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 px-4 fixed-top border-bottom shadow-sm">
+            <div class="row justify-content-center w-100">
+                <div class="container">
+                    <a class="navbar-brand d-flex justify-content-between align-items-center order-lg-0" href="/"
+                        style="letter-spacing: 10px;">
+                        <span class="text-uppercase fw-lighter ms-2"><b>AMIE</b></span>
+                    </a>
+                    <div class="order-lg-2 nav-btns">
+                        <button type="button" class="btn position-relative">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span
+                                class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">5</span>
+                        </button>
+                        <button type="button" class="btn position-relative">
+                            <i class="fa fa-heart"></i>
+                            <span
+                                class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">2</span>
+                        </button>
+                        <button type="button" class="btn position-relative">
+                            <i class="fa fa-search" @click="search"></i>
+                        </button>
+                    </div>
 
-                <div class = "order-lg-2 nav-btns">
-                    <button type = "button" class = "btn position-relative">
-                        <i class = "fa fa-shopping-cart"></i>
-                        <span class = "position-absolute top-0 start-100 translate-middle badge bg-primary">5</span>
+                    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navMenu">
+                        <span class="navbar-toggler-icon"></span>
                     </button>
-                    <button type = "button" class = "btn position-relative">
-                        <i class = "fa fa-heart"></i>
-                        <span class = "position-absolute top-0 start-100 translate-middle badge bg-primary">2</span>
-                    </button>
-                    <button type = "button" class = "btn position-relative">
-                        <i class = "fa fa-search"></i>
-                    </button>
+
+                    <div class="collapse navbar-collapse order-lg-1" id="navMenu">
+                        <ul class="navbar-nav mx-auto text-center">
+                            <li class="nav-item px-2 py-1">
+                                <router-link :to="{ name: 'Home' }"
+                                    class="nav-link text-uppercase text-dark nav-text">HOME</router-link>
+                            </li>
+                            <li class="nav-item px-2 py-1">
+                                <a class="nav-link text-uppercase text-dark nav-text" href="#collection">collection</a>
+                            </li>
+                            <li class="nav-item px-2 py-1">
+                                <a class="nav-link text-uppercase text-dark nav-text" href="#special">specials</a>
+                            </li>
+                            <li class="nav-item px-2 py-1">
+                                <a class="nav-link text-uppercase text-dark nav-text" href="#blogs">blogs</a>
+                            </li>
+                            <li class="nav-item px-2 py-1">
+                                <router-link :to="{ name: 'UserManage' }"
+                                    class="nav-link text-uppercase text-dark nav-text">Admin</router-link>
+                            </li>
+                            <li class="nav-item px-2 py-1 border-0">
+                                <a class="nav-link text-uppercase text-dark nav-text" href="#popular">Liên hệ</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-
-                <button class = "navbar-toggler border-0" type = "button" data-bs-toggle = "collapse" data-bs-target = "#navMenu">
-                    <span class = "navbar-toggler-icon"></span>
-                </button>
-
-                <div class = "collapse navbar-collapse order-lg-1" id = "navMenu">
-                    <ul class = "navbar-nav mx-auto text-center">
-                        <li class = "nav-item px-2 py-2">
-                            <a class = "nav-link text-uppercase text-dark" href = "#header">home</a>
-                        </li>
-                        <li class = "nav-item px-2 py-2">
-                            <a class = "nav-link text-uppercase text-dark" href = "#collection">collection</a>
-                        </li>
-                        <li class = "nav-item px-2 py-2">
-                            <a class = "nav-link text-uppercase text-dark" href = "#special">specials</a>
-                        </li>
-                        <li class = "nav-item px-2 py-2">
-                            <a class = "nav-link text-uppercase text-dark" href = "#blogs">blogs</a>
-                        </li>
-                        <li class = "nav-item px-2 py-2">
-                            <a class = "nav-link text-uppercase text-dark" href = "#about">about us</a>
-                        </li>
-                        <li class = "nav-item px-2 py-2 border-0">
-                            <a class = "nav-link text-uppercase text-dark" href = "#popular">popular</a>
-                        </li>
-                    </ul>
+                <div class="row">
+                    <SearchEngine v-if="isSearch" />
                 </div>
             </div>
         </nav>
+
     </div>
 </template>
+
+<script>
+import SearchEngine from '@/components/SearchEngine.vue';
+export default {
+    components: {
+        SearchEngine,
+    },
+    data() {
+        return {
+            isSearch: false,
+            isAdmin: false,
+        };
+    },
+    watch: {
+        $route(to, from) {
+            this.isAdmin = to.path.includes('admin');
+        },
+    },
+    methods: {
+        search() {
+            this.isSearch = !this.isSearch;
+        },
+    },
+}
+</script>
+
+<style scoped>
+.btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.nav-text:hover {
+    color: #f8b500 !important;
+}
+</style>

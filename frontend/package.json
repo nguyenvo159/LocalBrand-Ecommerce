@@ -13,6 +13,7 @@
     "axios": "^1.7.5",
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
+    "isotope-layout": "^3.0.6",
     "vee-validate": "^4.13.2",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3",

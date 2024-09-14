@@ -1,15 +1,17 @@
 <template>
-    <div class="search-engine">
-      <div class="input-group">
-        <input type="text" class="form-control" v-model="searchQuery" @keyup.enter="searchByText" placeholder="Tìm kiếm sản phẩm...">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary border-0" type="button" @click="searchByText">
-            <i class="fas fa-search"></i>
-          </button>
-          <button class="btn btn-outline-secondary border-0" type="button" @click="openFileDialog">
-            <i class="fas fa-camera"></i>
-          </button>
-          <input ref="fileInput" type="file" accept="image/*" class="d-none" @change="searchByImage" />
+    <div class="search-engine row justify-content-center">
+      <div class="col-lg-9 col-12">
+        <div class="input-group">
+          <input type="text" class="form-control" v-model="searchQuery" @keyup.enter="searchByText" placeholder="Tìm kiếm sản phẩm...">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary border-0" type="button" @click="searchByText">
+              <i class="fas fa-search"></i>
+            </button>
+            <button class="btn btn-outline-secondary border-0" type="button" @click="openFileDialog">
+              <i class="fas fa-camera"></i>
+            </button>
+            <input ref="fileInput" type="file" accept="image/*" class="d-none" @change="searchByImage" />
+          </div>
         </div>
       </div>
     </div>

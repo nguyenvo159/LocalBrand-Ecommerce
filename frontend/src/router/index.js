@@ -2,7 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import store from "@/store/index.js";
 import Home from "@/views/Home.vue";
 import Search from "@/views/Search.vue";
-
+import ProductDetail from "@/views/product/ProductDetail.vue";
 //Admin
 import UserManage from "@/views/admin/UserManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
@@ -11,18 +11,8 @@ import Register from "@/views/auth/Register.vue";
 import Product from "@/views/Product.vue";
 
 const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/search",
-    name: "Search",
-    component: Search,
-    props: (route) => ({ keyword: route.query.keyword, results: route.query.results }),
-  },
-  
+    
+  //Admin
   {
     path: "/admin/user",
     name: "UserManage",
@@ -36,7 +26,20 @@ const routes = [
     component: ProductManage,
     meta: {requiresAuth: true, requiredRole: ['Admin']},
   },
-  
+
+  // End - Admin
+
+  {
+    path: "/",
+    name: "Home",
+    component: Home,
+  },
+  {
+    path: "/search",
+    name: "Search",
+    component: Search,
+    props: (route) => ({ keyword: route.query.keyword, results: route.query.results }),
+  },
   {
     path: "/auth/login",
     name: "Login",
@@ -49,10 +52,11 @@ const routes = [
     component: Register,
   },
 
+  //Product
   {
-    path: "/product",
-    name: "Product",
-    component: Product,
+    path: "/product/:id",
+    name: "ProductDetail",
+    component: ProductDetail,
   },
 ];
 

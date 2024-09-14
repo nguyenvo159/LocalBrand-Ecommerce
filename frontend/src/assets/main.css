@@ -2,24 +2,127 @@
 
 
 :root {
+  --lg-font: 'Kaisei Tokumin', serif;
+  --sm-font: 'Poppins', sans-serif;
   --main-color: #d3ad7f;
   --black: #13131a;
+  --pink: #e5345b;
   --border: 0.1rem solid rgba(255, 255, 255, 0.3);
 }
-
-.roboto-condensed {
-  font-family: "Roboto Condensed", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: normal;
-  /* Set the desired font weight here */
-  font-style: normal;
+body {
+  margin: 0;
+  padding: 0;
 }
-
+section p{
+  font-family: var(--sm-font)!important;
+}
 .error-feedback {
     color: red;
 }
-
 .cursor-pointer {
     cursor: pointer;
+}
+.price{
+  color: #d52220;
+}
+.title-product{
+  text-decoration: none;
+  color: #000;
+}
+.title-product:hover{
+  text-decoration: none;
+  color: var(--main-color)!important;
+}
+.main-hover:hover{
+  color: var(--main-color)!important;
+}
+
+/* Navbar */
+.nav-link:hover{
+  color: var(--main-color)!important;
+}
+
+/* header */
+#header{
+  background: url(https://amiri.com/cdn/shop/files/Slideshow-Banner_Desktop_AW23-Mens-6D.jpg) top/cover no-repeat;
+}
+.carousel-inner h1{
+  font-size: 60px;
+  font-family: var(--lg-font);
+}
+.carousel-item .btn{
+  border-color: #fff!important;
+}
+
+
+/* Collection */
+.collection h2{
+  font-family: var(--sm-font) !important;
+  font-size: 40px;
+}
+.active-filter-btn{
+  /* background-color: #6c757d !important; */
+  background-color: #000 !important;
+  color: #fff!important;
+  border-color: #000!important;
+}
+.filter-button-group .btn:hover{
+  color: #fff!important;
+}
+.collection-img {
+  overflow: hidden;
+}
+.collection-img img {
+  transition: transform 0.3s ease-in-out; 
+}
+.collection-img img:hover{
+  transform: scale(1.1) ;
+}
+/* CSS cho hiệu ứng mượt mà */
+.list-move {
+  transition: transform 0.3s ease-in-out; /* Điều chỉnh thời gian di chuyển */
+}
+
+.list-enter-active, .list-leave-active {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease; /* Cả khi xuất hiện và biến mất */
+}
+
+.list-enter {
+  opacity: 0;
+  transform: scale(0.1); /* Xuất hiện với scale nhỏ và lớn dần */
+  transition : transform 2s ease-in-out; /* Điều chỉnh thời gian di chuyển */
+}
+
+.list-enter-to {
+  opacity: 1;
+  transform: scale(1); /* Trả về kích thước gốc */
+}
+
+.list-leave {
+  opacity: 1;
+  transform: scale(1); /* Bắt đầu với trạng thái gốc */
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.1); /* Thu nhỏ dần khi biến mất */
+}
+
+/* offers */
+#offers{
+  background: url(https://amiri.com/cdn/shop/files/Slideshow-Banner_Desktop_AW23-Womens-1.jpg) top/cover no-repeat;
+}
+#offers .row{
+  min-height: 60vh;
+}
+#offers a:hover{
+  border-color: var(--black)!important;
+}
+.offers-content span{
+  font-size: 28px;
+}
+.offers-content h2{
+  font-size: 60px;
+  font-family: var(--lg-font);
 }
 
