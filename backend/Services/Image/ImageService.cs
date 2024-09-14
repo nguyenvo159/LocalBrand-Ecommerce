@@ -37,6 +37,8 @@ public class ImageService : IImageService
         {
             throw new ApplicationException("Product not found");
         }
+        var entities = await _productImageRepository.FindAllAsync(x => x.ProductId == productId);
+        var count = new List<ProductImage>();
         foreach (var file in files)
         {
             var url = await _cloudService.UploadImageAsync(file);
@@ -55,8 +57,11 @@ public class ImageService : IImageService
                 ImageUrl = url,
                 ImageVector = vectorStr
             };
-            await _productImageRepository.AddAsync(productImage);
-
+            count.Add(await _productImageRepository.AddAsync(productImage));
+        }
+        if (count.Count > 0)
+        {
+            await _productImageRepository.DeleteListAsync(entities);
         }
     }
 
@@ -67,6 +72,8 @@ public class ImageService : IImageService
         {
             throw new ApplicationException("Product not found");
         }
+        var entities = await _productImageRepository.FindAllAsync(x => x.ProductId == productId);
+        var count = new List<ProductImage>();
         foreach (var file in files)
         {
             var url = await _cloudService.UploadImageAsync(file);
@@ -76,8 +83,18 @@ public class ImageService : IImageService
                 ProductId = productId,
                 ImageUrl = url
             };
-            await _productImageRepository.AddAsync(productImage);
 
+            count.Add(await _productImageRepository.AddAsync(productImage));
+
+        }
+        if (count.Count > 0)
+        {
+            await _productImageRepository.DeleteListAsync(entities);
+            foreach (var e in entities)
+            {
+                if (e.ImageUrl != null)
+                    await _cloudService.DeleteImageAsync(e.ImageUrl);
+            }
         }
     }
 

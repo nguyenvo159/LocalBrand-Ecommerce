@@ -93,6 +93,37 @@ public class ProductController : ControllerBase
 
         }
     }
+
+    [HttpGet("rate")]
+    public async Task<IActionResult> GetProductByRate()
+    {
+        try
+        {
+            var products = await _productService.GetProductByRate();
+            return Ok(products);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
+    [HttpGet("best-sell")]
+    public async Task<IActionResult> GetProductBestSell()
+    {
+        try
+        {
+            var products = await _productService.GetProductBestSell();
+            return Ok(products);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
     [HttpPost]
     //    [Authorize(Roles = "Admin, Staff")]
     public async Task<ActionResult<Product>> Create(ProductCreateDto productCreateDTO)

@@ -1,4 +1,5 @@
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace backend.Controller;
 
 [Route("api/image")]
 [ApiController]
+// [Authorize(Roles = "Admin")]
 public class ProductImageController : ControllerBase
 {
     private readonly IImageService _imageService;
@@ -34,7 +36,7 @@ public class ProductImageController : ControllerBase
     {
         try
         {
-            await _imageService.UploadImage(files, productId);
+            await _imageService.UploadImageNoVector(files, productId);
             return Ok("Added image successfully");
         }
         catch (ApplicationException ex)
@@ -46,6 +48,10 @@ public class ProductImageController : ControllerBase
     [HttpPost("search-by-image")]
     public async Task<IActionResult> SearchByImage(IFormFile file)
     {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("No file uploaded or file is empty.");
+        }
         var products = await _imageService.SearchImageAsync(file);
         return Ok(products);
     }

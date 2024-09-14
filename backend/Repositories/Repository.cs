@@ -85,34 +85,15 @@ public class Repository<T> : IRepository<T> where T : class
         return _context.Set<T>().AsQueryable();
     }
 
+    public async Task<bool> DeleteListAsync(List<T> entities)
+    {
+        if (!entities.Any())
+        {
+            return false;
+        }
 
-    //Specialize
-    // public async Task<Cart?> GetCartAsync(Expression<Func<Cart, bool>> predicate)
-    // {
-    //     return await _context.Carts.Include(c => c.CartItems)
-    //                                .ThenInclude(ci => ci.Product)
-    //                                .Include(c => c.CartItems)
-    //                                .ThenInclude(ci => ci.Size)
-    //                                .FirstOrDefaultAsync(predicate);
-    // }
-
-    // public async Task<Order?> GetOrderAsync(Expression<Func<Order, bool>> predicate)
-    // {
-    //     return await _context.Orders.Include(o => o.OrderItems)
-    //                           .ThenInclude(oi => oi.Product)
-    //                           .Include(o => o.OrderItems)
-    //                           .ThenInclude(oi => oi.Size)
-    //                           .FirstOrDefaultAsync(predicate);
-    // }
-
-    // public async Task<List<Order>> GetAllOrderAsync(Expression<Func<Order, bool>> predicate)
-    // {
-    //     var orders = await _context.Orders.Include(o => o.OrderItems)
-    //                           .ThenInclude(oi => oi.Product)
-    //                           .Include(o => o.OrderItems)
-    //                           .ThenInclude(oi => oi.Size)
-    //                           .Where(predicate)
-    //                           .ToListAsync();
-    //     return orders;
-    // }
+        _dbSet.RemoveRange(entities);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

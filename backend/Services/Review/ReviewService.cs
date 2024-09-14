@@ -67,4 +67,14 @@ public class ReviewService : IReviewService
         }
         await _reviewRepository.DeleteAsync(id);
     }
+
+    public Task<ReviewDto?> GetByUserId(Guid userId)
+    {
+        var review = _reviewRepository.FindAsync(x => x.UserId == userId);
+        if (review == null)
+        {
+            throw new ApplicationException("Review not found");
+        }
+        return Task.FromResult(_mapper.Map<ReviewDto>(review));
+    }
 }

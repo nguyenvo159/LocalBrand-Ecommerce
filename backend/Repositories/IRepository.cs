@@ -13,6 +13,7 @@ public interface IRepository<T> where T : class
     Task<T> UpdateAsync(T entity);
     Task<bool> DeleteAsync(Guid id);
     Task<bool> DeleteIfAsync(Expression<Func<T, bool>> predicate);
+    Task<bool> DeleteListAsync(List<T> entities);
 
     IQueryable<T> AsQueryable();
     //Special

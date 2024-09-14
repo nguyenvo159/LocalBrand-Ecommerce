@@ -5,6 +5,7 @@ using backend.Dto.Product;
 using backend.Dto.Review;
 using backend.Dto.Size;
 using backend.Dto.User;
+using backend.Dtos.Category;
 using backend.Entity;
 
 namespace backend.Mapper;
@@ -24,12 +25,16 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.Sizes, opt => opt.Ignore());
                 CreateMap<Product, ProductDto>()
                         .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(s => s.Category != null ? s.Category.Name : string.Empty))
+                        .ForMember(dest => dest.Rating, opt => opt.MapFrom(s => s.Reviews.Count > 0 ? s.Reviews.Average(r => r.Rating) : 0))
                         .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ProductImages.Select(pi => pi.ImageUrl)))
                         .ForMember(dest => dest.Sizes, opt => opt.MapFrom(src => src.Sizes.Select(s => new SizeDto
                         {
                                 Name = s.Size != null ? s.Size.Name : string.Empty,
                                 Inventory = s.Inventory
                         })));
+
+                //Category
+                CreateMap<Category, CategoryDto>();
 
                 // User
                 CreateMap<User, UserDto>();

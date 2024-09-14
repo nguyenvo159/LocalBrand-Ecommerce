@@ -298,4 +298,24 @@ public class ProductService : IProductService
         var products = await _productRepository.SearchAsync(keyword);
         return _mapper.Map<List<ProductDto>>(products);
     }
+
+    public async Task<List<ProductDto>> GetProductByRate()
+    {
+        var products = await _productRepository.GetByRate();
+        if (products == null)
+        {
+            throw new ApplicationException("Product not found");
+        }
+        return _mapper.Map<List<ProductDto>>(products);
+    }
+
+    public async Task<List<ProductDto>> GetProductBestSell()
+    {
+        var products = await _productRepository.GetBestSell();
+        if (products == null)
+        {
+            throw new ApplicationException("Product not found");
+        }
+        return _mapper.Map<List<ProductDto>>(products);
+    }
 }

@@ -18,6 +18,7 @@ public class CloudService : ICloudService
         _cloudinary = new Cloudinary(account);
     }
 
+
     public async Task<string> UploadImageAsync(IFormFile file)
     {
 
@@ -32,5 +33,18 @@ public class CloudService : ICloudService
         return url.SecureUrl.ToString();
     }
 
+
+    public async Task DeleteImageAsync(string publicId)
+    {
+
+        var deletionParams = new DeletionParams(publicId);
+
+        var result = await _cloudinary.DestroyAsync(deletionParams);
+
+        if (result.Result != "ok")
+        {
+            throw new ApplicationException("Could not delete image from Cloudinary");
+        }
+    }
 
 }

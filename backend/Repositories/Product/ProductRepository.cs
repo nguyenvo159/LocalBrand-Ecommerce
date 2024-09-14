@@ -88,10 +88,10 @@ public class ProductRepository : IProductRepository
         return false;
     }
 
-    public Task<List<Product>> SearchAsync(string search)
+    public async Task<List<Product>> SearchAsync(string search)
     {
         var keywords = search.ToLower().Split(' ');
-        var products = _context.Products
+        var products = await _context.Products
             .Where(p => keywords.Any(keyword =>
                 p.Name.ToLower().Contains(keyword) ||
                 p.Description.ToLower().Contains(keyword) ||
@@ -100,4 +100,28 @@ public class ProductRepository : IProductRepository
         return products;
     }
 
+    public async Task<List<Product>> GetByRate()
+    {
+        var date = DateTime.UtcNow.AddDays(-30);
+        return await _context.Products
+            .Include(p => p.Reviews)
+            .Where(p => p.Reviews.Any(r => r.CreatedAt > date))
+            .OrderByDescending(p => p.Reviews.Average(r => r.Rating))
+            .Take(10)
+            .ToListAsync();
+    }
+
+    public async Task<List<Product>> GetBestSell()
+    {
+        var date = DateTime.UtcNow.AddDays(-30);
+
+        return await _context.Products
+        .Include(a => a.OrderItems)
+            .Where(p => p.OrderItems.Any(oi => oi.Order.CreatedAt > date))
+            .OrderByDescending(p => p.OrderItems
+                .Where(oi => oi.Order.CreatedAt > date)
+                .Sum(oi => oi.Quantity))
+            .Take(10)
+            .ToListAsync();
+    }
 }
