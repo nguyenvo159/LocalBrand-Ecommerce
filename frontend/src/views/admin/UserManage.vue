@@ -36,9 +36,11 @@
                             <td class="align-middle">
                                 <div class="d-md-flex d-sm-block justify-content-evenly">
                                     <a class="cursor-pointer" data-toggle="modal" data-target="#update-user"
-                                        @click="confirmUpdate(user)" style="font-size: 20px;"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        @click="confirmUpdate(user)" style="font-size: 20px;"><i
+                                            class="fa-solid fa-pen-to-square"></i></a>
                                     <a class="cursor-pointer" data-toggle="modal" data-target="#delete-user"
-                                        @click="confirmDelete(user.name, user.id)" style="font-size: 20px; color: red;"><i class="fa-solid fa-trash"></i></a>
+                                        @click="confirmDelete(user.name, user.id)"
+                                        style="font-size: 20px; color: red;"><i class="fa-solid fa-trash"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -48,9 +50,11 @@
                 </table>
                 <!-- Sửa thông tin User -->
                 <!-- <InputUser :user="user" @submit:user="updateUser" @close="closeModal" title="Cập Nhật Tài Khoản" -->
-                    <!-- modalId="update-user" /> -->
-                <UserCreateUpdate modalId="update-user" :user="user" @submit:user="updateUser" @close="closeModal" title="Cập Nhật Tài Khoản" />
-                <UserCreateUpdate modalId="create-user" @submit:user="createUser" @close="closeModal" title="Thêm Tài Khoản" />
+                <!-- modalId="update-user" /> -->
+                <UserCreateUpdate modalId="update-user" :user="user" @submit:user="updateUser" @close="closeModal"
+                    title="Cập Nhật Tài Khoản" />
+                <UserCreateUpdate modalId="create-user" @submit:user="createUser" @close="closeModal"
+                    title="Thêm Tài Khoản" />
                 <!-- Thông báo -->
                 <NotificationModal modalId="delete-user" title="Xác Nhận Xóa" :message="message"
                     :confirmAction="deleteUser" :idToDelete="userIdToDelete" />
@@ -89,11 +93,11 @@ export default {
     },
     computed: {
         users() {
-            return this.$store.getters.getUsers;            ;
+            return this.$store.getters.getUsers;;
         },
         filteredUsers() {
             if (!this.searchText.trim()) return this.users;
-            return this.users.filter(user => 
+            return this.users.filter(user =>
                 (user.name + user.email + user.phone).toLowerCase().includes(this.searchText.toLowerCase())
             );
         },
@@ -155,10 +159,11 @@ export default {
         },
     },
     mounted() {
-        if(this.users.length == 0) {
+        if (this.users.length == 0) {
             this.retrieveUsers();
         }
     }
+
 };
 </script>
 <style></style>

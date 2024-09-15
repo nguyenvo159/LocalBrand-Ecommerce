@@ -4,7 +4,7 @@
             <DashBoard type="Product" />
             <div id="dv" class="col-lg-9 col-11 admin-content">
                 <h1 class="mb-4">Quản lý Sản Phẩm </h1>
-                
+
                 <div class="d-flex mb-3">
                     <SearchInput v-model="searchText" />
                     <button class="btn ml-2" style="box-shadow: none;" @click="refreshList()">
@@ -27,7 +27,8 @@
                                     @click="sortProductsByCategory()">Loại</a></th>
                             <th class="align-middle">Giá</th>
                             <th class="align-middle">Ngày thêm</th>
-                            <th class="align-middle cursor-pointer" @click="sortDate()" style="user-select: none;">Ngày sửa</th>
+                            <th class="align-middle cursor-pointer" @click="sortDate()" style="user-select: none;">Ngày
+                                sửa</th>
                             <th class="align-middle text-center text-nowrap">Số lượng</th>
                             <th class="align-middle text-center text-nowrap">Thao tác</th>
                         </tr>
@@ -45,12 +46,15 @@
                             <td class="align-middle">{{ formatDate(product.createdAt) }}</td>
                             <td class="align-middle">{{ formatDate(product.updatedAt) }}</td>
 
-                            <td class="align-middle text-center"> {{totalInventory(product.sizes)}}</td>
+                            <td class="align-middle text-center"> {{ totalInventory(product.sizes) }}</td>
                             <td class="align-middle">
                                 <div class="d-md-flex d-sm-block justify-content-evenly align-items-center">
-                                    <a class="cursor-pointer" data-toggle="modal" data-target="#update-product" style="font-size: 20px;">
+                                    <a class="cursor-pointer" data-toggle="modal" data-target="#update-product"
+                                        @click="confirmUpdate(product)" style="font-size: 20px;">
                                         <i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a class="cursor-pointer" data-toggle="modal" data-target="#delete-product" @click="confirmDelete(product.name, product.id)" style="font-size: 20px; color: red;">
+                                    <a class="cursor-pointer" data-toggle="modal" data-target="#delete-product"
+                                        @click="confirmDelete(product.name, product.id)"
+                                        style="font-size: 20px; color: red;">
                                         <i class="fa-solid fa-trash"></i></a>
                                 </div>
                             </td>
@@ -60,15 +64,15 @@
 
                 </table>
                 <!-- Thêm sản phẩm -->
-                <!-- <InputProduct :product="newProduct" @submit:product="createProduct" @close="closeModal"
-                    title="Thêm Sản Phẩm" modalId="add-product" /> -->
                 <ProductCreateUpdate modalId="add-product" @submit:product="createProduct" @close="closeModal"
                     title="Thêm Sản Phẩm" />
+
                 <!-- Upload ảnh -->
                 <ProductImage modalId="upload-img" title="Upload Ảnh" />
+
                 <!-- Sửa sản phẩm -->
-                <!-- <InputProduct :product="product" @submit:product="updateProduct" @close="closeModal"
-                    title="Chỉnh Sửa Sản Phẩm" modalId="update-product" /> -->
+                <ProductCreateUpdate :product="product" @submit:product="updateProduct" @close="closeModal"
+                    title="Chỉnh Sửa Sản Phẩm" modalId="update-product" />
 
                 <!-- Thông báo -->
                 <NotificationModal modalId="delete-product" title="Xác Nhận Xóa" :message="message"
@@ -93,29 +97,28 @@ export default {
         SearchInput,
         ProductCreateUpdate,
         ProductImage,
-        NotificationModal, 
+        NotificationModal,
     },
     data() {
         return {
+            products: [],
             searchText: "",
             message: "",
             productToDelete: null,
+            product: null,
         };
     },
     computed: {
-        products() {
-            return this.$store.getters.getProducts;
-        },
         filteredProducts() {
             if (!this.searchText.trim()) return this.products;
-            return this.products.filter(product => 
+            return this.products.filter(product =>
                 (product.name + product.categoryName + product.description).toLowerCase().includes(this.searchText.toLowerCase())
             );
         },
     },
     methods: {
         refreshList() {
-            this.searchText= "";
+            this.searchText = "";
             this.retrieveProducts();
         },
 
@@ -173,11 +176,12 @@ export default {
             this.message = `Bạn có chắn chắn muốn xóa \"${name ?? ''}\" ?`;
             this.productToDelete = id;
         },
+        confirmUpdate(product) {
+            this.product = product;
+        },
         async retrieveProducts() {
             try {
-                this.$store.dispatch('fillProducts');
-                this.products = this.$store.getters.getProducts;
-
+                this.products = await ProductService.getAll();
             } catch (error) {
                 console.log(error);
             }
@@ -213,9 +217,7 @@ export default {
 
     },
     mounted() {
-        if (this.products.length === 0){
-            this.retrieveProducts();
-        }
+        this.retrieveProducts();
     }
 };
 </script>

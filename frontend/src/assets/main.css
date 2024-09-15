@@ -13,6 +13,10 @@ body {
   margin: 0;
   padding: 0;
 }
+.btn-click:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
 section p{
   font-family: var(--sm-font)!important;
 }
@@ -73,7 +77,11 @@ section p{
   overflow: hidden;
 }
 .collection-img img {
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
   transition: transform 0.3s ease-in-out; 
+
 }
 .collection-img img:hover{
   transform: scale(1.1) ;
@@ -124,5 +132,12 @@ section p{
 .offers-content h2{
   font-size: 60px;
   font-family: var(--lg-font);
+}
+
+/* Blog */
+.blog-img {
+  height: 280px !important; 
+  width: 100% !important;
+  object-fit: cover !important; 
 }
 

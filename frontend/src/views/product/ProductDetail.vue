@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-4 col-12">
+            <div class="col-lg-4 col-12 mt-3">
                 <h3 class="card-title">{{ product.name }}</h3>
                 <div class="rating mt-2">
                     <span v-for="n in 5" :key="n" class="star">
@@ -112,6 +112,8 @@
                 </div>
                 <div v-else class="mt-3">
                     <button class="btn btn-dark py-3 px-5 rounded-0">Hết hàng</button>
+                    <span class="ml-3 text-muted"><i>(Còn {{ inventory }})</i></span>
+
                 </div>
                 <!-- </form> -->
 
@@ -332,8 +334,8 @@ export default {
         try {
             const id = this.$route.params.id;
             this.product = await ProductService.getById(id);
-            this.comment = await reviewService.getByProductId(id);
             this.inventory = this.product.sizes.reduce((acc, size) => acc + size.inventory, 0);
+            this.comment = await reviewService.getByProductId(id);
         } catch (error) {
             console.error(error);
         }

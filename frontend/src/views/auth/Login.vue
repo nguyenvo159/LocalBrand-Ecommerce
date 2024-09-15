@@ -2,15 +2,12 @@
   <div class="container-fluid mb-5">
     <div class="row">
       <div class="mt-3 col-lg-6 row justify-content-center align-items-flex-start d-none d-lg-flex">
-        <img
-          src="https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg"
-          alt=""
-          class="img-fluid mb-1 pt-3 w-75"
-        />
+        <img src="https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg" alt=""
+          class="img-fluid mb-1 pt-3 w-75" />
         <h1 class="w-100 text-center">Sign in Now</h1>
         <p class="w-75 font-italic text-muted text-center mb-0">
           Để truy cập đến giỏ hàng, đơn hàng của bạn. Khám phá thế giới mới với
-          chúng tôi! 
+          chúng tôi!
         </p>
       </div>
 
@@ -20,25 +17,13 @@
           <Form @submit="login" :validation-schema="validationSchema">
             <div class="form-group mt-2">
               <label for="email">Email:</label>
-              <Field
-                type="email"
-                class="form-control rounded-0"
-                id="email"
-                v-model="email"
-                name="email"
-              />
+              <Field type="email" class="form-control rounded-0" id="email" v-model="email" name="email" />
               <ErrorMessage class="error-feedback" name="email" />
             </div>
             <div class="form-group mt-2">
               <label for="password">Mật khẩu:</label>
-              <Field
-                type="password"
-                class="form-control rounded-0"
-                id="password"
-                v-model="password"
-                name="password"
-                @focus="loginError = null"
-              />
+              <Field type="password" class="form-control rounded-0" id="password" v-model="password" name="password"
+                @focus="loginError = null" />
               <ErrorMessage class="error-feedback" name="password" />
               <div v-if="loginError" class="error-feedback mt-2">
                 {{ loginError }}
@@ -87,6 +72,10 @@ export default {
       loginError: null,
     };
   },
+  mounted() {
+    window.scrollTo(0, 0);
+
+  },
   methods: {
     async login() {
       try {
@@ -96,7 +85,7 @@ export default {
         if (result) {
           const token = result.token;
           await localStorage.setItem("token", token);
-          
+
           this.$router.push("/");
         } else {
           this.loginError = "Sai thông tin tài khoản. Vui lòng nhập lại";

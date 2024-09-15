@@ -44,7 +44,7 @@
 
         <transition-group name="list" tag="div" class="collection-list row gx-0 gy-1">
           <div v-for="item in filteredCollections" :key="item.id"
-            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2', item.categoryName]">
+            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 cursor-pointer', item.categoryName]">
             <div class="collection-img position-relative">
               <img :src="item.imageUrls[0]" class="w-100">
             </div>
@@ -92,12 +92,12 @@
   <section id="blogs" class="py-5">
     <div class="container">
       <div class="title text-center py-5">
-        <h2 class="position-relative d-inline-block">Our Latest Blog</h2>
+        <h2 class="position-relative d-inline-block">Blog mới nhất</h2>
       </div>
 
       <div class="row g-3">
         <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
-          <img class="img-fluid" style="max-height: 300px; object-fit: contain; "
+          <img class="blog-img"
             src="https://scontent.fvca1-2.fna.fbcdn.net/v/t39.30808-6/458337148_557832580090764_58506317940912344_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_ohc=CeOnnGgMdGYQ7kNvgFNaSZZ&_nc_ht=scontent.fvca1-2.fna&_nc_gid=AoDak7Z8Bx7PO6fWAAe4zCv&oh=00_AYDbVF4fOLevntBJBLa52LYzm9OoR7L20caV1JTOrwckOg&oe=66EAA155"
             alt="">
           <div class="card-body px-0">
@@ -111,7 +111,30 @@
                 <span class="fw-bold">Author: </span>Sunwoo
               </small>
             </p>
-            <a href="#" class="btn btn-outline-dark">Read More</a>
+            <a href="https://www.facebook.com/share/p/PfwMVw2tSSGPvzHm/" target="_blank"
+              class="btn btn-outline-dark">Xem thêm</a>
+          </div>
+        </div>
+
+        <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
+          <img class="blog-img"
+            src="https://scontent.fsgn6-2.fna.fbcdn.net/v/t39.30808-6/422840274_936550431160893_2957141005116981815_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=gc-eGZhRWTQQ7kNvgG4v0lI&_nc_ht=scontent.fsgn6-2.fna&oh=00_AYBbsvm5doVwhGkeNuRU3ox4B8A05O2T49QvVNNYgBc7wg&oe=66EC1467"
+            alt="">
+          <div class="card-body px-0">
+            <h4 class="card-title">Làm Sáng Tỏ Logo Và Thương Hiệu Thời Trang Aimiri </h4>
+            <p class="card-text mt-3 text-muted"> Logo của Amiri thể hiện tinh thần nổi loạn kết hợp với sự tinh tế,
+              hiện đại trở
+              thành biểu
+              tượng của cá nhân hóa và thời trang cao cấp và hiện đại. Logo này không chỉ đại diện cho thời trang mà còn
+              là phong
+              cách sống, thu hút những người muốn thể hiện bản thân và sự khác biệt trước mọi người​.</p>
+            <p class="card-text">
+              <small class="text-muted">
+                <span class="fw-bold">Author: </span>John Doe
+              </small>
+            </p>
+            <a href="https://indibloghub.com/post/unraveling-the-symbolism-and-legacy-of-the-amiri-logo-a-brand-identity-icon"
+              class="btn btn-outline-dark" target="_blank">Xem thêm</a>
           </div>
         </div>
 
@@ -120,34 +143,19 @@
             src="file:///C:/Users/nguye/OneDrive/Documents/A%20Lu%E1%BA%ADn%20V%C4%83n/attire-shopping-site-using-bootstrap-5-master/attire-shopping-site-using-bootstrap-5-master/images/blog_1.jpg"
             alt="">
           <div class="card-body px-0">
-            <h4 class="card-title">Lorem ipsum, dolor sit amet consectetur adipisicing</h4>
-            <p class="card-text mt-3 text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
-              aspernatur repudiandae nostrum dolorem molestias odio. Sit fugit adipisci omnis quia itaque ratione iusto
-              sapiente reiciendis, numquam officiis aliquid ipsam fuga.</p>
+            <h4 class="card-title">Vì Sao Quần Jean Amiri Lại Đắt Đỏ Mà Vẫn Được Ưa Chuộng?</h4>
+            <p class="card-text mt-3 text-muted">Bài viết phân tích lý do quần jean Amiri có giá cao ngất ngưởng. Nguyên
+              nhân chính là việc sử dụng các vật liệu cao cấp, quy trình sản xuất tỉ mỉ bằng tay và các thiết kế độc
+              quyền. Chiến lược xây dựng thương hiệu của Amiri, tập trung vào sự sang trọng và hiếm có, đã tạo
+              ra giá trị cao cho sản phẩm.
+            </p>
             <p class="card-text">
               <small class="text-muted">
-                <span class="fw-bold">Author: </span>John Doe
+                <span class="fw-bold">Author: </span>DoTricks
               </small>
             </p>
-            <a href="#" class="btn btn-outline-dark">Read More</a>
-          </div>
-        </div>
-
-        <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
-          <img
-            src="file:///C:/Users/nguye/OneDrive/Documents/A%20Lu%E1%BA%ADn%20V%C4%83n/attire-shopping-site-using-bootstrap-5-master/attire-shopping-site-using-bootstrap-5-master/images/blog_1.jpg"
-            alt="">
-          <div class="card-body px-0">
-            <h4 class="card-title">Lorem ipsum, dolor sit amet consectetur adipisicing</h4>
-            <p class="card-text mt-3 text-muted">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
-              aspernatur repudiandae nostrum dolorem molestias odio. Sit fugit adipisci omnis quia itaque ratione iusto
-              sapiente reiciendis, numquam officiis aliquid ipsam fuga.</p>
-            <p class="card-text">
-              <small class="text-muted">
-                <span class="fw-bold">Author: </span>John Doe
-              </small>
-            </p>
-            <a href="" class="btn btn-outline-dark">Read More</a>
+            <a href="https://dotricks.io/why-are-amiri-jeans-so-expensive/" class="btn btn-outline-dark"
+              target="_blank">Xem thêm</a>
           </div>
         </div>
       </div>
@@ -158,7 +166,7 @@
   <section id="popular" class="py-5">
     <div class="container">
       <div class="title text-center pt-3 pb-5">
-        <h2 class="position-relative d-inline-block ms-4">Popular</h2>
+        <h2 class="position-relative d-inline-block ms-4">Top phổ biến</h2>
       </div>
 
       <div class="row align-items-start">
@@ -229,6 +237,7 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0);
     this.fetchCollection();
   },
   methods: {

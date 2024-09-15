@@ -2,11 +2,8 @@
   <div class="container-fluid mb-5">
     <div class="row">
       <div class="mt-5 col-lg-6 row justify-content-center align-items-flex-start d-none d-lg-flex">
-        <img
-          src="https://4723fa8e.rocketcdn.me/wp-content/uploads/2023/05/Group-59831.svg"
-          alt=""
-          class="img-fluid mb-3 pt-3 w-75"
-        />
+        <img src="https://4723fa8e.rocketcdn.me/wp-content/uploads/2023/05/Group-59831.svg" alt=""
+          class="img-fluid mb-3 pt-3 w-75" />
         <h1 class="w-100 text-center">Create an Account</h1>
         <p class="w-75 font-italic text-muted text-center mb-0">
           Để truy cập đến giỏ hàng, đơn hàng của bạn. Khám phá thế giới mới với
@@ -22,12 +19,14 @@
           <Form @submit="registerUser" :validation-schema="validationSchema">
             <div class="form-group mt-2">
               <label for="name">Họ và tên:</label>
-              <Field type="text" class="form-control rounded-0" id="name" v-model="user.name" name="name" autocomplete="off"/>
+              <Field type="text" class="form-control rounded-0" id="name" v-model="user.name" name="name"
+                autocomplete="off" />
               <ErrorMessage class="error-feedback" name="name" />
             </div>
             <div class="form-group mt-2">
               <label for="email">Email:</label>
-              <Field type="email" class="form-control rounded-0" id="email" v-model="user.email" name="email" autocomplete="off" @focus="isEmailExists = false"/>
+              <Field type="email" class="form-control rounded-0" id="email" v-model="user.email" name="email"
+                autocomplete="off" @focus="isEmailExists = false" />
               <ErrorMessage class="error-feedback" name="email" />
               <div v-if="isEmailExists" class="error-feedback">
                 Email đã tồn tại.
@@ -35,17 +34,20 @@
             </div>
             <div class="form-group mt-2">
               <label for="phone">Số điện thoại:</label>
-              <Field type="text" class="form-control rounded-0" id="phone" v-model="user.phone" name="phone" autocomplete="off" />
+              <Field type="text" class="form-control rounded-0" id="phone" v-model="user.phone" name="phone"
+                autocomplete="off" />
               <ErrorMessage class="error-feedback" name="phone" />
             </div>
             <div class="form-group mt-2">
               <label for="password">Mật khẩu:</label>
-              <Field type="password" class="form-control rounded-0" id="password" v-model="user.password" name="password" autocomplete="off" />
+              <Field type="password" class="form-control rounded-0" id="password" v-model="user.password"
+                name="password" autocomplete="off" />
               <ErrorMessage class="error-feedback" name="password" />
             </div>
             <div class="form-group mt-2">
               <label for="re-password">Nhập lại mật khẩu:</label>
-              <Field type="password" class="form-control rounded-0" id="re-password" name="re-password" autocomplete="off" />
+              <Field type="password" class="form-control rounded-0" id="re-password" name="re-password"
+                autocomplete="off" />
               <ErrorMessage class="error-feedback" name="re-password" />
             </div>
             <button type="submit" class="w-100 mt-3 btn btn-primary rounded-0">Đăng ký</button>
@@ -112,19 +114,23 @@ export default {
       }),
     };
   },
+  mounted() {
+    window.scrollTo(0, 0);
+
+  },
   methods: {
     async registerUser() {
       try {
         const response = await UserService.register(this.user);
         if (response == "User already exists") {
-            this.isEmailExists = true;
-            return;
+          this.isEmailExists = true;
+          return;
         }
         if (response) {
-            const token = response.token;
-            await localStorage.setItem("token", token);
-            await this.$store.dispatch('loadUser');
-            this.$router.push("/");
+          const token = response.token;
+          await localStorage.setItem("token", token);
+          await this.$store.dispatch('loadUser');
+          this.$router.push("/");
         }
       } catch (error) {
         console.error("Đăng ký thất bại:", error);

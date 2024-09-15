@@ -9,18 +9,19 @@
                     </a>
                     <div class="order-lg-2 nav-btns">
                         <button type="button" class="btn position-relative">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span
-                                class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">5</span>
-                        </button>
-                        <button type="button" class="btn position-relative">
-                            <i class="fa fa-heart"></i>
-                            <span
-                                class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">2</span>
-                        </button>
-                        <button type="button" class="btn position-relative">
                             <i class="fa fa-search" @click="search"></i>
                         </button>
+                        <button type="button" class="btn btn-click position-relative">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">
+                                {{ itemCart }}</span>
+                        </button>
+                        <button type="button" class="btn position-relative">
+                            <router-link :to="{ name: 'Login' }" class="text-dark">
+                                <i class="fa fa-user"></i>
+                            </router-link>
+                        </button>
+
                     </div>
 
                     <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navMenu">
@@ -71,6 +72,7 @@ export default {
         return {
             isSearch: false,
             isAdmin: false,
+            itemCart: 0,
         };
     },
     watch: {

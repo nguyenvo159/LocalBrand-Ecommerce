@@ -12,9 +12,10 @@
                     <h5 class="fw-light">Links</h5>
                     <ul class="list-unstyled">
                         <li class="my-3">
-                            <a href="#" class="text-white text-decoration-none main-hover">
+                            <router-link :to="{ name: 'Home' }" href="#"
+                                class="text-white text-decoration-none main-hover">
                                 <i class="fas fa-chevron-right me-1"></i> Home
-                            </a>
+                            </router-link>
                         </li>
                         <li class="my-3">
                             <a href="#" class="text-white text-decoration-none main-hover">
