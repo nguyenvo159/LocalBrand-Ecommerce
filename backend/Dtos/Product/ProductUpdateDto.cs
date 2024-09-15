@@ -21,7 +21,7 @@ public class ProductUpdateDto
     [Required]
     public Guid CategoryId { get; set; }
 
-    public List<string>? ImageUrl { get; set; }
+    public List<string>? ImageUrls { get; set; }
     public List<SizeDto>? Sizes { get; set; }
 
 }

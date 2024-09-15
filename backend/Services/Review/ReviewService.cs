@@ -29,11 +29,7 @@ public class ReviewService : IReviewService
     public async Task<List<ReviewDto>> GetByProductId(Guid productId)
     {
         var reviews = await _reviewRepository.FindAllAsync(r => r.ProductId == productId);
-        if (reviews == null || reviews.Count() < 1)
-        {
-            throw new ApplicationException("Reviews not found");
-        }
-        return _mapper.Map<List<ReviewDto>>(reviews);
+        return _mapper.Map<List<ReviewDto>>(reviews ?? new List<Review>());
     }
     public async Task<ReviewDto> Create(ReviewCreateDto reviewCreateDto)
     {

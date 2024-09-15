@@ -163,9 +163,9 @@ public class ProductService : IProductService
         // Update product details
         var updatedProduct = await _productRepository.UpdateAsync(product);
 
-        if (productDto.ImageUrl != null && productDto.ImageUrl.Any() && updatedProduct != null)
+        if (productDto.ImageUrls != null && productDto.ImageUrls.Any() && updatedProduct != null)
         {
-            var productImages = productDto.ImageUrl.Select(url => new ProductImage
+            var productImages = productDto.ImageUrls.Select(url => new ProductImage
             {
                 ProductId = updatedProduct.Id,
                 ImageUrl = url
