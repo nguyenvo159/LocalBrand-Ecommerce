@@ -18,8 +18,8 @@ public class MapperConfig : Profile
 
                 // Product
                 CreateMap<ProductUpdateDto, Product>()
-                        .ForMember(dest => dest.ProductImages, opt => opt.Ignore())
-                        .ForMember(dest => dest.Sizes, opt => opt.Ignore());
+                        .ForMember(dest => dest.Sizes, opt => opt.Ignore())
+                        .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
                 CreateMap<ProductCreateDto, Product>()
                         .ForMember(dest => dest.ProductImages, opt => opt.Ignore())
                         .ForMember(dest => dest.Sizes, opt => opt.Ignore());
@@ -46,7 +46,8 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.Role, opt => opt.Ignore());
 
                 //Review
-                CreateMap<ReviewCreateDto, Review>();
+                CreateMap<ReviewCreateDto, Review>()
+                        .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
                 CreateMap<ReviewUpdateDto, Review>();
                 CreateMap<Review, ReviewDto>()
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))

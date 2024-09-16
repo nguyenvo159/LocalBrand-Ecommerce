@@ -11,10 +11,12 @@ namespace backend.Controller;
 public class ProductImageController : ControllerBase
 {
     private readonly IImageService _imageService;
+    private readonly ICloudService _cloudService;
 
-    public ProductImageController(IImageService imageService)
+    public ProductImageController(IImageService imageService, ICloudService cloudService)
     {
         _imageService = imageService;
+        _cloudService = cloudService;
     }
 
     [HttpPost("upload")]
@@ -56,4 +58,30 @@ public class ProductImageController : ControllerBase
         return Ok(products);
     }
 
+    [HttpPost("upload-image")]
+    public async Task<IActionResult> UploadImage(IFormFile file)
+    {
+        try
+        {
+            var url = await _cloudService.UploadImageAsync(file);
+            return Ok(url);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+    [HttpDelete("delete")]
+    public async Task<IActionResult> DeleteImage(string url)
+    {
+        try
+        {
+            await _cloudService.DeleteImageAsync(url);
+            return Ok("Deleted image successfully");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
 }

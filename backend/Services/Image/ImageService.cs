@@ -62,6 +62,11 @@ public class ImageService : IImageService
         if (count.Count > 0)
         {
             await _productImageRepository.DeleteListAsync(entities);
+            foreach (var e in entities)
+            {
+                if (e.ImageUrl != null)
+                    await _cloudService.DeleteImageAsync(e.ImageUrl);
+            }
         }
     }
 

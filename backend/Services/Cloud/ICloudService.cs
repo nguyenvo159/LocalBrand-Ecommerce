@@ -3,5 +3,5 @@
 public interface ICloudService
 {
     Task<string> UploadImageAsync(IFormFile file);
-    Task DeleteImageAsync(string publicId);
+    Task DeleteImageAsync(string url);
 }

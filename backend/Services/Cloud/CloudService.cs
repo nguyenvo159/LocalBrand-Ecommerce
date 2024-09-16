@@ -34,17 +34,16 @@ public class CloudService : ICloudService
     }
 
 
-    public async Task DeleteImageAsync(string publicId)
+    public async Task DeleteImageAsync(string url)
     {
+        var uri = new Uri(url);
+        var segments = uri.Segments;
+        var publicIdWithExtension = segments.Last();
+        var publicId = Path.GetFileNameWithoutExtension(publicIdWithExtension);
 
         var deletionParams = new DeletionParams(publicId);
-
-        var result = await _cloudinary.DestroyAsync(deletionParams);
-
-        if (result.Result != "ok")
-        {
-            throw new ApplicationException("Could not delete image from Cloudinary");
-        }
+        await _cloudinary.DestroyAsync(deletionParams);
     }
+
 
 }

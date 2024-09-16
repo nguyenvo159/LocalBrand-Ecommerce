@@ -13,4 +13,6 @@ public class ReviewDto
     public int Rating { get; set; }
 
     public string Comment { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

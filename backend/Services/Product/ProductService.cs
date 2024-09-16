@@ -158,25 +158,9 @@ public class ProductService : IProductService
         }
 
         var product = _mapper.Map<Product>(productDto);
-
-
-        // Update product details
         var updatedProduct = await _productRepository.UpdateAsync(product);
 
-        if (productDto.ImageUrls != null && productDto.ImageUrls.Any() && updatedProduct != null)
-        {
-            var productImages = productDto.ImageUrls.Select(url => new ProductImage
-            {
-                ProductId = updatedProduct.Id,
-                ImageUrl = url
-            }).ToList();
-
-            foreach (var image in productImages)
-            {
-                await _productImageRepository.AddAsync(image);
-            }
-        }
-
+        // Update product details
         if (productDto.Sizes != null && productDto.Sizes.Any() && updatedProduct != null)
         {
             foreach (var sizeDto in productDto.Sizes)

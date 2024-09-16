@@ -57,18 +57,12 @@ public class ProductRepository : IProductRepository
         existingProduct.Description = product.Description;
         existingProduct.Price = product.Price;
         existingProduct.CategoryId = product.CategoryId;
+        existingProduct.UpdatedAt = DateTime.UtcNow;
         // Update Sizes
         _context.ProductInventories.RemoveRange(existingProduct.Sizes);
         foreach (var size in product.Sizes)
         {
             existingProduct.Sizes.Add(size);
-        }
-
-        // Update Images
-        _context.ProductImages.RemoveRange(existingProduct.ProductImages);
-        foreach (var image in product.ProductImages)
-        {
-            existingProduct.ProductImages.Add(image);
         }
 
         _context.Products.Update(existingProduct);
