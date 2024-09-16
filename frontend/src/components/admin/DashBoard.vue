@@ -1,17 +1,24 @@
 <template>
 
     <!-- Admin Sidebar -->
-    <div class="col-lg-3 admin-sidebar">
+    <div class="col-lg-3 bg-dark admin-sidebar">
 
-        <h3 style="height: 52px;"><span>Quản Trị</span></h3>
-
-        <!-- <router-link :to="{name: 'Analytics'}" :class="{'active': type == 'Analytics'}"><i class="fas fa-chart-bar"></i><span>Thống kê</span></router-link> -->
-        <router-link :to="{ name: 'UserManage' }" :class="{ 'active': type == 'User' }"><i
-                class="fas fa-user"></i><span>Người dùng</span></router-link>
-        <router-link :to="{ name: 'ProductManage' }" :class="{ 'active': type == 'Product' }"><i
-                class="fas fa-box"></i><span>Sản phẩm</span></router-link>
-        <!-- <router-link :to="{name: 'OrderManage'}"  :class="{'active': type == 'Order'}"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></router-link> -->
-        <router-link :to="{ name: 'Home' }" class=""><i class="fas fa-sign-out-alt"></i><span>Thoát</span></router-link>
+        <h3 class="admin-title" style="height: 52px; letter-spacing: 10px;"><span>AMIE</span></h3>
+        <hr>
+        <div class="py-3">
+            <h6 class="py-2 text-uppercase admin-title"><span>Manage</span></h6>
+            <!-- <router-link :to="{name: 'Analytics'}" :class="{'active': type == 'Analytics'}"><i class="fas fa-chart-bar"></i><span>Thống kê</span></router-link> -->
+            <router-link :to="{ name: 'UserManage' }" :class="{ 'active': type == 'User' }"><i
+                    class="fas fa-user"></i><span>User</span></router-link>
+            <router-link :to="{ name: 'ProductManage' }" :class="{ 'active': type == 'Product' }"><i
+                    class="fas fa-box"></i><span>Product</span></router-link>
+            <!-- <router-link :to="{name: 'OrderManage'}"  :class="{'active': type == 'Order'}"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></router-link> -->
+        </div>
+        <hr>
+        <div>
+            <router-link :to="{ name: 'Home' }" class=""><i
+                    class="fas fa-sign-out-alt"></i><span>Thoát</span></router-link>
+        </div>
     </div>
 
     <!-- <ProductManager /> -->
@@ -26,18 +33,20 @@ export default {
 </script>
 
 <style>
+.admin-title {
+    color: rgba(255, 255, 255, .55);
+}
+
 .admin-sidebar {
     position: fixed;
     width: 250px;
     height: 100%;
-    background-color: #343a40;
     padding-top: 20px;
     color: #ffffff;
     transition: width 0.3s;
 }
 
 .admin-content {
-    margin-left: 275px;
     padding: 20px;
     transition: margin-left 0.3s;
     /* Thêm hiệu ứng chuyển động cho Admin Content */
@@ -67,7 +76,7 @@ export default {
 
 /* Hiệu ứng width */
 
-@media (max-width: 1024px) {
+@media (max-width: 1440px) {
     .admin-sidebar {
         width: 65px;
     }

@@ -199,6 +199,7 @@
                                     </span>
                                 </div>
                                 <p class="card-text">{{ cmt.comment }}</p>
+                                <span class="text-muted"><i>{{ formatDate(cmt.createdAt) }}</i></span>
                             </div>
                         </div>
                     </div>
@@ -232,6 +233,7 @@
 </template>
 
 <script>
+import { format } from 'date-fns';
 import ProductService from "@/services/product.service";
 import reviewService from "@/services/review.service";
 // import CartService from "@/services/cart.service";
@@ -293,6 +295,10 @@ export default {
             const size = this.product.sizes.find(s => s.name === sizeName);
             return size ? size.inventory : 0;
         },
+        formatDate(date) {
+            const formattedDate = format(new Date(date), "HH:mm:ss dd/MM/yyyy");
+            return formattedDate;
+        },
         async addToCart() {
             console.log('add to cart');
         },
@@ -350,10 +356,10 @@ export default {
 }
 
 .size {
-    display: table;
-    width: 35px;
-    height: 35px;
-    line-height: 30px;
+    display: block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
     border-radius: 50%;
     border: 1px solid #75757520;

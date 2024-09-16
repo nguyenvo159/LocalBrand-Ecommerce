@@ -2,52 +2,74 @@
     <div class="container-fluid" style="height: 100vh;">
         <div class="row">
             <DashBoard type="User" />
-            <div id="dv" class="col-lg-9 col-11 admin-content">
-                <h1 class="mb-4">Quản lý Người Dùng </h1>
+            <div id="dv" class="col-lg-10 offset-lg-2 col-11 offset-1 admin-content">
+                <h3 class="mb-4 text-uppercase">Quản lý Người Dùng </h3>
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <button class="btn btn-primary mb-2" data-toggle="modal" data-target="#create-user">
+                            <i class="fa-solid fa-user-plus"></i> Thêm tài khoản</button>
 
-                <div class="d-flex mb-3">
-                    <SearchInput v-model="searchText" />
-                    <button class="btn ml-2" style="box-shadow: none;" @click="refreshList()">
-                        <i class="main-hover fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
+                        <button class="btn ml-2 text-dark" style="box-shadow: none;" @click="refreshList()">
+                            <i class=" fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
+                    </div>
+                    <div class="w-25">
+                        <SearchInput v-model="searchText" />
+
+                    </div>
                 </div>
-                <button class="btn btn-primary mb-2" data-toggle="modal" data-target="#create-user">
-                    <i class="fa-solid fa-user-plus"></i> Thêm tài khoản</button>
 
-                <table class="table table-hover shadow bg-white">
-                    <thead class="thead-light">
-                        <tr>
-                            <th class="align-middle text-center">STT</th>
-                            <th class="align-middle">Tên</th>
-                            <th class="align-middle">Email</th>
-                            <th class="align-middle">Số điện thoại</th>
-                            <th class="align-middle text-center">Phân Quyền</th>
-                            <th class="align-middle text-center">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <div v-if="users.length == 0">No user available.</div>
-                    <tbody v-else>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <span><i class="bi bi-table me-2"></i></span> Data Table
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-striped bg-white">
+                                        <thead class="">
+                                            <tr>
+                                                <th class="border-0 align-middle text-center">STT</th>
+                                                <th class="border-0 align-middle">Tên</th>
+                                                <th class="border-0 align-middle">Email</th>
+                                                <th class="border-0 align-middle">Số điện thoại</th>
+                                                <th class="border-0 align-middle text-center">Phân Quyền</th>
+                                                <th class="border-0 align-middle text-center">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <div v-if="users.length == 0">No user available.</div>
+                                        <tbody v-else>
 
-                        <tr v-for="(user, index) in filteredUsers" :key="user.id" class="product-item">
-                            <td class="align-middle text-center">{{ index + 1 }}</td>
-                            <td class="align-middle">{{ user.name }}</td>
-                            <td class="align-middle">{{ user.email }}</td>
-                            <td class="align-middle">{{ user.phone }}</td>
-                            <td class="align-middle text-center">{{ user.role }}</td>
-                            <td class="align-middle">
-                                <div class="d-md-flex d-sm-block justify-content-evenly">
-                                    <a class="cursor-pointer" data-toggle="modal" data-target="#update-user"
-                                        @click="confirmUpdate(user)" style="font-size: 20px;"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
-                                    <a class="cursor-pointer" data-toggle="modal" data-target="#delete-user"
-                                        @click="confirmDelete(user.name, user.id)"
-                                        style="font-size: 20px; color: red;"><i class="fa-solid fa-trash"></i></a>
+                                            <tr v-for="(user, index) in filteredUsers" :key="user.id"
+                                                class="product-item">
+                                                <td class="align-middle text-center">{{ index + 1 }}</td>
+                                                <td class="align-middle">{{ user.name }}</td>
+                                                <td class="align-middle">{{ user.email }}</td>
+                                                <td class="align-middle">{{ user.phone }}</td>
+                                                <td class="align-middle text-center">{{ user.role }}</td>
+                                                <td class="align-middle">
+                                                    <div class="d-md-flex d-sm-block justify-content-evenly">
+                                                        <a class="cursor-pointer" data-toggle="modal"
+                                                            data-target="#update-user" @click="confirmUpdate(user)"
+                                                            style="font-size: 20px;"><i
+                                                                class="fa-solid fa-pen-to-square"></i></a>
+                                                        <a class="cursor-pointer" data-toggle="modal"
+                                                            data-target="#delete-user"
+                                                            @click="confirmDelete(user.name, user.id)"
+                                                            style="font-size: 20px; color: red;"><i
+                                                                class="fa-solid fa-trash"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+
+                                    </table>
                                 </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Sửa thông tin User -->
                 <!-- <InputUser :user="user" @submit:user="updateUser" @close="closeModal" title="Cập Nhật Tài Khoản" -->
                 <!-- modalId="update-user" /> -->

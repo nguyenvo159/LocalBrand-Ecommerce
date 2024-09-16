@@ -18,20 +18,22 @@
                             </router-link>
                         </li>
                         <li class="my-3">
-                            <a href="#" class="text-white text-decoration-none main-hover">
+                            <router-link :to="{ name: 'ProductList', params: { category: 'all-collection' } }"
+                                class="text-white text-decoration-none main-hover">
                                 <i class="fas fa-chevron-right me-1"></i> Collection
-                            </a>
+                            </router-link>
                         </li>
                         <li class="my-3">
-                            <a href="#" class="text-white text-decoration-none main-hover">
-                                <i class="fas fa-chevron-right me-1"></i> Contact Us
-                            </a>
-                        </li>
-                        <li class="my-3">
-                            <a href="#" class="text-white text-decoration-none main-hover">
+                            <router-link :to="{ name: 'About' }" class="text-white text-decoration-none main-hover">
                                 <i class="fas fa-chevron-right me-1"></i> About Us
-                            </a>
+                            </router-link>
                         </li>
+                        <li class="my-3">
+                            <router-link :to="{ name: 'Contact' }" class="text-white text-decoration-none main-hover">
+                                <i class="fas fa-chevron-right me-1"></i> Contact Us
+                            </router-link>
+                        </li>
+
                     </ul>
                 </div>
 

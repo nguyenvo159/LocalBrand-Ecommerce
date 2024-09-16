@@ -44,9 +44,9 @@
 
         <transition-group name="list" tag="div" class="collection-list row gx-0 gy-1">
           <div v-for="item in filteredCollections" :key="item.id"
-            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 cursor-pointer', item.categoryName]">
-            <div class="collection-img position-relative">
-              <img :src="item.imageUrls[0]" class="w-100">
+            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 ', item.categoryName]">
+            <div class="collection-img position-relative" @click="goToDetail(item.id)">
+              <img :src="item.imageUrls[0]" class="w-100 cursor-pointer">
             </div>
             <div class="text-center">
               <p class="text-capitalize my-1"><router-link class="title-product"
@@ -171,34 +171,37 @@
 
       <div class="row align-items-start">
         <div class="col-md-6 col-lg-4 row g-3">
-          <h3 class="fs-5">Top Rated</h3>
-          <div v-for="product in bestRate" class="d-flex align-items-start justify-content-start">
+          <h3 class="fs-5">Top đánh giá</h3>
+          <div v-for="product in bestRate" class="d-flex align-items-start justify-content-start cursor-pointer"
+            @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0">{{ product.name }}</p>
-              <span class="price">{{ product.price }}</span>
+              <span class="price">{{ product.price }}đ</span>
             </div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 row g-3">
-          <h3 class="fs-5">Best Selling</h3>
-          <div v-for="product in bestSeller" class="d-flex align-items-start justify-content-start">
+          <h3 class="fs-5">Top bán chạy</h3>
+          <div v-for="product in bestSeller" class="d-flex align-items-start justify-content-start cursor-pointer"
+            @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0">{{ product.name }}</p>
-              <span class="price">{{ product.price }}</span>
+              <span class="price">{{ product.price }}đ</span>
             </div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 row g-3">
-          <h3 class="fs-5">Lastest</h3>
-          <div v-for="product in lastest" class="d-flex align-items-start justify-content-start">
+          <h3 class="fs-5">Mới nhất</h3>
+          <div v-for="product in lastest" class="d-flex align-items-start justify-content-start cursor-pointer"
+            @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0">{{ product.name }}</p>
-              <span class="price">{{ product.price }}</span>
+              <span class="price">{{ product.price }}đ</span>
             </div>
           </div>
         </div>
@@ -256,6 +259,9 @@ export default {
       this.bestRate = await productService.getBestRate();
       this.bestSeller = await productService.getBestSeller();
       this.lastest = this.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+    },
+    goToDetail(id) {
+      this.$router.push({ name: 'ProductDetail', params: { id } });
     },
     setFilter(filter) {
       this.activeFilter = filter;

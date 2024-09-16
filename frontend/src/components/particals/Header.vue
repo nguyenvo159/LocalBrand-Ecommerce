@@ -13,11 +13,14 @@
                         </button>
                         <button type="button" class="btn btn-click position-relative">
                             <i class="fa fa-shopping-cart"></i>
-                            <span class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">
-                                {{ itemCart }}</span>
+                            <span class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">{{
+                                itemCart }}</span>
                         </button>
                         <button type="button" class="btn position-relative">
-                            <router-link :to="{ name: 'Login' }" class="text-dark">
+                            <router-link v-if="!isLogged" class="text-dark" :to="{ name: 'Login' }">
+                                <i class="fa fa-user"></i>
+                            </router-link>
+                            <router-link v-else class="text-dark" :to="{ name: 'Register' }">
                                 <i class="fa fa-user"></i>
                             </router-link>
                         </button>
@@ -29,26 +32,29 @@
                     </button>
 
                     <div class="collapse navbar-collapse order-lg-1" id="navMenu">
-                        <ul class="navbar-nav mx-auto text-center">
+                        <ul class="navbar-nav mx-auto">
                             <li class="nav-item px-2 py-1">
                                 <router-link :to="{ name: 'Home' }"
                                     class="nav-link text-uppercase text-dark nav-text">HOME</router-link>
                             </li>
                             <li class="nav-item px-2 py-1">
-                                <a class="nav-link text-uppercase text-dark nav-text" href="#collection">collection</a>
+                                <router-link :to="{ name: 'ProductList', params: { category: 'all-collection' } }"
+                                    class="nav-link text-uppercase text-dark nav-text">collection</router-link>
                             </li>
                             <li class="nav-item px-2 py-1">
                                 <a class="nav-link text-uppercase text-dark nav-text" href="#special">specials</a>
                             </li>
                             <li class="nav-item px-2 py-1">
-                                <a class="nav-link text-uppercase text-dark nav-text" href="#blogs">blogs</a>
+                                <router-link :to="{ name: 'About' }" class="nav-link text-uppercase text-dark nav-text"
+                                    href="#blogs">About us</router-link>
+                            </li>
+                            <li class="nav-item px-2 py-1 border-0">
+                                <router-link :to="{ name: 'Contact' }"
+                                    class="nav-link text-uppercase text-dark nav-text">Contact</router-link>
                             </li>
                             <li class="nav-item px-2 py-1">
                                 <router-link :to="{ name: 'UserManage' }"
                                     class="nav-link text-uppercase text-dark nav-text">Admin</router-link>
-                            </li>
-                            <li class="nav-item px-2 py-1 border-0">
-                                <a class="nav-link text-uppercase text-dark nav-text" href="#popular">Liên hệ</a>
                             </li>
                         </ul>
                     </div>
@@ -79,6 +85,14 @@ export default {
         $route(to, from) {
             this.isAdmin = to.path.includes('admin');
         },
+    },
+    computed: {
+        isLogged() {
+            return this.$store.getters.isLogged;
+        },
+    },
+    mounted() {
+        this.isAdmin = this.$route.path.includes('admin');
     },
     methods: {
         search() {

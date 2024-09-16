@@ -1,85 +1,110 @@
 <template>
-    <div class="container-fluid" style="background-color: lightcyan; height: 100vh">
+    <div class="container-fluid" style=" height: 100vh">
         <div class="row">
             <DashBoard type="Product" />
-            <div id="dv" class="col-lg-9 col-11 admin-content">
-                <h1 class="mb-4">Quản lý Sản Phẩm </h1>
+            <div id="dv" class="col-lg-10 offset-lg-2 col-11 offset-1 admin-content">
+                <h3 class="mb-4 text-uppercase">Quản lý Sản Phẩm </h3>
 
-                <div class="d-flex mb-3">
-                    <SearchInput v-model="searchText" />
-                    <button class="btn ml-2" style="box-shadow: none;" @click="refreshList()">
-                        <i class="main-hover fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <button class="btn btn-primary mb-2 mr-3" data-toggle="modal" data-target="#add-product">
+                            <i class="fa-solid fa-plus"></i> Thêm mới</button>
+                        <button class="btn btn-primary mb-2" data-toggle="modal" data-target="#upload-img">
+                            <i class="fa-solid fa-upload"></i> Upload</button>
+                        <button class="btn ml-2" style="box-shadow: none;" @click="refreshList()">
+                            <i class=" fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
+                    </div>
+                    <div class="w-25">
+                        <SearchInput v-model="searchText" />
+
+                    </div>
                 </div>
-                <button class="btn btn-primary mb-2 mr-3" data-toggle="modal" data-target="#add-product">
-                    <i class="fa-solid fa-plus"></i> Thêm mới</button>
-                <button class="btn btn-primary mb-2" data-toggle="modal" data-target="#upload-img">
-                    <i class="fa-solid fa-upload"></i> Upload</button>
 
-                <table class="table table-hover shadow bg-white">
-                    <thead class="thead-light">
-                        <tr>
-                            <th class="align-middle text-center">STT</th>
-                            <th class="align-middle"><a class="cursor-pointer text-decoration-none"
-                                    style="color: #495057; user-select: none;" @click="sortProductsByName()">Tên</a>
-                            </th>
-                            <th class="align-middle"><a class="cursor-pointer text-decoration-none"
-                                    style="color: #495057; user-select: none;"
-                                    @click="sortProductsByCategory()">Loại</a></th>
-                            <th class="align-middle">Giá</th>
-                            <th class="align-middle">Ngày thêm</th>
-                            <th class="align-middle cursor-pointer" @click="sortDate()" style="user-select: none;">Ngày
-                                sửa</th>
-                            <th class="align-middle text-center text-nowrap">Số lượng</th>
-                            <th class="align-middle text-center text-nowrap">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <div v-if="products.length === 0">No products available.</div>
-                    <tbody v-else>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <span><i class="bi bi-table me-2"></i></span> Data Table
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-striped bg-white">
+                                        <thead class="">
+                                            <tr>
+                                                <th class="border-0 align-middle text-center">STT</th>
+                                                <th class="border-0 align-middle cursor-pointer"
+                                                    style="user-select: none;" @click="sortProductsByName()">Tên</th>
+                                                <th class="border-0 align-middle cursor-pointer"
+                                                    style="user-select: none;" @click="sortProductsByCategory()">Loại
+                                                </th>
+                                                <th class="border-0 align-middle">Giá</th>
+                                                <!-- <th class="border-0 align-middle">Ngày thêm</th> -->
+                                                <th class="border-0 align-middle text-dark cursor-pointer"
+                                                    @click="sortDate()" style="user-select: none;">Ngày
+                                                    sửa</th>
+                                                <th class="border-0 align-middle text-center text-nowrap">Số lượng</th>
+                                                <th class="border-0 align-middle text-center text-nowrap">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <div v-if="products.length === 0">No products available.</div>
+                                        <tbody v-else>
 
-                        <tr v-for="(product, index) in filteredProducts" :key="product.id" class="product-item">
-                            <td class="align-middle text-center">{{ index + 1 }}</td>
-                            <td class="align-middle">
-                                {{ product.name }}
-                            </td>
-                            <td class="align-middle">{{ capitalizeFirstLetter(product.categoryName) }}</td>
-                            <td class="align-middle">{{ product.price }}</td>
-                            <td class="align-middle">{{ formatDate(product.createdAt) }}</td>
-                            <td class="align-middle">{{ formatDate(product.updatedAt) }}</td>
+                                            <tr v-for="(product, index) in filteredProducts" :key="product.id"
+                                                class="product-item">
+                                                <td class="align-middle text-center">{{ index + 1 }}</td>
+                                                <td class="align-middle">
+                                                    {{ product.name }}
+                                                </td>
+                                                <td class="align-middle">{{ capitalizeFirstLetter(product.categoryName)
+                                                    }}</td>
+                                                <td class="align-middle">{{ product.price }}</td>
+                                                <!-- <td class="align-middle">{{ formatDate(product.createdAt) }}</td> -->
+                                                <td class="align-middle">{{ formatDate(product.updatedAt) }}</td>
 
-                            <td class="align-middle text-center"> {{ totalInventory(product.sizes) }}</td>
-                            <td class="align-middle">
-                                <div class="d-md-flex d-sm-block justify-content-evenly align-items-center">
-                                    <a class="cursor-pointer" data-toggle="modal" data-target="#update-product"
-                                        @click="confirmUpdate(product)" style="font-size: 20px;">
-                                        <i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a class="cursor-pointer" data-toggle="modal" data-target="#delete-product"
-                                        @click="confirmDelete(product.name, product.id)"
-                                        style="font-size: 20px; color: red;">
-                                        <i class="fa-solid fa-trash"></i></a>
+                                                <td class="align-middle text-center"> {{ totalInventory(product.sizes)
+                                                    }}</td>
+                                                <td class="align-middle">
+                                                    <div
+                                                        class="d-md-flex d-sm-block justify-content-evenly align-items-center">
+                                                        <a class="cursor-pointer" data-toggle="modal"
+                                                            data-target="#update-product"
+                                                            @click="confirmUpdate(product)" style="font-size: 20px;">
+                                                            <i class="fa-solid fa-pen-to-square"></i></a>
+                                                        <a class="cursor-pointer" data-toggle="modal"
+                                                            data-target="#delete-product"
+                                                            @click="confirmDelete(product.name, product.id)"
+                                                            style="font-size: 20px; color: red;">
+                                                            <i class="fa-solid fa-trash"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+
+                                    </table>
                                 </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Thêm sản phẩm -->
-                <ProductCreateUpdate modalId="add-product" @submit:product="createProduct" @close="closeModal"
-                    title="Thêm Sản Phẩm" />
-
-                <!-- Upload ảnh -->
-                <ProductImage modalId="upload-img" title="Upload Ảnh" />
-
-                <!-- Sửa sản phẩm -->
-                <ProductCreateUpdate :product="product" @submit:product="updateProduct" @close="closeModal"
-                    title="Chỉnh Sửa Sản Phẩm" modalId="update-product" />
-
-                <!-- Thông báo -->
-                <NotificationModal modalId="delete-product" title="Xác Nhận Xóa" :message="message"
-                    :confirmAction="deleteProduct" :idToDelete="productToDelete" />
             </div>
         </div>
     </div>
+    <!-- Thêm sản phẩm -->
+    <ProductCreateUpdate modalId="add-product" @close="closeModal" :submitFunction="createProduct"
+        title="Thêm Sản Phẩm" />
+
+    <!-- Upload ảnh -->
+    <ProductImage modalId="upload-img" title="Upload Ảnh" />
+
+    <!-- Sửa sản phẩm -->
+    <ProductCreateUpdate :product="product" :submitFunction="updateProduct" @close="closeModal"
+        title="Chỉnh Sửa Sản Phẩm" modalId="update-product" />
+
+    <!-- Thông báo -->
+    <NotificationModal modalId="delete-product" title="Xác Nhận Xóa" :message="message" :confirmAction="deleteProduct"
+        :idToDelete="productToDelete" />
 </template>
 
 <script>
@@ -123,7 +148,7 @@ export default {
         },
 
         formatDate(date) {
-            const formattedDate = format(new Date(date), "dd/MM/yyyy HH:mm");
+            const formattedDate = format(new Date(date), "HH:mm dd/MM/yyyy");
             return formattedDate;
         },
         capitalizeFirstLetter(text) {
@@ -148,9 +173,9 @@ export default {
         sortProductsByCategory() {
             this.products.sort((a, b) => {
                 if (this.sortByCategoryAsc) {
-                    return a.category.localeCompare(b.categoryName);
+                    return a.categoryName.localeCompare(b.categoryName);
                 } else {
-                    return b.category.localeCompare(a.categoryName);
+                    return b.categoryName.localeCompare(a.categoryName);
                 }
             });
             this.sortByCategoryAsc = !this.sortByCategoryAsc;
@@ -218,6 +243,10 @@ export default {
     },
     mounted() {
         this.retrieveProducts();
+        if (this.$store.getters.getCategories.length == 0) {
+            this.$store.dispatch('fillCategories');
+
+        }
     }
 };
 </script>

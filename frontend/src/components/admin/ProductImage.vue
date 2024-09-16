@@ -9,18 +9,18 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form @submit="submitImage">
+                    <form @submit.prevent="submitImage">
                         <!-- Image -->
                         <div class="row">
                             <div class="col-12 form-group row align-items-center">
-                                <label for="name" class="col-2 m-0">Tên sản phẩm</label>
-                                <div class="col-10">
-                                    <input type="text" class="form-control-plaintext" id="name" name="name" readonly value="abcaca"  />
-                                </div>
-                            </div>   1
+                                <label for="name" class="col-2 m-0">ID: </label>
+                                <input type="text" class="form-control col-9" id="name" name="name"
+                                    v-model="productId" />
+                            </div>
                             <div class="col-lg-6 form-group">
                                 <label for="image">Ảnh</label>
-                                <input type="file" class="form-control" id="image" name="image" multiple @change="handleFileChange" />
+                                <input type="file" class="form-control" id="image" name="image" multiple
+                                    @change="handleFileChange" />
                                 <small class="text-muted">Tối đa 4 ảnh.</small>
                             </div>
                         </div>
@@ -35,8 +35,9 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="resetForm" data-dismiss="modal">Hủy</button>
-                            <button type="submit" @click="submitImage" class="btn btn-primary">Lưu</button>
+                            <button type="button" class="btn btn-secondary" @click="resetForm"
+                                data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
                     </form>
                 </div>
@@ -44,10 +45,8 @@
         </div>
     </div>
 </template>
-  
+
 <script>
-import * as yup from 'yup';
-import { Form, Field, ErrorMessage } from 'vee-validate';
 import ProductImageService from '@/services/image.service';
 
 export default {
@@ -58,7 +57,8 @@ export default {
     },
     data() {
         return {
-            imageFiles: [], 
+            productId: null,
+            imageFiles: [],
             imagePreviews: [],
         };
     },
@@ -81,10 +81,10 @@ export default {
             });
         },
         removeImage(index) {
-            this.imagePreviews.splice(index, 1);  
-            this.imageFiles.splice(index, 1);    
+            this.imagePreviews.splice(index, 1);
+            this.imageFiles.splice(index, 1);
         },
-        async submitImage(){
+        async submitImage() {
             if (this.imageFiles.length === 0) {
                 alert('Chưa có ảnh nào để upload.');
                 return;
@@ -95,14 +95,13 @@ export default {
             });
 
             try {
-                await ProductImageService.uploadImagesNoVector(formData);
-                this.imagePreviews = []; 
-                this.imageFiles = [];
+                await ProductImageService.uploadImagesNoVector(formData, this.productId);
+                this.resetForm();
             } catch (error) {
                 console.error('Lỗi khi upload ảnh:', error);
             }
         },
-        resetForm(){
+        resetForm() {
             this.imageFiles = [];
             this.imagePreviews = [];
         },
@@ -111,36 +110,35 @@ export default {
 </script>
 
 <style scoped>
-    .image-preview-wrapper {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-    }
+.image-preview-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
 
-    .delete-icon {
-        font-size: 35px;
-        position: absolute;
-        top: 50%;
-        right: 50%;
-        transform: translate(50%, -50%);
-        color: white;
-        padding: 5px;
-        cursor: pointer;
-        display: none;
-    }
+.delete-icon {
+    font-size: 35px;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    display: none;
+}
 
-    .image-preview-wrapper:hover .delete-icon {
-        display: block;
-    }
-    .image-preview-wrapper:hover img {
-        opacity: 0.6;
+.image-preview-wrapper:hover .delete-icon {
+    display: block;
+}
 
-    }
+.image-preview-wrapper:hover img {
+    opacity: 0.6;
 
-    .image-preview-wrapper img {
-        max-width: 100%;
-        height: auto;
-    }
+}
+
+.image-preview-wrapper img {
+    max-width: 100%;
+    height: auto;
+}
 </style>
-
-  

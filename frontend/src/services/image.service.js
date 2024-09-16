@@ -17,12 +17,13 @@ class ProductImageService {
         }
     }
 
-    async uploadImagesNoVector(images, id){
+    async uploadImagesNoVector(images, productId){
         try {
-            const response = await this.api.post("/upload-no-vector", images, id, {
+            const response = await this.api.post("/upload-no-vector", images, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
+                params: { productId }
             });
             return response.data;
         } catch (error) {

@@ -3,7 +3,8 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{ title }}</h5>
+                    <h3 class="w-100 modal-title text-uppercase text-center py-3" id="exampleModalLabel">{{ title }}
+                    </h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -20,10 +21,10 @@
 
                             <div class="col-lg-6 form-group">
                                 <label for="category">Loại sản phẩm</label>
-                                <Field class="form-control " name="category" v-model="productLocal.categoryId"
-                                    as="select" label="Loại sản phẩm">
-                                    <option v-for="category in categories" :value="category.id">{{
-                                        capitalizeFirstLetter(category.name) }}</option>
+                                <Field class="form-control text-capitalize" name="category"
+                                    v-model="productLocal.categoryId" as="select" label="Loại sản phẩm">
+                                    <option v-for="category in categories" :value="category.id" class="text-capitalize">
+                                        {{ category.name }}</option>
                                 </Field>
                                 <ErrorMessage class="error-feedback" name="category" />
                             </div>
@@ -75,13 +76,37 @@
                                 <ErrorMessage class="error-feedback" name="description" />
                             </div>
                         </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="resetForm"
-                                data-dismiss="modal">Hủy</button>
-                            <button type="submit" @click="submitProduct" class="btn btn-primary">Lưu</button>
-                        </div>
                     </Form>
+                    <hr>
+                    <!-- Image -->
+
+                    <form @submit.prevent="submitImage">
+                        <!-- Image -->
+                        <div class="row">
+                            <div class="col-lg-6 form-group">
+                                <label for="image" class="h5 py-2">Upload Ảnh</label>
+                                <input type="file" class="form-control" id="image" name="image" multiple
+                                    @change="handleFileChange" />
+                                <small class="text-muted"><i>Tối đa 4 ảnh.</i></small>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-3" v-for="(image, index) in imagePreviews" :key="index">
+                                <div class="image-preview-wrapper">
+                                    <img :src="image" class="img-thumbnail" alt="Image Preview" />
+                                    <span class="delete-icon" @click="removeImage(index)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="resetForm"
+                            data-dismiss="modal">Hủy</button>
+                        <button type="" @click="submitProduct" class="btn btn-primary">Lưu</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,12 +116,45 @@
 <script>
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-
+import ProductService from '@/services/product.service';
+import ProductImageService from '@/services/image.service';
 export default {
     components: {
         Form,
         Field,
         ErrorMessage,
+    },
+    data() {
+        return {
+            modalId: this.modalId,
+            productLocal: { ...this.product },
+            selectedSizes: {
+                freesize: false,
+                s: false,
+                m: false,
+                l: false,
+                xl: false,
+                xxl: false,
+            },
+            inventory: {
+                freesize: 0,
+                s: 0,
+                m: 0,
+                l: 0,
+                xl: 0,
+                xxl: 0,
+            },
+            productFormSchema: yup.object().shape({
+                name: yup.string().required('Tên phải có giá trị.').min(2, 'Tên phải ít nhất 2 ký tự.').max(100, 'Tên có nhiều nhất 100 ký tự.'),
+                category: yup.string().required('Loại sản phẩm là bắt buộc.'),
+                price: yup.number(),
+                inventory: yup.number().min(1, "Số lượng tối thiểu là 1.").max(999, 'Không thể vượt quá 999.'),
+                description: yup.string().max(1000, 'Mô tả tối đa 1000 ký tự.'),
+                imgURL: yup.string().required('Link ảnh là bắt buộc.').matches(/\.(jpg|jpeg|png)$/, 'Link ảnh phải có định dạng hợp lệ (jpg, jpeg, png).'),
+            }),
+            imageFiles: [],
+            imagePreviews: [],
+        };
     },
     computed: {
         categories() {
@@ -109,9 +167,9 @@ export default {
             return ['s', 'm', 'l', 'xl', 'xxl'];
         }
     },
-    emits: ['submit:product'],
     props: {
         product: { type: Object, required: false, default: () => null },
+        submitFunction: { type: Function, required: true },
         modalId: { type: String, required: true },
         title: { type: String, required: true }
     },
@@ -148,41 +206,15 @@ export default {
                         }
                     });
                 }
+                if (newVal && newVal.imageUrls) {
+                    this.imagePreviews = newVal.imageUrls;
+                }
             },
             deep: true
         }
     },
-    data() {
-        return {
-            productLocal: { ...this.product },
-            selectedSizes: {
-                freesize: false,
-                s: false,
-                m: false,
-                l: false,
-                xl: false,
-                xxl: false,
-            },
-            inventory: {
-                freesize: 0,
-                s: 0,
-                m: 0,
-                l: 0,
-                xl: 0,
-                xxl: 0,
-            },
-            productFormSchema: yup.object().shape({
-                name: yup.string().required('Tên phải có giá trị.').min(2, 'Tên phải ít nhất 2 ký tự.').max(100, 'Tên có nhiều nhất 100 ký tự.'),
-                category: yup.string().required('Loại sản phẩm là bắt buộc.'),
-                price: yup.number(),
-                inventory: yup.number().min(1, "Số lượng tối thiểu là 1.").max(999, 'Không thể vượt quá 999.'),
-                description: yup.string().max(1000, 'Mô tả tối đa 1000 ký tự.'),
-                imgURL: yup.string().required('Link ảnh là bắt buộc.').matches(/\.(jpg|jpeg|png)$/, 'Link ảnh phải có định dạng hợp lệ (jpg, jpeg, png).'),
-            }),
-        };
-    },
     methods: {
-        submitProduct() {
+        async submitProduct() {
             var sizes = Object.keys(this.selectedSizes)
                 .filter(size => this.selectedSizes[size])
                 .map(size => ({
@@ -190,16 +222,57 @@ export default {
                     inventory: this.inventory[size]
                 }));
             this.productLocal.sizes = sizes;
-            this.$emit('submit:product', this.productLocal);
+            var product = null;
+            if (this.modalId == 'add-product') {
+                product = await ProductService.create(this.productLocal);
+            }
+            if (this.modalId == 'update-product') {
+                product = await ProductService.update(this.productLocal);
+            }
+            console.log(product);
+            if (!product) {
+                alert('Có lỗi xảy ra khi lưu sản phẩm.');
+            }
+            await this.submitImage(product.id);
             this.$emit('close');
         },
-        reloadCategory() {
-            this.$store.dispatch('fillCategories');
-            this.categories = this.$store.getters.getCategories;
+        handleFileChange(event) {
+            const files = Array.from(event.target.files);
+
+            if (this.imageFiles.length + files.length > 4) {
+                alert('Chỉ có thể upload tối đa 4 ảnh.');
+                return;
+            }
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imagePreviews.push(e.target.result);
+                    this.imageFiles.push(file);
+                };
+                reader.readAsDataURL(file);
+            });
         },
-        capitalizeFirstLetter(text) {
-            if (!text) return '';
-            return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        removeImage(index) {
+            this.imagePreviews.splice(index, 1);
+            this.imageFiles.splice(index, 1);
+        },
+        async submitImage(productId) {
+            if (this.imageFiles.length === 0) {
+                alert('Chưa có ảnh nào để upload.');
+                return;
+            }
+            const formData = new FormData();
+            this.imageFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            try {
+                await ProductImageService.uploadImagesNoVector(formData, productId);
+                this.resetForm();
+            } catch (error) {
+                console.error('Lỗi khi upload ảnh:', error);
+            }
         },
         resetForm() {
             this.productLocal = { ...this.product };
@@ -230,12 +303,12 @@ export default {
                     }
                 });
             }
+            this.imageFiles = [];
+            this.imagePreviews = [];
         },
     },
     mounted() {
-        if (this.categories.length == 0) {
-            this.reloadCategory();
-        }
+
     },
 };
 </script>
