@@ -76,6 +76,9 @@ const store = createStore({
         isLogged(state) {
             return !!state.token && !!state.user;
         },
+        isAdmin(state) {
+            return state.user && (state.user.role === 'Admin' || state.user.role === 'Staff');
+        },
         getSearchResults(state) {
             return state.searchResults;
         },

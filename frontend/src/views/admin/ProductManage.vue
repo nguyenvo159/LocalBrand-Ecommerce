@@ -6,11 +6,13 @@
                 <h3 class="mb-4 text-uppercase">Quản lý Sản Phẩm </h3>
 
                 <div class="d-flex justify-content-between mb-3">
-                    <div>
+                    <div class="">
                         <button class="btn btn-primary mb-2 mr-3" data-toggle="modal" data-target="#add-product">
                             <i class="fa-solid fa-plus"></i> Thêm mới</button>
-                        <button class="btn btn-primary mb-2" data-toggle="modal" data-target="#upload-img">
-                            <i class="fa-solid fa-upload"></i> Upload</button>
+
+                        <input ref="fileImport" type="file" class="d-none" @change="importProduct" />
+                        <button class="btn btn-primary mb-2" type="button" @click="openFileDialog">
+                            <i class=" fa-solid fa-upload"></i> Upload</button>
                         <button class="btn ml-2" style="box-shadow: none;" @click="refreshList()">
                             <i class=" fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
                     </div>
@@ -102,7 +104,7 @@
         :idToDelete="productToDelete" />
 
     <!-- Upload ảnh -->
-    <ProductImage modalId="upload-img" title="Upload Ảnh" />
+
 </template>
 
 <script>
@@ -110,7 +112,6 @@ import { format } from 'date-fns';
 import ProductService from '@/services/product.service';
 import SearchInput from '@/components/SearchInput.vue';
 import ProductCreateUpdate from '@/components/admin/ProductCreateUpdate.vue';
-import ProductImage from '@/components/admin/ProductImage.vue';
 import NotificationModal from '@/components/NotificationModal.vue';
 import DashBoard from '@/components/admin/DashBoard.vue';
 
@@ -119,7 +120,6 @@ export default {
         DashBoard,
         SearchInput,
         ProductCreateUpdate,
-        ProductImage,
         NotificationModal,
     },
     data() {
@@ -155,6 +155,9 @@ export default {
         },
         totalInventory(data) {
             return data.reduce((total, product) => total + product.inventory, 0);
+        },
+        openFileDialog() {
+            this.$refs.fileImport.click();
         },
 
         // Sắp xếp
@@ -206,6 +209,7 @@ export default {
         async retrieveProducts() {
             try {
                 this.products = await ProductService.getAll();
+                this.products.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             } catch (error) {
                 console.log(error);
             }
@@ -220,6 +224,19 @@ export default {
             }
         },
 
+        async importProduct(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    await ProductService.import(formData);
+                    this.retrieveProducts();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        },
     },
     mounted() {
         this.retrieveProducts();

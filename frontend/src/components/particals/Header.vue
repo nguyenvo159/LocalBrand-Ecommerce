@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isAdmin" class="" style="padding-bottom: 72px;">
+    <div v-if="!isAdminRoute" class="" style="padding-bottom: 72px;">
         <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 px-4 fixed-top border-bottom shadow-sm">
             <div class="row justify-content-center w-100">
                 <div class="container">
@@ -20,9 +20,9 @@
                             <router-link v-if="!isLogged" class="text-dark" :to="{ name: 'Login' }">
                                 <i class="fa fa-user"></i>
                             </router-link>
-                            <router-link v-else class="text-dark" :to="{ name: 'Register' }">
-                                <i class="fa fa-user"></i>
-                            </router-link>
+                            <a v-else class="text-dark" @click="logout">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </a>
                         </button>
 
                     </div>
@@ -52,7 +52,7 @@
                                 <router-link :to="{ name: 'Contact' }"
                                     class="nav-link text-uppercase text-dark nav-text">Contact</router-link>
                             </li>
-                            <li class="nav-item px-2 py-1">
+                            <li v-if="isAdmin" class="nav-item px-2 py-1">
                                 <router-link :to="{ name: 'UserManage' }"
                                     class="nav-link text-uppercase text-dark nav-text">Admin</router-link>
                             </li>
@@ -70,6 +70,7 @@
 
 <script>
 import SearchEngine from '@/components/SearchEngine.vue';
+import { isAfter } from 'date-fns';
 export default {
     components: {
         SearchEngine,
@@ -77,26 +78,33 @@ export default {
     data() {
         return {
             isSearch: false,
-            isAdmin: false,
+            isAdminRoute: false,
             itemCart: 0,
         };
     },
     watch: {
         $route(to, from) {
-            this.isAdmin = to.path.includes('admin');
+            this.isAdminRoute = to.path.includes('admin');
         },
     },
     computed: {
         isLogged() {
             return this.$store.getters.isLogged;
         },
+        isAdmin() {
+            return this.$store.getters.isAdmin;
+        },
     },
     mounted() {
-        this.isAdmin = this.$route.path.includes('admin');
+        this.isAdminRoute = this.$route.path.includes('admin');
     },
     methods: {
         search() {
             this.isSearch = !this.isSearch;
+        },
+        logout() {
+            this.$store.dispatch('logout');
+            this.$router.push({ name: 'Home' });
         },
     },
 }

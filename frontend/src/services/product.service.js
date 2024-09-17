@@ -94,6 +94,19 @@ class ProductService {
             throw error;
         }
     }
+
+    async import(file) {
+        try {
+            const response = await this.api.post("/import", file, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default new ProductService();

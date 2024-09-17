@@ -85,20 +85,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
-  const isLogged = store.getters.isLogged;
-  const userRole = store.getters.getUser? store.getters.getUser.role : null;
-
-  if (token ) {
-    try {
+  if (token && !store.getters.isLogged) {
       store.dispatch('loadUser');
-    } catch (error) {
-      console.error('Failed to load user:', error);
-      localStorage.removeItem('token');
-      next({ name: 'Login' });
-      return;
-    }
   }
 
+  const isLogged = store.getters.isLogged;
+  const userRole = store.getters.getUser? store.getters.getUser.role : null;
 
   //Check isLogged and role
   if(to.meta.requiresAuth ) {

@@ -87,6 +87,11 @@
                                 <label for="image" class="h5 py-2">Upload Ảnh</label>
                                 <input type="file" class="form-control" id="image" name="image" multiple
                                     @change="handleFileChange" />
+                                <div class="form-check d-flex align-items-center">
+                                    <input type="checkbox" id="vector" class="form-check-input"
+                                        v-model="isVectorized" />
+                                    <label for="vector" class="form-check-label p-2">Vector hóa</label>
+                                </div>
                                 <small class="text-muted"><i>Tối đa 4 ảnh.</i></small>
                             </div>
                         </div>
@@ -154,6 +159,7 @@ export default {
             }),
             imageFiles: [],
             imagePreviews: [],
+            isVectorized: false,
         };
     },
     computed: {
@@ -283,7 +289,11 @@ export default {
             });
 
             try {
-                await ProductImageService.uploadImagesNoVector(formData, productId);
+                if (this.isVectorized) {
+                    await ProductImageService.uploadImage(formData, productId);
+                } else {
+                    await ProductImageService.uploadImagesNoVector(formData, productId);
+                }
                 this.resetForm();
             } catch (error) {
                 console.error('Lỗi khi upload ảnh:', error);

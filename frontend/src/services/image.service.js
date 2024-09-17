@@ -4,12 +4,13 @@ class ProductImageService {
     constructor(baseUrl = "/api/image"){
         this.api = createApi(baseUrl);
     }
-    async uploadImage(images, id){
+    async uploadImage(images, productId){
         try {
-            const response = await this.api.post("/upload", images, id, {
+            const response = await this.api.post("/upload", images, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
+                params: { productId }
             });
             return response.data;
         } catch (error) {

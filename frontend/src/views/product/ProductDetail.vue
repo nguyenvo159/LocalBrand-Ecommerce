@@ -313,10 +313,11 @@ export default {
                 quantityInput.value = 1;
             }
             if (quantityInput.value > this.getSizeInventory(this.selectedSize)) {
-                quantityInput.value = this.getSizeInventory(this.selectedSize);
-            }
-            if (quantityInput.value > 100) {
-                quantityInput = 100;
+                if (this.getSizeInventory(this.selectedSize) < 100) {
+                    quantityInput.value = this.getSizeInventory(this.selectedSize);
+                } else {
+                    quantityInput.value = 100;
+                }
             }
         },
 
