@@ -267,12 +267,12 @@ export default {
       this.activeFilter = filter;
     }
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.$store.dispatch('loadUser').then(() => {
-        next();
-      });
-    });
-  }
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     vm.$store.dispatch('loadUser').then(() => {
+  //       next();
+  //     });
+  //   });
+  // }
 }
 </script>

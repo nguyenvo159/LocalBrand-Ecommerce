@@ -1,5 +1,5 @@
 <template>
-    <section id="collection" class="py-5">
+    <section id="collection" class="py-3">
         <div class="container">
             <div class="row g-0">
                 <div class="d-flex flex-wrap justify-content-center mt-3 filter-button-group">
@@ -22,8 +22,8 @@
                         <div class="collection-img position-relative">
                             <img :src="item.imageUrls[0]" class="w-100">
                         </div>
-                        <div class="text-center">
-                            <p class="text-capitalize my-1"><router-link class="title-product"
+                        <div class="text-center py-2">
+                            <p class="text-capitalize my-1" style="min-height: 48px;"><router-link class="title-product"
                                     :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
                                         item.name }}</router-link></p>
                             <span class="price">{{ item.price }}đ</span>
@@ -79,6 +79,7 @@ export default {
             await this.$store.dispatch('fillCategories');
         }
         await this.fetchCollection();
+        window.scrollTo(0, 0);
     },
 };
 </script>

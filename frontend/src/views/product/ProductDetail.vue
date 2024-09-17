@@ -72,7 +72,7 @@
 
                     <div v-else class="ml-4">
                         <span>
-                            <i>Free size</i>
+                            <i>FREE SIZE</i>
                         </span>
                     </div>
                 </div>
@@ -243,7 +243,7 @@ export default {
         return {
             product: null,
             comment: [],
-            selectedSize: 'free-size',
+            selectedSize: 'freesize',
             errorSize: false,
             active: true,
             inventory: 0,
@@ -290,6 +290,10 @@ export default {
             }
             this.errorSize = false;
             this.selectedSize = size;
+            const quantityInput = document.getElementById('quantityDetail');
+            if (quantityInput.value > this.getSizeInventory(size)) {
+                quantityInput.value = this.getSizeInventory(size);
+            }
         },
         getSizeInventory(sizeName) {
             const size = this.product.sizes.find(s => s.name === sizeName);
@@ -325,10 +329,9 @@ export default {
             }
         },
         increaseQuantity() {
-            100
             const quantityInput = document.getElementById('quantityDetail');
             let currentQuantity = parseInt(quantityInput.value);
-            if (currentQuantity < 100) {
+            if (currentQuantity < 100 && currentQuantity < this.getSizeInventory(this.selectedSize)) {
                 currentQuantity++;
                 quantityInput.value = currentQuantity;
             }

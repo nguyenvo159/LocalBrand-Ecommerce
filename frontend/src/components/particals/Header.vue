@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <SearchEngine v-if="isSearch" />
+                    <SearchEngine v-if="isSearch" @image-search-complete="search" />
                 </div>
             </div>
         </nav>

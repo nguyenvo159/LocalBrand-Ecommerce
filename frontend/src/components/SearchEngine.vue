@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       searchQuery: '',
+      fullPage: false,
     };
   },
   methods: {
@@ -53,14 +54,26 @@ export default {
         formData.append('file', file);
 
         try {
+          let loader = this.$loading.show({
+            container: null,
+            width: 100,
+            height: 100,
+            color: '#808EF4',
+            loader: 'bars',
+            canCancel: true,
+          });
           const response = await ProductImageService.searchByImage(formData);
           this.$store.commit('setSearchResults', response);
+          loader.hide();
+          this.$emit('image-search-complete');
           this.$router.push({ path: '/search', query: { keyword: 'search-by-image' } });
         } catch (error) {
           console.error('Lỗi khi tìm kiếm sản phẩm bằng hình ảnh:', error);
         }
       }
     },
+
+
   },
 };
 </script>

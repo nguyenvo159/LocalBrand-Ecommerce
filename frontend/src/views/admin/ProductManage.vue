@@ -92,19 +92,17 @@
         </div>
     </div>
     <!-- Thêm sản phẩm -->
-    <ProductCreateUpdate modalId="add-product" @close="closeModal" :submitFunction="createProduct"
-        title="Thêm Sản Phẩm" />
-
-    <!-- Upload ảnh -->
-    <ProductImage modalId="upload-img" title="Upload Ảnh" />
+    <ProductCreateUpdate modalId="add-product" @close="closeModal" title="Thêm Sản Phẩm" />
 
     <!-- Sửa sản phẩm -->
-    <ProductCreateUpdate :product="product" :submitFunction="updateProduct" @close="closeModal"
-        title="Chỉnh Sửa Sản Phẩm" modalId="update-product" />
+    <ProductCreateUpdate :product="product" @close="closeModal" title="Chỉnh Sửa Sản Phẩm" modalId="update-product" />
 
     <!-- Thông báo -->
     <NotificationModal modalId="delete-product" title="Xác Nhận Xóa" :message="message" :confirmAction="deleteProduct"
         :idToDelete="productToDelete" />
+
+    <!-- Upload ảnh -->
+    <ProductImage modalId="upload-img" title="Upload Ảnh" />
 </template>
 
 <script>
@@ -196,6 +194,7 @@ export default {
         closeModal() {
             $('#add-product').modal('hide');
             $('#update-product').modal('hide');
+            this.retrieveProducts();
         },
         confirmDelete(name, id) {
             this.message = `Bạn có chắn chắn muốn xóa \"${name ?? ''}\" ?`;
@@ -211,25 +210,6 @@ export default {
                 console.log(error);
             }
         },
-
-        async createProduct(data) {
-            try {
-                await ProductService.create(data);
-                this.refreshList();
-            } catch (error) {
-                console.log(error);
-            }
-        },
-
-        async updateProduct(data) {
-            try {
-                await ProductService.update(data);
-                this.retrieveProducts();
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        ,
 
         async deleteProduct(id) {
             try {

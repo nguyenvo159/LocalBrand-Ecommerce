@@ -215,26 +215,41 @@ export default {
     },
     methods: {
         async submitProduct() {
-            var sizes = Object.keys(this.selectedSizes)
-                .filter(size => this.selectedSizes[size])
-                .map(size => ({
-                    name: size,
-                    inventory: this.inventory[size]
-                }));
-            this.productLocal.sizes = sizes;
-            var product = null;
-            if (this.modalId == 'add-product') {
-                product = await ProductService.create(this.productLocal);
+            try {
+                var sizes = Object.keys(this.selectedSizes)
+                    .filter(size => this.selectedSizes[size])
+                    .map(size => ({
+                        name: size,
+                        inventory: this.inventory[size]
+                    }));
+                this.productLocal.sizes = sizes;
+                var product = null;
+                let loader = this.$loading.show({
+                    container: null,
+                    width: 100,
+                    height: 100,
+                    color: '#808EF4',
+                    loader: 'bars',
+                    canCancel: true,
+                });
+                if (this.modalId == 'add-product') {
+                    product = await ProductService.create(this.productLocal);
+                }
+                if (this.modalId == 'update-product') {
+                    product = await ProductService.update(this.productLocal);
+                }
+                if (!product) {
+                    alert('Có lỗi xảy ra khi lưu sản phẩm.');
+                }
+                await this.submitImage(product.id);
+                loader.hide();
+                this.$emit('close');
+
+            } catch (error) {
+                console.error('Lỗi khi lưu sản phẩm:', error);
+                this.$loading.hide();
+                this.$emit('close');
             }
-            if (this.modalId == 'update-product') {
-                product = await ProductService.update(this.productLocal);
-            }
-            console.log(product);
-            if (!product) {
-                alert('Có lỗi xảy ra khi lưu sản phẩm.');
-            }
-            await this.submitImage(product.id);
-            this.$emit('close');
         },
         handleFileChange(event) {
             const files = Array.from(event.target.files);

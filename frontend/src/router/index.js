@@ -2,14 +2,15 @@ import { createWebHistory, createRouter } from "vue-router";
 import store from "@/store/index.js";
 import Home from "@/views/Home.vue";
 import Search from "@/views/Search.vue";
+import Contact from "@/views/Contact.vue";
+import About from "@/views/AboutUs.vue";
 import ProductDetail from "@/views/product/ProductDetail.vue";
+import ProductList from "@/views/product/ProductList.vue";
 //Admin
 import UserManage from "@/views/admin/UserManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
 import Login from "@/views/auth/Login.vue";
 import Register from "@/views/auth/Register.vue";
-import Product from "@/views/Product.vue";
-
 const routes = [
     
   //Admin
@@ -26,9 +27,9 @@ const routes = [
     component: ProductManage,
     meta: {requiresAuth: true, requiredRole: ['Admin']},
   },
-
   // End - Admin
 
+  // Guess
   {
     path: "/",
     name: "Home",
@@ -39,6 +40,16 @@ const routes = [
     name: "Search",
     component: Search,
     props: (route) => ({ keyword: route.query.keyword, results: route.query.results }),
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    component: Contact,
+  },
+  {
+    path: "/about",
+    name: "About",
+    component: About,
   },
   {
     path: "/auth/login",
@@ -54,10 +65,17 @@ const routes = [
 
   //Product
   {
-    path: "/product/:id",
+    path: "/product/detail/:id",
     name: "ProductDetail",
     component: ProductDetail,
   },
+
+  {
+    path: "/product/:category",
+    name: "ProductList",
+    component: ProductList,
+  }
+
 ];
 
 const router = createRouter({
@@ -66,10 +84,23 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
   const isLogged = store.getters.isLogged;
   const userRole = store.getters.getUser? store.getters.getUser.role : null;
 
-  //Check isLogged
+  if (token ) {
+    try {
+      store.dispatch('loadUser');
+    } catch (error) {
+      console.error('Failed to load user:', error);
+      localStorage.removeItem('token');
+      next({ name: 'Login' });
+      return;
+    }
+  }
+
+
+  //Check isLogged and role
   if(to.meta.requiresAuth ) {
     if(!isLogged) {
       next({name: 'Login'});
