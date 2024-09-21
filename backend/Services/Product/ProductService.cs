@@ -1,9 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
+using backend.Dto.Common;
 using backend.Dto.Product;
 using backend.Dto.Size;
 using backend.Entity;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 
 namespace backend.Services;
@@ -302,4 +306,45 @@ public class ProductService : IProductService
         }
         return _mapper.Map<List<ProductDto>>(products);
     }
+
+    public async Task<PageResult<ProductDto>> GetPagingProduct(ProductPagingDto request)
+    {
+        var query = _productRepository.AsQueryable();
+        if (!string.IsNullOrEmpty(request.CategoryName))
+        {
+            query = query.Where(p => p.Category != null && p.Category.Name == request.CategoryName);
+        }
+        if (!string.IsNullOrEmpty(request.Search))
+        {
+            query = query.Where(p => p.Name.Contains(request.Search)
+                                       || (p.Category != null && p.Category.Name.Contains(request.Search))
+                                       || p.Description.Contains(request.Search));
+        }
+        var totalRecords = await query.CountAsync();
+        if (totalRecords == 0)
+        {
+            throw new ApplicationException("Product not found");
+        }
+        if (!request.PageSize.HasValue || !request.PageNumber.HasValue)
+        {
+            var result = await query.ToListAsync();
+            return new PageResult<ProductDto>
+            {
+                Items = _mapper.Map<List<ProductDto>>(result),
+                TotalRecords = totalRecords
+            };
+        }
+        var products = await query.Skip((request.PageNumber.Value - 1) * request.PageSize.Value)
+                                  .Take(request.PageSize.Value)
+                                  .ToListAsync();
+        return new PageResult<ProductDto>
+        {
+            Items = _mapper.Map<List<ProductDto>>(products),
+            PageNumber = request.PageNumber.Value,
+            PageSize = request.PageSize.Value,
+            TotalRecords = totalRecords
+        };
+    }
 }
+
+

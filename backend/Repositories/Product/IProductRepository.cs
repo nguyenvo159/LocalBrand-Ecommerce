@@ -16,4 +16,6 @@ public interface IProductRepository
     Task<bool> DeleteAsync(Guid id);
     Task<List<Product>> SearchAsync(string search);
 
+    IQueryable<Product> AsQueryable();
+
 }

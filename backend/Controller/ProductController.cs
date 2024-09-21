@@ -64,6 +64,21 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpPost("paging")]
+    public async Task<IActionResult> GetPagingProduct(ProductPagingDto productPagingDto)
+    {
+        try
+        {
+            var products = await _productService.GetPagingProduct(productPagingDto);
+            return Ok(products);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
     [HttpGet("image/{id}")]
     public async Task<IActionResult> GetImageByProductId(Guid id)
     {

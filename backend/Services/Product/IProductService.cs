@@ -1,4 +1,5 @@
-﻿using backend.Dto.Product;
+﻿using backend.Dto.Common;
+using backend.Dto.Product;
 
 namespace backend.Services;
 
@@ -10,6 +11,7 @@ public interface IProductService
     Task<List<ProductDto>> GetByCategory(string categoryName);
     Task<List<ProductDto>> GetProductByRate();
     Task<List<ProductDto>> GetProductBestSell();
+    Task<PageResult<ProductDto>> GetPagingProduct(ProductPagingDto productPagingDto);
     Task<ProductDto> Create(ProductCreateDto productDto);
     Task<ProductDto> Update(ProductUpdateDto productDto);
     Task<bool> Delete(Guid id);

@@ -118,4 +118,9 @@ public class ProductRepository : IProductRepository
             .Take(10)
             .ToListAsync();
     }
+
+    public IQueryable<Product> AsQueryable()
+    {
+        return _context.Products.AsQueryable();
+    }
 }

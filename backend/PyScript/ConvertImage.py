@@ -5,6 +5,10 @@ from torchvision.models import resnet50, ResNet50_Weights
 from PIL import Image
 import json
 
+# ResNet18/ResNet34
+# EfficientNet
+# MobileNetV2
+
 def load_image(image_path, transform=None):
     image = Image.open(image_path).convert("RGB")
     if transform:
