@@ -23,6 +23,15 @@ class ProductService {
         }
     }
 
+    async getPaging(data){
+        try {
+            const response = await this.api.post("/paging", data);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getImageByProductId(id) {
         try {
             const response = await this.api.get(`/image/${id}`);

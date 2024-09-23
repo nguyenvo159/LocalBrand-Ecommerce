@@ -244,7 +244,7 @@ export default {
                 if (this.modalId == 'update-product') {
                     product = await ProductService.update(this.productLocal);
                 }
-                if (!product) {
+                if (!product && this.modalId == 'add-product') {
                     alert('Có lỗi xảy ra khi lưu sản phẩm.');
                 }
                 await this.submitImage(product.id);

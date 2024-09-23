@@ -26,7 +26,7 @@
                             <p class="text-capitalize my-1" style="min-height: 48px;"><router-link class="title-product"
                                     :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
                                         item.name }}</router-link></p>
-                            <span class="price">{{ item.price }}đ</span>
+                            <span class="price">{{ formatPrice(item.price) }}đ</span>
                         </div>
                     </div>
                 </div>
@@ -72,6 +72,9 @@ export default {
         },
         changeCategory(category) {
             this.$router.push({ name: 'ProductList', params: { category } });
+        },
+        formatPrice(price) {
+            return price.toLocaleString('vi-VN');
         }
     },
     async mounted() {

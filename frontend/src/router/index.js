@@ -6,7 +6,11 @@ import Contact from "@/views/Contact.vue";
 import About from "@/views/AboutUs.vue";
 import ProductDetail from "@/views/product/ProductDetail.vue";
 import ProductList from "@/views/product/ProductList.vue";
+
+import Cart from "@/views/Cart.vue";
+import Profile from "@/views/auth/Profile.vue";
 //Admin
+
 import UserManage from "@/views/admin/UserManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
 import Login from "@/views/auth/Login.vue";
@@ -74,6 +78,21 @@ const routes = [
     path: "/product/:category",
     name: "ProductList",
     component: ProductList,
+  },
+
+  //Authorized
+  {
+    path: "/cart",
+    name: "Cart",
+    component: Cart,
+    meta: {requiresAuth: true},
+  },
+
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
+    meta: {requiresAuth: true},
   }
 
 ];

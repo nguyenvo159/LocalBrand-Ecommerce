@@ -3,9 +3,7 @@
         <div class="col-lg-10 col-11 mb-5">
             <h1 class="text-center mt-3">Contact Us</h1>
             <p class="text-center text-muted">Liên hệ với chúng tôi nếu bạn có bất kì thắc mắc hay trải nghiệm không tốt
-                nào
-                về
-                chúng tôi</p>
+                nào về chúng tôi</p>
             <div class="row mt-5 ">
                 <div class="col-lg-6 col-12 d-none d-lg-flex justify-content-center">
                     <img class="img-fluid w-75" src="../assets/images/contact.png" alt="">
@@ -47,7 +45,6 @@
                         </button>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
@@ -63,31 +60,43 @@ export default {
         };
     },
     methods: {
-        submitForm() {
-            const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSecWjedhFrkV2KrrDCVJPNgERjKKF44oAGSUeM9KvCFFUrmow/viewform?usp=sf_link';
+        async submitForm() {
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4NYJiMutzMOcYPlhniO8CCo4AkvfMa-t37oHp1-UTktte6g/formResponse";
             const formData = new FormData();
-            formData.append('entry.127516944', this.name);
-            formData.append('entry.289726526', this.email);
-            formData.append('entry.347132293', this.message);
 
-            fetch(formUrl, {
-                method: 'POST',
-                body: formData,
-                mode: 'no-cors'
-            })
-                .then(response => {
-                    console.log('Form submitted successfully');
-                    this.name = '';
-                    this.email = '';
-                    this.message = '';
-                })
-                .catch(error => {
-                    console.error('Error submitting form:', error);
+            // Append the input fields
+            formData.append("entry.442035508", this.name);
+            formData.append("entry.1390559808", this.email);
+            formData.append("entry.1978270797", this.message);
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
+            try {
+
+                const response = await fetch(formUrl, {
+                    method: "POST",
+                    body: formData,
+                    mode: "no-cors" // Google Forms does not return CORS headers
                 });
+                this.name = '';
+                this.email = '';
+                this.message = '';
+
+                loader.hide();
+            } catch (error) {
+                loader.hide();
+                alert("Gởi biểu mẫu không thành công" + error);
+                console.error("Error:", error);
+            }
         }
     },
     mounted() {
         window.scrollTo(0, 0);
     }
-}
+};
 </script>

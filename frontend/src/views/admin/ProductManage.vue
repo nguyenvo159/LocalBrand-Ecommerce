@@ -12,7 +12,7 @@
 
                         <input ref="fileImport" type="file" class="d-none" @change="importProduct" />
                         <button class="btn btn-primary mb-2" type="button" @click="openFileDialog">
-                            <i class=" fa-solid fa-upload"></i> Upload</button>
+                            <i class=" fa-solid fa-upload"></i> Import</button>
                         <button class="btn ml-2" style="box-shadow: none;" @click="refreshList()">
                             <i class=" fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
                     </div>
@@ -27,6 +27,16 @@
                         <div class="card">
                             <div class="card-header">
                                 <span><i class="bi bi-table me-2"></i></span> Data Table
+                            </div>
+                            <div class="d-flex align-items-center px-3 pt-3">
+                                <label class="m-0 pr-2">Show </label>
+                                <select name="example_length" aria-controls="example" class="form-select form-select-sm"
+                                    v-model="size" @change="fetchProduct" style="max-width: 70px;">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -85,6 +95,27 @@
 
                                     </table>
                                 </div>
+                                <div>
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                            <li class="page-item" @click="changePage(page - 1)"><a class="page-link"
+                                                    href="#">
+                                                    <i class="fa-solid fa-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                            <li class="page-item" v-for="p in totalPage"
+                                                :class="{ 'active': p == page }" @click="changePage(p)">
+                                                <a class="page-link" href="#">{{ p }}</a>
+                                            </li>
+
+                                            <li class="page-item" @click="changePage(page + 1)"><a class="page-link"
+                                                    href="#">
+                                                    <i class="fa-solid fa-chevron-right"></i>
+                                                </a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -124,7 +155,11 @@ export default {
     },
     data() {
         return {
+            size: 10,
+            page: 1,
+            totalPage: 1,
             products: [],
+            items: [],
             searchText: "",
             message: "",
             productToDelete: null,
@@ -134,7 +169,8 @@ export default {
     computed: {
         filteredProducts() {
             if (!this.searchText.trim()) return this.products;
-            return this.products.filter(product =>
+            this.items = this.$store.getters.getProducts;
+            return this.items.filter(product =>
                 (product.name + product.categoryName + product.description).toLowerCase().includes(this.searchText.toLowerCase())
             );
         },
@@ -142,7 +178,9 @@ export default {
     methods: {
         refreshList() {
             this.searchText = "";
-            this.retrieveProducts();
+            this.fetchProduct();
+            this.page = 1;
+            // this.retrieveProducts();
         },
 
         formatDate(date) {
@@ -206,10 +244,30 @@ export default {
         confirmUpdate(product) {
             this.product = product;
         },
+        changePage(page) {
+            if (page > 0 && page <= this.totalPage) {
+                this.page = page;
+                this.fetchProduct();
+            }
+        },
         async retrieveProducts() {
             try {
                 this.products = await ProductService.getAll();
                 this.products.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async fetchProduct() {
+            try {
+                var data = {
+                    pageNumber: this.page,
+                    pageSize: this.size
+                }
+                var result = await ProductService.getPaging(data);
+                this.totalPage = result.totalPages;
+                this.products = result.items;
+                this.items = result.items;
             } catch (error) {
                 console.log(error);
             }
@@ -239,12 +297,20 @@ export default {
         },
     },
     mounted() {
-        this.retrieveProducts();
+        // this.retrieveProducts();
+        this.fetchProduct();
         if (this.$store.getters.getCategories.length == 0) {
             this.$store.dispatch('fillCategories');
-
+        }
+        if (this.$store.getters.getProducts.length == 0) {
+            this.$store.dispatch('fillProducts');
         }
     }
-};
+}
 </script>
-<style></style>
+<style>
+.page-link {
+    outline: none !important;
+    box-shadow: none !important;
+}
+</style>

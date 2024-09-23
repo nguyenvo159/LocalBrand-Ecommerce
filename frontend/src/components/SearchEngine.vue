@@ -35,6 +35,7 @@ export default {
         try {
           const response = await ProductService.search(this.searchQuery.trim());
           this.$store.commit('setSearchResults', response);
+          this.$emit('image-search-complete');
           this.$router.push({ path: '/search', query: { keyword: this.searchQuery } });
         } catch (error) {
           console.error('Lỗi khi tìm kiếm sản phẩm bằng từ khóa:', error);

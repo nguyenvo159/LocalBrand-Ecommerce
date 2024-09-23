@@ -12,18 +12,34 @@
                             <i class="fa fa-search" @click="search"></i>
                         </button>
                         <button type="button" class="btn btn-click position-relative">
-                            <i class="fa fa-shopping-cart"></i>
+                            <router-link class="text-dark" :to="{ name: 'Cart' }">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                            </router-link>
                             <span class="position-absolute rounded-circle top-10 translate-middle badge bg-primary">{{
                                 itemCart }}</span>
                         </button>
-                        <button type="button" class="btn position-relative">
+                        <div class="btn position-relative">
                             <router-link v-if="!isLogged" class="text-dark" :to="{ name: 'Login' }">
                                 <i class="fa fa-user"></i>
                             </router-link>
-                            <a v-else class="text-dark" @click="logout">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                            </a>
-                        </button>
+                            <div v-else class="dropdown">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    {{ user.name }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right pt-3 mt-1 border-0">
+                                    <router-link :to="{ name: 'Profile' }" class="dropdown-item">
+                                        <i class="fa-solid fa-user"></i>
+                                        Thông tin cá nhân</router-link>
+                                    <a class="dropdown-item">
+                                        <i class="fa-solid fa-receipt"></i>
+                                        Đơn hàng
+                                    </a>
+                                    <a class="dropdown-item" @click="logout">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        Đăng xuất</a>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -79,7 +95,6 @@ export default {
         return {
             isSearch: false,
             isAdminRoute: false,
-            itemCart: 0,
         };
     },
     watch: {
@@ -94,6 +109,16 @@ export default {
         isAdmin() {
             return this.$store.getters.isAdmin;
         },
+        user() {
+            return this.$store.getters.getUser;
+        },
+        itemCart() {
+            if (this.$store.getters.getCart) {
+                return this.$store.getters.getCart.cartItems.length;
+            }
+            return 0;
+        }
+
     },
     mounted() {
         this.isAdminRoute = this.$route.path.includes('admin');
@@ -111,12 +136,21 @@ export default {
 </script>
 
 <style scoped>
-.btn:focus {
+.btn {
     outline: none !important;
     box-shadow: none !important;
+    border: none !important;
 }
 
 .nav-text:hover {
     color: #f8b500 !important;
+}
+
+i {
+    font-size: 20px;
+}
+
+.dropdown-item>i {
+    font-size: 15px;
 }
 </style>

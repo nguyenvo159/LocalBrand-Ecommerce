@@ -1,6 +1,7 @@
 import userService from '@/services/user.service';
 import productService from '@/services/product.service';
 import categoryService from '@/services/category.service';
+import cartService from '@/services/cart.service';
 
 import { set } from 'date-fns';
 import {createStore} from 'vuex';
@@ -14,6 +15,7 @@ const store = createStore({
             users: [],
             products: [],
             categories: [],
+            cart: null,
         }
     },
     mutations: {
@@ -35,9 +37,13 @@ const store = createStore({
         setCategories(state, categories) {
             state.categories = categories;
         },
+        setCart(state, cart) {
+            state.cart = cart;
+        },
         logOut(state) {
             state.token = null;
             state.user = null;
+            state.cart = null;
         }
     },
     actions: {
@@ -47,6 +53,10 @@ const store = createStore({
               commit('setToken', token);
               try {
                 const userProfile = await userService.profile();
+                if(userProfile){
+                    const cart = await cartService.getByUserId(userProfile.id);
+                    commit('setCart', cart);
+                }
                 commit('setUser', userProfile);
               } catch (error) {
                 console.error('Failed to load user profile:', error);
@@ -66,6 +76,12 @@ const store = createStore({
             const categories = await categoryService.getAll();
             categories.sort((a, b) => a.name.localeCompare(b.name));
             commit('setCategories', categories);
+        },
+        async fillCart({ commit }) {
+            if(this.getters.isLogged) {
+                const cart = await cartService.getByUserId(this.state.user.id);
+                commit('setCart', cart);
+            }
         },
         async logout ({ commit }) {
             commit('logOut');
@@ -96,6 +112,9 @@ const store = createStore({
         },
         getCategories(state) {
             return state.categories;
+        },
+        getCart(state) {
+            return state.cart;
         }
     }
 })

@@ -17,7 +17,7 @@
         <hr>
         <div>
             <router-link :to="{ name: 'Home' }" class=""><i
-                    class="fas fa-sign-out-alt"></i><span>Thoát</span></router-link>
+                    class="fas fa-sign-out-alt"></i><span>Exit</span></router-link>
         </div>
     </div>
 

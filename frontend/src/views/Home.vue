@@ -44,15 +44,15 @@
 
         <transition-group name="list" tag="div" class="collection-list row gx-0 gy-1">
           <div v-for="item in filteredCollections" :key="item.id"
-            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 ', item.categoryName]">
-            <div class="collection-img position-relative" @click="goToDetail(item.id)">
+            :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 mb-3', item.categoryName]">
+            <div class="collection-img position-relative" @click="goToDetail(item.id)" style="min-height: 308px;">
               <img :src="item.imageUrls[0]" class="w-100 cursor-pointer">
             </div>
             <div class="text-center">
               <p class="text-capitalize my-1"><router-link class="title-product"
                   :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
                     item.name }}</router-link></p>
-              <span class="price">{{ item.price }}đ</span>
+              <span class="price">{{ formatPrice(item.price) }}đ</span>
             </div>
           </div>
         </transition-group>
@@ -176,8 +176,8 @@
             @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
-              <p class="mb-0">{{ product.name }}</p>
-              <span class="price">{{ product.price }}đ</span>
+              <p class="mb-0 title-product">{{ product.name }}</p>
+              <span class="price">{{ formatPrice(product.price) }}đ</span>
             </div>
           </div>
         </div>
@@ -188,8 +188,8 @@
             @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
-              <p class="mb-0">{{ product.name }}</p>
-              <span class="price">{{ product.price }}đ</span>
+              <p class="mb-0 title-product">{{ product.name }}</p>
+              <span class="price">{{ formatPrice(product.price) }}đ</span>
             </div>
           </div>
         </div>
@@ -200,8 +200,8 @@
             @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
-              <p class="mb-0">{{ product.name }}</p>
-              <span class="price">{{ product.price }}đ</span>
+              <p class="mb-0 title-product">{{ product.name }}</p>
+              <span class="price">{{ formatPrice(product.price) }}đ</span>
             </div>
           </div>
         </div>
@@ -265,6 +265,9 @@ export default {
     },
     setFilter(filter) {
       this.activeFilter = filter;
+    },
+    formatPrice(price) {
+      return price.toLocaleString('vi-VN');
     }
   },
   // beforeRouteEnter(to, from, next) {

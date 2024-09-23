@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row g-0">
         <div class="col-md-12">
-          <h2 class="text-center">Kết quả tìm kiếm</h2>
+          <h2 class="">Kết quả tìm kiếm</h2>
         </div>
 
         <div class="collection-list row gx-0 gy-1">

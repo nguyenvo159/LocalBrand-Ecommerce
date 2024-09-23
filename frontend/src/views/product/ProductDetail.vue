@@ -236,7 +236,7 @@
 import { format } from 'date-fns';
 import ProductService from "@/services/product.service";
 import reviewService from "@/services/review.service";
-// import CartService from "@/services/cart.service";
+import CartService from "@/services/cart.service";
 
 export default {
     data() {
@@ -304,7 +304,25 @@ export default {
             return formattedDate;
         },
         async addToCart() {
-            console.log('add to cart');
+            try {
+
+                var user = this.$store.getters.getUser;
+                if (this.$store.getters.isLoggedIn === false || user === null) {
+                    this.$router.push('/auth/login');
+                    return;
+                }
+                await CartService.addProductToCart({
+                    userId: user.id,
+                    productId: this.product.id,
+                    sizeName: this.selectedSize,
+                    quantity: parseInt(document.getElementById('quantityDetail').value),
+                })
+                this.$store.dispatch('fillCart');
+                this.$router.push('/cart');
+            }
+            catch (error) {
+                console.error(error);
+            }
         },
 
         handleInput() {
