@@ -62,7 +62,8 @@ public class CartService : ICartService
     {
         // Kiểm tra tồn tại Cart
         var cart = await _cartRepository.FindAsync(c => c.UserId == cartItemCreateDto.UserId);
-        var inventory = await _inventoryRepository.FindAsync(i => i.ProductId == cartItemCreateDto.ProductId && i.SizeId == cartItemCreateDto.SizeId);
+        var inventory = await _inventoryRepository.FindAsync(i => i.ProductId == cartItemCreateDto.ProductId
+                            && i.Size.Name == cartItemCreateDto.SizeName);
         if (inventory == null || inventory.Inventory == 0)
         {
             throw new ApplicationException("Product is out of stock");
@@ -74,15 +75,20 @@ public class CartService : ICartService
             await _cartRepository.AddAsync(cart);
         }
 
+        var size = await _sizeRepository.FindAsync(s => s.Name == cartItemCreateDto.SizeName);
+        if (size == null)
+        {
+            throw new ApplicationException("Size not found");
+        }
         var cartItem = await _cartItemRepository
-                            .FindAsync(c => c.ProductId == cartItemCreateDto.ProductId && c.SizeId == cartItemCreateDto.SizeId);
+                            .FindAsync(c => c.ProductId == cartItemCreateDto.ProductId && c.Size.Name == cartItemCreateDto.SizeName);
         if (cartItem == null)
         {
             cartItem = new CartItem
             {
                 CartId = cart.Id,
                 ProductId = cartItemCreateDto.ProductId,
-                SizeId = cartItemCreateDto.SizeId,
+                SizeId = size.Id,
                 Quantity = cartItemCreateDto.Quantity
             };
             await _cartItemRepository.AddAsync(cartItem);
@@ -125,7 +131,6 @@ public class CartService : ICartService
         else
         {
             cartItem.Quantity = cartItemUpdateDto.Quantity;
-
         }
 
         await _cartItemRepository.UpdateAsync(cartItem);

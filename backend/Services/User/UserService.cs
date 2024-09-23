@@ -107,7 +107,7 @@ public class UserService : IUserService
         }
         if (!await CheckPasswordAsync(user, userChangePassDto.OldPassword))
         {
-            throw new ApplicationException("Invalid old password");
+            throw new ApplicationException("Mật khẩu cũ sai");
         }
         user.PasswordHash = _passwordHasher.HashPassword(user, userChangePassDto.NewPassword);
 

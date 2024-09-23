@@ -104,6 +104,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<ICloudService, CloudService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));

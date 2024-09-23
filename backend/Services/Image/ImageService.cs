@@ -142,7 +142,7 @@ public class ImageService : IImageService
         var items = await _productImageRepository.AsQueryable()
             .Include(x => x.Product)
             .OrderBy(x => x.ImageVector!.L2Distance(vectorStr))
-            .Take(1) // Lấy 1 sản phẩm gần nhất
+            .Take(3) // Lấy x sản phẩm gần nhất
             .ToListAsync();
         return _mapper.Map<List<ProductDto>>(items);
     }

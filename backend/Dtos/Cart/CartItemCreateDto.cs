@@ -9,7 +9,7 @@ public class CartItemCreateDto
     [Required]
     public Guid ProductId { get; set; }
     [Required]
-    public Guid SizeId { get; set; }
+    public string SizeName { get; set; } = string.Empty;
 
     [Range(1, 99, ErrorMessage = "Quantity must be 1 to 99")]
     public int Quantity { get; set; }

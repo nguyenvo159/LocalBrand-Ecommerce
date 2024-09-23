@@ -57,6 +57,7 @@ public class MapperConfig : Profile
                 CreateMap<CartItem, CartItemDto>()
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
                         .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+                        .ForMember(dest => dest.ProductImg, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductImages.Select(a => a.ImageUrl).FirstOrDefault() : string.Empty))
                         .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
                 CreateMap<Cart, CartDto>();
                 CreateMap<CartItemCreateDto, CartItem>();
