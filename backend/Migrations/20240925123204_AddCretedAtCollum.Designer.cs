@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240925123204_AddCretedAtCollum")]
+    partial class AddCretedAtCollum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,9 +109,6 @@ namespace backend.Migrations
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActived")
-                        .HasColumnType("boolean");
 
                     b.Property<decimal>("MaximumDiscount")
                         .HasColumnType("numeric");
@@ -328,21 +328,13 @@ namespace backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("DiscountId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActived")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Note")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ShipType")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("numeric");
@@ -366,8 +358,6 @@ namespace backend.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DiscountId");
 
                     b.HasIndex("UserId");
 
@@ -500,17 +490,11 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Order", b =>
                 {
-                    b.HasOne("backend.Entity.Discount", "Discount")
-                        .WithMany()
-                        .HasForeignKey("DiscountId");
-
                     b.HasOne("backend.Entity.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Discount");
 
                     b.Navigation("User");
                 });

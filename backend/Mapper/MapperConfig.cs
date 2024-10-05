@@ -7,6 +7,7 @@ using backend.Dto.Size;
 using backend.Dto.User;
 using backend.Dtos.Category;
 using backend.Entity;
+using backend.Helper.EnumHelper;
 
 namespace backend.Mapper;
 
@@ -66,9 +67,11 @@ public class MapperConfig : Profile
                 CreateMap<OrderItem, OrderItemDto>()
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
                         .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+                        .ForMember(dest => dest.ProductImg, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductImages.Select(a => a.ImageUrl).FirstOrDefault() : string.Empty))
                         .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
                 CreateMap<Order, OrderDto>()
                         .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
+                // .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status.GetDescription()));
                 CreateMap<OrderCreateDto, Order>();
                 CreateMap<OrderUpdateDto, Order>()
                         .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));

@@ -10,5 +10,6 @@ public interface IDiscountService
     Task<List<Discount>> Create(DiscountCreateDto discountCreateDto);
     Task Delete(Guid id);
     Task<byte[]> Export();
+    Task<List<string>> DeleteDiscountExpired();
 
 }

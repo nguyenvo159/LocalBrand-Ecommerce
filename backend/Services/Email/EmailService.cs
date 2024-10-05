@@ -3,6 +3,7 @@ using AutoMapper;
 using backend.Dto.Order;
 using backend.Entity;
 using backend.Extensions;
+using backend.Helper.EnumHelper;
 using backend.Repositories;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
@@ -32,6 +33,8 @@ public class EmailService : IEmailService
         {
             var order = await _orderRepository.FindAsync(o => o.Id == orderId);
             var orderItem = _mapper.Map<OrderDto>(order).OrderItems;
+            var total = orderItem.Sum(item => item.ProductPrice * item.Quantity);
+            var shipCost = new decimal[] { 0, 35000, 50000, 25000 };
             if (order == null)
             {
                 throw new ApplicationException("Order not found to mail");
@@ -39,43 +42,48 @@ public class EmailService : IEmailService
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_smtpSettings.Value.SenderName, _smtpSettings.Value.SenderEmail));
             message.To.Add(new MailboxAddress(order.UserName, order.UserEmail));
-            message.Subject = "Order Confirmation";
+            message.Subject = "Xác Nhận Đơn Hàng - AMIE Fashion";
 
             var builder = new BodyBuilder
             {
                 HtmlBody = $@"
                 <html>
                 <body>
-                    <h2>Order Confirmation</h2>
+                    <h1>XÁC NHẬN ĐƠN HÀNG</h1>
                     <p>Dear {order.UserName},</p>
-                    <p>Thank you for your order! Here are the details:</p>
+                    <p>Cám ơn bạn đã đặt hàng sản phẩm của chúng tôi, dưới đây là chi tiết hóa đơn:</p>
+                    <br>
                     <table style='border-collapse: collapse; width: 100%;'>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Order ID</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Mã đơn hàng</th>
                             <td style='border: 1px solid #dddddd; padding: 8px;'>{(order.Id).ToString().ToUpper()}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Order Status</th>
-                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.OrderStatus}</td>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Trạng thái</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.Status.GetDescription()}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Phone Number</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Số điện thoại</th>
                             <td style='border: 1px solid #dddddd; padding: 8px;'>{order.UserPhone}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Delivery Address</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Địa chỉ</th>
                             <td style='border: 1px solid #dddddd; padding: 8px;'>{order.Address}</td>
+                        </tr>
+                        <tr>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Ghi chú</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.Note ?? "Không có ghi chú"}</td>
                         </tr>
                         
                     </table>
 
-                    <h3>Order Items</h3>
+                    <h3>Danh sách sản phẩm</h3>
                     <table style='border-collapse: collapse; width: 100%;'>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Item Name</th>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Quantity</th>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Price</th>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Total</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Tên sản phẩm</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Số lượng</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Giá</th>
+                            <th style='border: 1px solid #dddddd; padding: 8px;'>Thành tiền</th>
                         </tr>
                         {string.Join("\n", orderItem.Select(item =>
                             $@"
@@ -86,13 +94,23 @@ public class EmailService : IEmailService
                             <td style='border: 1px solid #dddddd; padding: 8px; text-align: center;'>{(item.ProductPrice * item.Quantity):C0}</td>
                         </tr>"))}
                         <tr>
-                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: end;'><b>Total Amount:</b> {order.TotalAmount:C0}</td>
+                            <td><b>Phí vận chuyển({order.ShipType.GetDescription()}):</b> {shipCost[(int)order.ShipType]:C0}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Giảm giá:</b> {(total + shipCost[(int)order.ShipType] - order.TotalAmount):C0}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Tổng tiền:</b> {order.TotalAmount:C0}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Hình thức thanh toán: </b> Thanh toán khi nhận hàng</td>
                         </tr>
                     </table>
 
-                    <p>If you have any questions or need assistance, please contact us.</p>
+                    <p>Vui lòng chuẩn bị {order.TotalAmount:C0} trước khi nhận hàng.</p>
+                    <p>Nếu bạn có bất kỳ câu hỏi hay cần sự giúp đỡ nào hãy liên hệ lại với chúng tôi.</p>
                     <p>Best regards,</p>
-                    <p>Your Store Team</p>
+                    <p>AMIE Fashion</p>
                 </body>
                 </html>"
             };
@@ -113,6 +131,4 @@ public class EmailService : IEmailService
             throw new ApplicationException("Error sending email", ex);
         }
     }
-
-
 }

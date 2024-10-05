@@ -55,6 +55,7 @@ public class CartService : ICartService
 
         await AutoUpdateInventory(cart.CartItems);
         cart = await _cartRepository.FindAsync(u => u.UserId == userId);
+        cart.CartItems = cart.CartItems.OrderBy(c => c.CreatedAt).ToList();
         return _mapper.Map<CartDto>(cart);
     }
 
@@ -89,7 +90,8 @@ public class CartService : ICartService
                 CartId = cart.Id,
                 ProductId = cartItemCreateDto.ProductId,
                 SizeId = size.Id,
-                Quantity = cartItemCreateDto.Quantity
+                Quantity = cartItemCreateDto.Quantity,
+                CreatedAt = DateTime.UtcNow
             };
             await _cartItemRepository.AddAsync(cartItem);
         }

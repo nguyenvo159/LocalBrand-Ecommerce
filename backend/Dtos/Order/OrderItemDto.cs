@@ -8,6 +8,7 @@ public class OrderItemDto
     public Guid ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;
     public decimal ProductPrice { get; set; }
+    public string ProductImg { get; set; } = string.Empty;
     public Guid SizeId { get; set; }
     public string SizeName { get; set; } = string.Empty;
     public int Quantity { get; set; }

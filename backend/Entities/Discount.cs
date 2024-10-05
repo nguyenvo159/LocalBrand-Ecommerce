@@ -8,4 +8,5 @@ public record class Discount
     public decimal DiscountPercentage { get; set; }
     public decimal MaximumDiscount { get; set; }
     public DateTime ExpiryDate { get; set; }
+    public bool IsActived { get; set; } = true;
 }

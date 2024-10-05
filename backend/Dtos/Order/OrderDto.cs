@@ -1,4 +1,5 @@
 ﻿namespace backend.Dto.Order;
+using backend.Text.Enums;
 
 public class OrderDto
 {
@@ -9,10 +10,12 @@ public class OrderDto
     public string UserEmail { get; set; } = string.Empty;
     public string UserPhone { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+    public Guid? DiscountId { get; set; }
 
     public decimal TotalAmount { get; set; }
 
-    public string OrderStatus { get; set; } = string.Empty;
+    public Enums.OrderStatus Status { get; set; }
+    public Enums.ShipType ShipType { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

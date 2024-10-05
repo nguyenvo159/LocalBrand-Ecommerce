@@ -3,6 +3,7 @@ using AutoMapper;
 using backend.Data;
 using backend.Entity;
 using backend.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -22,7 +23,7 @@ public class DiscountService : IDiscountService
 
     public async Task<List<Discount>> GetAll()
     {
-        var discounts = await _discountRepository.GetAllAsync();
+        var discounts = await _discountRepository.AsQueryable().Where(a => a.IsActived).ToListAsync();
         if (discounts == null)
         {
             throw new ApplicationException("No discounts found");
@@ -32,10 +33,10 @@ public class DiscountService : IDiscountService
 
     public async Task<Discount> GetByCode(string code)
     {
-        var discount = await _discountRepository.FindAsync(d => d.Code == code);
+        var discount = await _discountRepository.FindAsync(d => d.Code == code && d.IsActived);
         if (discount == null)
         {
-            throw new ApplicationException("Discount not found");
+            return null;
         }
         return discount;
     }
@@ -57,6 +58,7 @@ public class DiscountService : IDiscountService
         {
             var discount = _mapper.Map<Discount>(discountCreateDto);
             discount.Code = await GenerateCode();
+            discount.IsActived = true;
             await _discountRepository.AddAsync(discount);
             discounts.Add(discount);
         }
@@ -85,12 +87,13 @@ public class DiscountService : IDiscountService
         {
             throw new ApplicationException("Discount not found");
         }
-        await _discountRepository.DeleteAsync(id);
+        discount.IsActived = false;
+        await _discountRepository.UpdateAsync(discount);
     }
 
     public async Task<byte[]> Export()
     {
-        var discounts = await _discountRepository.GetAllAsync();
+        var discounts = await _discountRepository.AsQueryable().Where(a => a.IsActived).ToListAsync();
         if (discounts == null || !discounts.Any())
         {
             throw new ApplicationException("No discounts found");
@@ -132,6 +135,17 @@ public class DiscountService : IDiscountService
 
             return package.GetAsByteArray();
         }
+    }
+    public async Task<List<string>> DeleteDiscountExpired()
+    {
+        var discounts = await _discountRepository.AsQueryable().Where(a => a.ExpiryDate < DateTime.Now && a.IsActived).ToListAsync();
+        if (discounts == null || !discounts.Any())
+        {
+            throw new ApplicationException("No discounts found");
+        }
+        await _discountRepository.DeleteListAsync(discounts);
+        return discounts.Select(a => a.Code).ToList();
+
     }
 }
 

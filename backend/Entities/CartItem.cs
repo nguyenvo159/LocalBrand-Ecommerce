@@ -14,4 +14,6 @@ public record class CartItem
 
     public int Quantity { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
 }

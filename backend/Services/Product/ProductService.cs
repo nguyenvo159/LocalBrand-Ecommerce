@@ -19,6 +19,8 @@ public class ProductService : IProductService
     private readonly IRepository<ProductImage> _productImageRepository;
     private readonly IRepository<Size> _sizeRepository;
     private readonly IRepository<ProductInventory> _productInventoryRepository;
+    private readonly ICloudService _cloudinaryService;
+
     private readonly IMapper _mapper;
 
     public ProductService(IProductRepository productRepository,
@@ -26,6 +28,7 @@ public class ProductService : IProductService
         IRepository<ProductImage> productImageRepository,
         IRepository<Size> sizeRepository1,
         IRepository<ProductInventory> productInventoryRepository,
+        ICloudService cloudinaryService,
         IMapper mapper)
     {
         _productRepository = productRepository;
@@ -33,6 +36,7 @@ public class ProductService : IProductService
         _productImageRepository = productImageRepository;
         _sizeRepository = sizeRepository1;
         _productInventoryRepository = productInventoryRepository;
+        _cloudinaryService = cloudinaryService;
         _mapper = mapper;
     }
 
@@ -207,6 +211,12 @@ public class ProductService : IProductService
         if (product == null)
         {
             throw new ApplicationException("Product not found");
+        }
+        foreach (var productImage in product.ProductImages)
+        {
+            if (productImage.ImageUrl != null)
+                await _cloudinaryService.DeleteImageAsync(productImage.ImageUrl);
+
         }
         return await _productRepository.DeleteAsync(id);
     }

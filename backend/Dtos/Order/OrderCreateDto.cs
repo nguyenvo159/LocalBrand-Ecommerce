@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using backend.Text.Enums;
 
 namespace backend.Dto.Order;
 
@@ -18,10 +19,10 @@ public class OrderCreateDto
 
     [Required]
     public string Address { get; set; } = string.Empty;
+    [Required]
+    public Enums.ShipType ShipType { get; set; } = Enums.ShipType.Standard;
 
     public string? Note { get; set; } = string.Empty;
 
     public string? Code { get; set; } = string.Empty;
-
-    public string OrderStatus { get; set; } = "Pending";
 }

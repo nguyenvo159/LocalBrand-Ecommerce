@@ -111,7 +111,7 @@ public class ProductRepository : IProductRepository
 
         return await _context.Products
         .Include(a => a.OrderItems)
-            .Where(p => p.OrderItems.Any(oi => oi.Order.CreatedAt > date))
+            .Where(p => p.OrderItems.Any(oi => oi.Order.CreatedAt > date && oi.Order.Status == Text.Enums.Enums.OrderStatus.Done))
             .OrderByDescending(p => p.OrderItems
                 .Where(oi => oi.Order.CreatedAt > date)
                 .Sum(oi => oi.Quantity))

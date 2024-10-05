@@ -5,6 +5,7 @@ using backend.Entity;
 using backend.Extensions;
 using backend.Repositories;
 using MailKit.Net.Smtp;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
@@ -15,6 +16,8 @@ public class OrderService : IOrderService
     private readonly IRepository<Order> _orderRepository;
     private readonly IRepository<OrderItem> _orderItemRepository;
     private readonly IRepository<Cart> _cartRepository;
+    private readonly IRepository<ProductInventory> _productInventoryRepository;
+    private readonly IDiscountService _discountService;
     private readonly IRepository<Discount> _discountRepository;
     private readonly ICartService _cartService;
     private readonly IEmailService _emailService;
@@ -23,17 +26,19 @@ public class OrderService : IOrderService
     public OrderService(IRepository<Order> orderRepository,
     IRepository<OrderItem> orderItemRepository,
     IRepository<Cart> cartRepository,
-    IRepository<Discount> discountRepository,
+    IDiscountService discountService,
     ICartService cartService,
     IEmailService emailService,
+    IRepository<Discount> discountRepository,
     IMapper mapper)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _cartRepository = cartRepository;
-        _discountRepository = discountRepository;
+        _discountService = discountService;
         _cartService = cartService;
         _emailService = emailService;
+        _discountRepository = discountRepository;
         _mapper = mapper;
     }
 
@@ -54,6 +59,7 @@ public class OrderService : IOrderService
         {
             throw new ApplicationException("Order not found");
         }
+        orders = orders.OrderByDescending(o => o.CreatedAt).ToList();
         return _mapper.Map<List<OrderDto>>(orders);
     }
 
@@ -77,12 +83,14 @@ public class OrderService : IOrderService
         var total = _mapper.Map<CartDto>(cart).Total;
 
         var order = _mapper.Map<Order>(orderCreateDto);
-        order.OrderStatus = "Pending";
-
+        order.Status = Text.Enums.Enums.OrderStatus.Pending;
+        order.IsActived = true;
+        var shipCost = new decimal[] { 0, 35000, 50000, 25000 };
+        total += shipCost[(int)order.ShipType];
         //Check code
         if (!string.IsNullOrEmpty(orderCreateDto.Code))
         {
-            var discount = await _discountRepository.FindAsync(d => d.Code == orderCreateDto.Code);
+            var discount = await _discountService.GetByCode(orderCreateDto.Code);
             if (discount != null && discount.ExpiryDate >= DateTime.Now && discount.RequireMoney <= total)
             {
                 var discountAmount = total * discount.DiscountPercentage / 100;
@@ -91,7 +99,8 @@ public class OrderService : IOrderService
                     discountAmount = discount.MaximumDiscount;
                 }
                 total -= discountAmount;
-                await _discountRepository.DeleteAsync(discount.Id);
+                order.DiscountId = discount.Id;
+                await _discountService.Delete(discount.Id);
             }
         }
 
@@ -115,7 +124,7 @@ public class OrderService : IOrderService
 
     public async Task<OrderDto> Update(OrderUpdateDto orderUpdateDto)
     {
-        var order = await _orderRepository.FindAsync(o => o.Id == orderUpdateDto.Id);
+        var order = await _orderRepository.FindAsync(o => o.Id == orderUpdateDto.Id && o.IsActived);
         if (order == null)
         {
             throw new ApplicationException("Order not found");
@@ -123,18 +132,41 @@ public class OrderService : IOrderService
 
         order = _mapper.Map(orderUpdateDto, order);
         await _orderRepository.UpdateAsync(order);
+        order.UpdatedAt = DateTime.UtcNow;
         return _mapper.Map<OrderDto>(order);
     }
 
     public async Task Delete(Guid id)
     {
-        var order = await _orderRepository.FindAsync(o => o.Id == id);
+        // Load order và bao gồm OrderItems
+        var order = await _orderRepository
+            .FindAsync(o => o.Id == id && o.IsActived);
         if (order == null)
         {
             throw new ApplicationException("Order not found");
         }
-        await _orderRepository.DeleteAsync(id);
+
+        // Hủy đơn hàng
+        order.IsActived = false;
+        order.Status = Text.Enums.Enums.OrderStatus.Cancelled;
+        order.UpdatedAt = DateTime.UtcNow;
+
+        // Xử lý discount nếu có
+        if (order.DiscountId != null)
+        {
+            var discount = await _discountRepository.FindAsync(d => d.Id == order.DiscountId);
+            if (discount != null)
+            {
+                discount.IsActived = true;
+                await _discountRepository.UpdateAsync(discount);
+            }
+        }
+
+        // Cập nhật order
+        await _orderRepository.UpdateAsync(order);
+
     }
+
 
 
 }
