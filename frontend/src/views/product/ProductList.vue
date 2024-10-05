@@ -22,11 +22,18 @@
                         <div class="collection-img position-relative">
                             <img :src="item.imageUrls[0]" class="w-100">
                         </div>
-                        <div class="text-center py-2">
-                            <p class="text-capitalize my-1" style="min-height: 48px;"><router-link class="title-product"
-                                    :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
-                                        item.name }}</router-link></p>
-                            <span class="price">{{ formatPrice(item.price) }}đ</span>
+                        <div class="text-center py-2 row align-items-center" style="min-height: 72px;">
+                            <router-link class="title-product"
+                                :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
+                                    item.name }}</router-link>
+                            <div class="mt-3 d-flex justify-content-around">
+                                <span class="price">{{ formatPrice(item.price) }}₫</span>
+                                <div>
+                                    <span v-for="n in 5" :key="n" class="star">
+                                        <i :class="getStarClass(n, item.rating)" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,7 +82,19 @@ export default {
         },
         formatPrice(price) {
             return price.toLocaleString('vi-VN');
-        }
+        },
+        getStarClass(index, rating) {
+            if (rating >= index) {
+                return 'fa-solid fa-star';
+            } else if (rating >= index - 0.5) {
+                return 'fa-solid fa-star-half-stroke';
+            } else {
+                return 'fa-regular fa-star';
+            }
+        },
+        goToDetail(id) {
+            this.$router.push({ name: 'ProductDetail', params: { id } });
+        },
     },
     async mounted() {
         if (this.categories.length === 0) {

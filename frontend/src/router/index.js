@@ -1,16 +1,21 @@
 import { createWebHistory, createRouter } from "vue-router";
 import store from "@/store/index.js";
+
 import Home from "@/views/Home.vue";
 import Search from "@/views/Search.vue";
 import Contact from "@/views/Contact.vue";
 import About from "@/views/AboutUs.vue";
+import NotFound404 from "@/views/NotFound404.vue";
 import ProductDetail from "@/views/product/ProductDetail.vue";
 import ProductList from "@/views/product/ProductList.vue";
 
-import Cart from "@/views/Cart.vue";
+import Cart from "@/views/cart/Cart.vue";
+import Payment from "@/views/cart/Payment.vue";
 import Profile from "@/views/auth/Profile.vue";
-//Admin
+import OrderList from "@/views/order/OrderList.vue";
+import OrderDetail from "@/views/order/OrderDetail.vue";
 
+//Admin
 import UserManage from "@/views/admin/UserManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
 import Login from "@/views/auth/Login.vue";
@@ -67,6 +72,12 @@ const routes = [
     component: Register,
   },
 
+  {
+    path: "/not-found",
+    name: "NotFound404",
+    component: NotFound404,
+  },
+
   //Product
   {
     path: "/product/detail/:id",
@@ -89,11 +100,33 @@ const routes = [
   },
 
   {
+    path: "/payment",
+    name: "Payment",
+    component: Payment,
+    meta: {requiresAuth: true},
+  },
+
+  {
     path: "/profile",
     name: "Profile",
     component: Profile,
     meta: {requiresAuth: true},
+  },
+
+  {
+    path: "/order",
+    name: "OrderList",
+    component: OrderList,
+  },
+
+  {
+    path: "/order/:id",
+    name: "OrderDetail",
+    component: OrderDetail,
+    // meta: {requiresAuth: true},
   }
+
+
 
 ];
 

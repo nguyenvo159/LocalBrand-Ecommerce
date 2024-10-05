@@ -32,12 +32,20 @@ section p{
     cursor: pointer;
 }
 .price{
-  color: #d52220;
-  font-family: var(--price-font);
+  color: #d52220 !important;
+  font-family: var(--sm-font) !important;
+
+}
+.topic-title >h2{
+  padding-left: 10px;
+  border-left: 5px solid var(--main-color);
 }
 .title-product{
+  font-family: var(--sm-font) !important;
   text-decoration: none;
   color: #000;
+  font-size: 16px;
+
 }
 .title-product:hover{
   text-decoration: none;

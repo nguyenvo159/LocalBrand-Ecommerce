@@ -53,11 +53,11 @@ const store = createStore({
               commit('setToken', token);
               try {
                 const userProfile = await userService.profile();
+                commit('setUser', userProfile);
                 if(userProfile){
                     const cart = await cartService.getByUserId(userProfile.id);
                     commit('setCart', cart);
                 }
-                commit('setUser', userProfile);
               } catch (error) {
                 console.error('Failed to load user profile:', error);
               }

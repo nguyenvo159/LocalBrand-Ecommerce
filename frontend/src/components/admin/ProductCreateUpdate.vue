@@ -221,6 +221,14 @@ export default {
     },
     methods: {
         async submitProduct() {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
             try {
                 var sizes = Object.keys(this.selectedSizes)
                     .filter(size => this.selectedSizes[size])
@@ -230,14 +238,7 @@ export default {
                     }));
                 this.productLocal.sizes = sizes;
                 var product = null;
-                let loader = this.$loading.show({
-                    container: null,
-                    width: 100,
-                    height: 100,
-                    color: '#808EF4',
-                    loader: 'bars',
-                    canCancel: true,
-                });
+
                 if (this.modalId == 'add-product') {
                     product = await ProductService.create(this.productLocal);
                 }
@@ -253,7 +254,7 @@ export default {
 
             } catch (error) {
                 console.error('Lỗi khi lưu sản phẩm:', error);
-                this.$loading.hide();
+                loader.hide();
                 this.$emit('close');
             }
         },

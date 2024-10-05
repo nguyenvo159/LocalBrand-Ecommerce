@@ -254,6 +254,7 @@ export default {
             try {
                 this.products = await ProductService.getAll();
                 this.products.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                this.fetchProduct();
             } catch (error) {
                 console.log(error);
             }

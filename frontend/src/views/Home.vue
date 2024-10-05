@@ -26,8 +26,8 @@
   <!-- Collection -->
   <section id="collection" class="py-5">
     <div class="container">
-      <div class="title text-center">
-        <h2 class="position-relative d-inline-block">New Collection</h2>
+      <div class="topic-title text-center">
+        <h2 class="position-relative d-inline-block">Bộ Sưu Tập</h2>
       </div>
 
       <div class="row g-0">
@@ -43,7 +43,7 @@
         </div>
 
         <transition-group name="list" tag="div" class="collection-list row gx-0 gy-1">
-          <div v-for="item in filteredCollections" :key="item.id"
+          <div v-for="item in filteredCollections.slice(0, 8)" :key="item.id"
             :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 mb-3', item.categoryName]">
             <div class="collection-img position-relative" @click="goToDetail(item.id)" style="min-height: 308px;">
               <img :src="item.imageUrls[0]" class="w-100 cursor-pointer">
@@ -52,7 +52,7 @@
               <p class="text-capitalize my-1"><router-link class="title-product"
                   :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
                     item.name }}</router-link></p>
-              <span class="price">{{ formatPrice(item.price) }}đ</span>
+              <span class="price">{{ formatPrice(item.price) }}₫</span>
             </div>
           </div>
         </transition-group>
@@ -91,15 +91,13 @@
   <!-- Blog -->
   <section id="blogs" class="py-5">
     <div class="container">
-      <div class="title text-center py-5">
+      <div class="topic-title text-center py-5">
         <h2 class="position-relative d-inline-block">Blog mới nhất</h2>
       </div>
 
       <div class="row g-3">
         <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
-          <img class="blog-img"
-            src="https://scontent.fvca1-2.fna.fbcdn.net/v/t39.30808-6/458337148_557832580090764_58506317940912344_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_ohc=CeOnnGgMdGYQ7kNvgFNaSZZ&_nc_ht=scontent.fvca1-2.fna&_nc_gid=AoDak7Z8Bx7PO6fWAAe4zCv&oh=00_AYDbVF4fOLevntBJBLa52LYzm9OoR7L20caV1JTOrwckOg&oe=66EAA155"
-            alt="">
+          <img class="blog-img" src="../assets/images/blog1.png" alt="">
           <div class="card-body px-0">
             <h4 class="card-title">AMIRI's Autumn-Winter 2024 Đại sứ toàn cầu</h4>
             <p class="card-text mt-3 text-muted">“AMIRI's Autumn-Winter 2024 là sàn diễn đầu tiên của tôi và đây cũng
@@ -117,9 +115,7 @@
         </div>
 
         <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
-          <img class="blog-img"
-            src="https://scontent.fsgn6-2.fna.fbcdn.net/v/t39.30808-6/422840274_936550431160893_2957141005116981815_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=gc-eGZhRWTQQ7kNvgG4v0lI&_nc_ht=scontent.fsgn6-2.fna&oh=00_AYBbsvm5doVwhGkeNuRU3ox4B8A05O2T49QvVNNYgBc7wg&oe=66EC1467"
-            alt="">
+          <img class="blog-img" src="../assets/images/blog2.png" alt="">
           <div class="card-body px-0">
             <h4 class="card-title">Làm Sáng Tỏ Logo Và Thương Hiệu Thời Trang Aimiri </h4>
             <p class="card-text mt-3 text-muted"> Logo của Amiri thể hiện tinh thần nổi loạn kết hợp với sự tinh tế,
@@ -139,9 +135,7 @@
         </div>
 
         <div class="card border-0 col-md-6 col-lg-4 bg-transparent my-3">
-          <img
-            src="file:///C:/Users/nguye/OneDrive/Documents/A%20Lu%E1%BA%ADn%20V%C4%83n/attire-shopping-site-using-bootstrap-5-master/attire-shopping-site-using-bootstrap-5-master/images/blog_1.jpg"
-            alt="">
+          <img class="blog-img" src="../assets/images/blog3.png" alt="">
           <div class="card-body px-0">
             <h4 class="card-title">Vì Sao Quần Jean Amiri Lại Đắt Đỏ Mà Vẫn Được Ưa Chuộng?</h4>
             <p class="card-text mt-3 text-muted">Bài viết phân tích lý do quần jean Amiri có giá cao ngất ngưởng. Nguyên
@@ -165,43 +159,43 @@
   <!-- Popular -->
   <section id="popular" class="py-5">
     <div class="container">
-      <div class="title text-center pt-3 pb-5">
+      <div class="topic-title text-center pt-3 pb-5">
         <h2 class="position-relative d-inline-block ms-4">Top phổ biến</h2>
       </div>
 
       <div class="row align-items-start">
         <div class="col-md-6 col-lg-4 row g-3">
-          <h3 class="fs-5">Top đánh giá</h3>
+          <h3 class="fs-5"><i class="fa-solid fa-fire" style="color: #ed0202;"></i> Top đánh giá</h3>
           <div v-for="product in bestRate" class="d-flex align-items-start justify-content-start cursor-pointer"
             @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price">{{ formatPrice(product.price) }}đ</span>
+              <span class="price">{{ formatPrice(product.price) }}₫</span>
             </div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 row g-3">
-          <h3 class="fs-5">Top bán chạy</h3>
+          <h3 class="fs-5"><i class="fa-solid fa-fire" style="color: #ed0202;"></i> Top bán chạy</h3>
           <div v-for="product in bestSeller" class="d-flex align-items-start justify-content-start cursor-pointer"
             @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price">{{ formatPrice(product.price) }}đ</span>
+              <span class="price">{{ formatPrice(product.price) }}₫</span>
             </div>
           </div>
         </div>
 
         <div class="col-md-6 col-lg-4 row g-3">
-          <h3 class="fs-5">Mới nhất</h3>
+          <h3 class="fs-5"><i class="fa-solid fa-fire" style="color: #ed0202;"></i> Mới nhất</h3>
           <div v-for="product in lastest" class="d-flex align-items-start justify-content-start cursor-pointer"
             @click="goToDetail(product.id)">
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price">{{ formatPrice(product.price) }}đ</span>
+              <span class="price">{{ formatPrice(product.price) }}₫</span>
             </div>
           </div>
         </div>
@@ -218,6 +212,7 @@ export default {
   data() {
     return {
       collections: [],
+      newCollections: [],
       categories: [],
       bestRate: [],
       bestSeller: [],
@@ -250,7 +245,8 @@ export default {
     },
     async fetchCollection() {
       this.collections = await productService.getAll();
-      this.categories = this.collections.reduce((acc, item) => {
+      this.newCollections = this.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 8);
+      this.categories = this.newCollections.reduce((acc, item) => {
         if (!acc.find((category) => category.name === item.categoryName)) {
           acc.push({ name: item.categoryName });
         }
@@ -279,3 +275,10 @@ export default {
   // }
 }
 </script>
+
+<style scoped>
+#popular img {
+  max-height: 86px !important;
+  object-fit: contain;
+}
+</style>

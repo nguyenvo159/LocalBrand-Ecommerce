@@ -1,9 +1,10 @@
 <template>
     <div class="container">
         <div v-if="product" class="row">
-            <div class="mt-3 mb-3 col-12">
-                <h2>Sản phẩm
-                    / {{ translatedCategory() }}
+            <div class="mt-3 mb-3 col-12 topic-title">
+                <h2 class="text-capitalize
+                ">Collection
+                    / {{ product.categoryName }}
                 </h2>
             </div>
 
@@ -43,7 +44,7 @@
                 </div>
                 <hr>
 
-                <h4><span class="price">{{ product.price }}đ</span></h4> <br>
+                <h4><span class="price">{{ formatPrice(product.price) }}₫</span></h4> <br>
                 <div class="d-flex justify-content-around">
                     <div class="item-policy text-muted"><i class="fa-solid fa-repeat"></i> Đổi trả dễ dàng</div>
                     <div class="item-policy text-muted"><i class="fa-solid fa-check"></i> Chính hãng 100%</div>
@@ -83,7 +84,7 @@
                         class="cursor-pointer text-decoration-none error-feedback"> + Hướng dẫn chọn size</a></p>
 
                 <p class="w-100 text-muted font-italic"><i class="fa-solid fa-truck-fast"></i> Miễn phí giao hàng cho
-                    tất cả đơn hàng từ 300.000đ</p>
+                    tất cả đơn hàng từ 300.000₫</p>
 
                 <p>Số lượng:</p>
                 <div class="row d-flex justify-content-center">
@@ -184,11 +185,30 @@
                             <button class="btn border mr-3 mt-2">2 sao({{ countStar(2) }})</button>
                             <button class="btn border mr-3 mt-2">1 sao({{ countStar(1) }})</button>
                         </div>
-                        <div class="mt-3">
-                            <button class="btn btn-danger">Gửi đánh giá của bạn</button>
+                        <div v-if="!showComment" class="mt-3">
+                            <button class="btn btn-danger" @click="showCommentForm">Gửi đánh giá của bạn</button>
+                        </div>
+                        <div v-if="showComment" class="mt-5 border-top">
+                            <div class="rating mt-3">
+                                <p class="mt-2">Vui lòng đánh giá số sao bên dưới</p>
+                                <span v-for="n in 5" :key="n" class="star" @click="setRating(n)"
+                                    style="cursor: pointer;">
+                                    <i :class="getStarClass(n, selectedRating)" aria-hidden="true"
+                                        style="font-size: 24px;"></i>
+                                </span>
+                            </div>
 
+                            <div class="form-group mt-3">
+                                <textarea v-model="newComment" class="form-control" rows="4" @focus="resetError"
+                                    placeholder="Viết đánh giá của bạn..."></textarea>
+                                <div v-if="errorComment">
+                                    <p class="error-feedback">Vui lòng nhập đánh giá.</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger mt-2" @click="submitReview">Gửi đánh giá</button>
                         </div>
                     </div>
+
                     <div class="col-11 p-0 m-0 py-4 row justify-content-start align-items-start">
                         <div class="col-12 py-3 border-bottom" v-for="cmt in comment">
                             <div class="card border-0">
@@ -247,6 +267,12 @@ export default {
             errorSize: false,
             active: true,
             inventory: 0,
+            showComment: false,
+            selectedRating: 5,
+            newComment: "",
+            errorComment: false,
+            myComment: null,
+            user: null,
         };
     },
     methods: {
@@ -259,7 +285,7 @@ export default {
                 case 'polo':
                     return 'Phụ kiện';
                 default:
-                    return this.product.category;
+                    return this.product.categoryName;
             }
         },
         countStar(i) {
@@ -303,28 +329,9 @@ export default {
             const formattedDate = format(new Date(date), "HH:mm:ss dd/MM/yyyy");
             return formattedDate;
         },
-        async addToCart() {
-            try {
-
-                var user = this.$store.getters.getUser;
-                if (this.$store.getters.isLoggedIn === false || user === null) {
-                    this.$router.push('/auth/login');
-                    return;
-                }
-                await CartService.addProductToCart({
-                    userId: user.id,
-                    productId: this.product.id,
-                    sizeName: this.selectedSize,
-                    quantity: parseInt(document.getElementById('quantityDetail').value),
-                })
-                this.$store.dispatch('fillCart');
-                this.$router.push('/cart');
-            }
-            catch (error) {
-                console.error(error);
-            }
+        setRating(rating) {
+            this.selectedRating = rating;
         },
-
         handleInput() {
             const quantityInput = document.getElementById('quantityDetail');
             if (quantityInput < 1) {
@@ -356,14 +363,107 @@ export default {
             }
 
         },
+        formatPrice(price) {
+            return price.toLocaleString('vi-VN');
+        },
+        resetError() {
+            this.errorComment = false;
+        },
+        showCommentForm() {
+            this.showComment = !this.showComment;
+        },
+        async submitReview() {
+            if (!this.newComment) {
+                this.errorComment = true;
+                return;
+            }
+            const user = this.$store.getters.getUser;
+            if (this.$store.getters.isLoggedIn === false || !user) {
+                this.$router.push('/auth/login');
+            }
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
+            try {
+                if (this.myComment) {
+                    await reviewService.update(
+                        {
+                            id: this.myComment.id,
+                            userId: user.id,
+                            productId: this.product.id,
+                            rating: this.selectedRating,
+                            comment: this.newComment,
+                        }
+                    );
+                } else {
+                    await reviewService.create({
+                        userId: user.id,
+                        productId: this.product.id,
+                        rating: this.selectedRating,
+                        comment: this.newComment,
+                    });
+                }
+                loader.hide();
+                this.comment = await reviewService.getByProductId(this.product.id);
+                this.loadComment();
+                this.showComment = false;
+            } catch (error) {
+                loader.hide();
+                console.error(error);
+            }
+        },
+        async addToCart() {
+            try {
+
+                var user = this.$store.getters.getUser;
+
+                if (user) {
+                    await CartService.addProductToCart({
+                        userId: user.id,
+                        productId: this.product.id,
+                        sizeName: this.selectedSize,
+                        quantity: parseInt(document.getElementById('quantityDetail').value),
+                    })
+                }
+                else {
+                    this.$router.push('/auth/login');
+                    return;
+                }
+                this.$store.dispatch('fillCart');
+                this.$router.push('/cart');
+            }
+            catch (error) {
+                console.error(error);
+            }
+        },
+        loadComment() {
+            if (this.$store.getters.getUser) {
+                this.user = this.$store.getters.getUser;
+                this.myComment = this.comment.find(cmt => cmt.userId === this.user.id);
+                if (this.myComment) {
+                    this.selectedRating = this.myComment.rating;
+                    this.newComment = this.myComment.comment;
+                    this.comment = this.comment.filter(cmt => cmt.userId !== this.user.id);
+                    this.comment.unshift(this.myComment);
+                }
+            }
+        }
 
     },
     async mounted() {
         try {
             const id = this.$route.params.id;
             this.product = await ProductService.getById(id);
+            const sizeOrder = ['s', 'm', 'l', 'xl', 'xxl'];
+            this.product.sizes.sort((a, b) => sizeOrder.indexOf(a.name) - sizeOrder.indexOf(b.name));
             this.inventory = this.product.sizes.reduce((acc, size) => acc + size.inventory, 0);
             this.comment = await reviewService.getByProductId(id);
+            this.loadComment();
         } catch (error) {
             console.error(error);
         }

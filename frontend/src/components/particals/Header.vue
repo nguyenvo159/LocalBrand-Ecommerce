@@ -26,16 +26,16 @@
                                 <a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                     {{ user.name }}
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right pt-3 mt-1 border-0">
-                                    <router-link :to="{ name: 'Profile' }" class="dropdown-item">
-                                        <i class="fa-solid fa-user"></i>
+                                <div class="dropdown-menu dropdown-menu-right mt-4 p-0 border-0 shadow">
+                                    <router-link :to="{ name: 'Profile' }" class="dropdown-item py-2">
+                                        <i class="fa-solid fa-user mr-2"></i>
                                         Thông tin cá nhân</router-link>
-                                    <a class="dropdown-item">
-                                        <i class="fa-solid fa-receipt"></i>
+                                    <router-link :to="{ name: 'OrderList' }" class="dropdown-item py-2">
+                                        <i class="fa-solid fa-receipt mr-2"></i>
                                         Đơn hàng
-                                    </a>
-                                    <a class="dropdown-item" @click="logout">
-                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                    </router-link>
+                                    <a class="dropdown-item py-2" @click="logout">
+                                        <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>
                                         Đăng xuất</a>
                                 </div>
                             </div>
