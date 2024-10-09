@@ -2,7 +2,7 @@
     <section id="collection" class="py-3">
         <div class="container">
             <div class="row g-0">
-                <div class="d-flex flex-wrap justify-content-center mt-3 filter-button-group">
+                <div class="d-flex flex-wrap justify-content-center my-3 filter-button-group">
                     <button type="button" class="btn rounded-pill py-2 px-3 m-2 btn-outline-dark text-capitalize"
                         @click="changeCategory('all-collection')"
                         :class="{ 'active-filter-btn': category === 'all-collection' }">All</button>
@@ -14,8 +14,31 @@
                         style="transition: 0.3 ease-in-out;">
                         {{ category.name }}
                     </button>
+
                 </div>
 
+                <div class="py-3 px-5 d-flex align-items-center border-top">
+                    <div class="form-group d-flex align-items-center m-0">
+                        <span class="m-0 pr-3 text-muted">Sắp xếp</span>
+                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'newest' }"
+                            @click="changeSort('newest')">Mới
+                            nhất</button>
+                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'popular' }"
+                            @click="changeSort('popular')">Phổ
+                            biến</button>
+                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'related' }"
+                            @click="changeSort('related')">Liên
+                            quan</button>
+                        <div>
+                            <select class="form-control" id="sortProduct" placeholder="Giá"
+                                @change="changeSortByPrice($event)">
+                                <option>Giá</option>
+                                <option value="price-asc">Giá: Thấp đến Cao</option>
+                                <option value="price-desc">Giá: Cao đến Thấp</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="collection-list row gx-0 gy-1">
                     <div v-for="item in products" :key="item.id"
                         :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 cursor-pointer', item.categoryName]">
@@ -52,6 +75,9 @@ export default {
         return {
             category: null,
             products: [],
+            originalProducts: [],
+            sortType: 'newest', // newest, popular, related
+            sortPrice: 'price-asc', // price-asc, price-desc
         };
     },
     computed: {
@@ -70,15 +96,42 @@ export default {
     methods: {
         async fetchCollection() {
             this.category = this.$route.params.category.toLocaleLowerCase();
+            let fetchedProducts = [];
             if (this.category === 'all-collection') {
-                this.products = await ProductService.getAll();
-                return;
+                fetchedProducts = await ProductService.getAll();
+            } else {
+                fetchedProducts = await ProductService.getByCategory(this.category);
             }
-            else
-                this.products = await ProductService.getByCategory(this.category);
+
+            this.originalProducts = [...fetchedProducts];
+            this.products = [...fetchedProducts];
+            this.sortType = 'newest';
+            this.sortProducts();
+
         },
         changeCategory(category) {
             this.$router.push({ name: 'ProductList', params: { category } });
+        },
+        changeSort(sort) {
+            this.sortType = sort;
+            this.sortProducts();
+        },
+        changeSortByPrice(event) {
+            this.sortPrice = event.target.value;
+            this.sortProducts();
+        },
+        sortProducts() {
+            this.products = [...this.originalProducts];
+            if (this.sortType === 'newest') {
+                this.products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (this.sortType === 'popular') {
+                this.products.sort((a, b) => b.rating - a.rating);
+            }
+            if (this.sortPrice === 'price-asc') {
+                this.products.sort((a, b) => a.price - b.price);
+            } else if (this.sortPrice === 'price-desc') {
+                this.products.sort((a, b) => b.price - a.price);
+            }
         },
         formatPrice(price) {
             return price.toLocaleString('vi-VN');
@@ -105,3 +158,11 @@ export default {
     },
 };
 </script>
+
+<style>
+.active-sort-btn,
+.active-sort-btn:hover {
+    background-color: red;
+    color: #fff;
+}
+</style>

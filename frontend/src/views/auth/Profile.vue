@@ -1,5 +1,5 @@
 <template>
-    <section class="pt-3" style="background-color:#f1f3f7 ;">
+    <section class="pt-4" style="background-color:#f1f3f7 ;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4">
@@ -14,7 +14,8 @@
                                     <p class="text-secondary mb-3">{{ user.role == 'User' ? 'Khách hàng' : 'Nhân viên'
                                         }}
                                     </p>
-                                    <button class="btn btn-success w-75 mb-2">Đơn Hàng</button>
+                                    <router-link :to="{ name: 'OrderList' }" class="btn btn-success w-75 mb-2">Đơn
+                                        Hàng</router-link>
                                     <a class="btn btn-primary w-75 mb-2 text-white main-hover" href="#change-password">
                                         Đổi Mật Khẩu</a>
                                     <button @click="logout" class="btn btn-outline-danger w-75 mb-2">Đăng Xuất</button>
@@ -140,6 +141,8 @@
                 </div>
             </div>
         </div>
+        <NotificationOption v-if="showToast" :visible="showToast" :type="toastType" @close="showToast = false"
+            :message="toastMessage" />
     </section>
 </template>
 
@@ -147,16 +150,21 @@
 import * as yup from 'yup';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import UserService from '@/services/user.service';
+import NotificationOption from '@/components/NotificationOption.vue';
 
 export default {
     components: {
-        Form, Field, ErrorMessage
+        Form, Field, ErrorMessage,
+        NotificationOption
     },
     data() {
         return {
             password: '',
             newPassword: '',
             rePassword: '',
+            showToast: false,
+            toastType: 'success', // Kiểu toast ('success', 'error', 'info')
+            toastMessage: ''
         };
     },
     computed: {
@@ -178,50 +186,57 @@ export default {
 
         },
         async update() {
-            let loader = this.$loading;
+            let loader = this.$loading.show({
+                container: null,
+                canCancel: true,
+                color: '#808EF4',
+                loader: 'dots',
+                width: 100,
+                height: 100,
+            });;
             try {
-                loader = loader.show({
-                    container: null,
-                    canCancel: true,
-                    color: '#808EF4',
-                    loader: 'dots',
-                    width: 100,
-                    height: 100,
-                });
                 await UserService.update(this.user);
                 loader.hide();
+                this.toastType = 'success';
+                this.toastMessage = 'Cập nhật thành công!';
                 this.refresh();
             } catch (error) {
                 loader.hide();
-
+                this.toastType = 'error';
+                this.toastMessage = 'Lỗi!';
                 console.error('Lỗi khi cập nhật thông tin cá nhân:', error);
             } finally {
                 loader.hide();
+                this.showToast = true;
             }
         },
         async changePassword(values) {
-            let loader = this.$loading;
+            let loader = this.$loading.show({
+                container: null,
+                canCancel: true,
+                color: '#808EF4',
+                loader: 'dots',
+                width: 100,
+                height: 100,
+            });;
             try {
-                loader = loader.show({
-                    container: null,
-                    canCancel: true,
-                    color: '#808EF4',
-                    loader: 'dots',
-                    width: 100,
-                    height: 100,
-                });
                 let r = await UserService.changePassword({
                     oldPassword: values.password,
                     newPassword: values.newPassword,
                 });
                 loader.hide();
+                this.toastType = 'success';
+                this.toastMessage = 'Cập nhật thành công!';
                 this.refresh();
                 this.$refs.passwordForm.resetForm();
             } catch (error) {
                 loader.hide();
+                this.toastType = 'error';
+                this.toastMessage = error.response.data.message;
                 alert('Lỗi khi cập nhật mật khẩu:', error.response.data.message);
             } finally {
                 loader.hide();
+                this.showToast = true;
             }
         }
     },

@@ -1,7 +1,7 @@
 <template>
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
-    <section class="pt-3" style="background-color: #f1f3f7;">
+    <section class="pt-4" style="background-color: #f1f3f7;">
         <div class="container padding-bottom-3x mb-1">
             <div class="card mb-3">
                 <div class="p-4 text-center text-white text-lg bg-dark rounded-top"><span class="text-uppercase">ĐƠN
@@ -105,7 +105,7 @@
                                     <tr>
                                         <td colspan="2">Thành tiền</td>
                                         <td class="text-end price">{{ formatPrice(order.totalAmount -
-                                            shipCost[order.shipType] - priceReduceDiscount) }}đ</td>
+                                            (shipCost[order.shipType] + priceReduceDiscount)) }}đ</td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Vận chuyển</td>
@@ -113,7 +113,7 @@
                                     </tr>
                                     <tr v-if="discount">
                                         <td colspan="2">Discount <span>(Code: {{ discount.code }})</span></td>
-                                        <td class="price text-end">{{ formatPrice(priceReduceDiscount) }}đ</td>
+                                        <td class="price text-end">-{{ formatPrice(priceReduceDiscount) }}đ</td>
                                     </tr>
                                     <tr class="fw-bold">
                                         <td colspan="2">Tổng tiền</td>
@@ -219,7 +219,9 @@ export default {
                 if (this.order.discountId) {
                     this.discount = await DiscountService.getById(this.order.discountId);
                     var totalAmount = this.order.orderItems.reduce((total, item) => total + item.productPrice * item.quantity, 0);
-                    this.priceReduceDiscount = totalAmount - this.order.totalAmount;
+                    var potentialDiscount = (totalAmount * this.discount.discountPercentage) / 100;
+                    this.priceReduceDiscount = Math.min(potentialDiscount, this.discount.maximumDiscount);
+                    // this.priceReduceDiscount = totalAmount + shipCost[order.shipType] - this.order.totalAmount;
                 }
             }
             catch (error) {

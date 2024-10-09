@@ -1,5 +1,5 @@
 <template>
-    <section class="pt-3" style="background-color: #f1f3f7;">
+    <section class="pt-4" style="background-color: #f1f3f7;">
         <div class="container">
             <h3 class="text-uppercase">Danh sách đơn hàng</h3>
             <div class="row">
@@ -70,8 +70,8 @@
                                             <tr v-for="(item, index) in order.orderItems" :key="item.id" class="line">
                                                 <td>{{ index + 1 }}</td>
                                                 <td><span>{{ item.productName }}</span></td>
-                                                <td class="text-center">2</td>
-                                                <td class="text-center">$75</td>
+                                                <td class="text-center">{{ item.quantity }}</td>
+                                                <td class="text-center">{{ formatPrice(item.productPrice) }}</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2">

@@ -47,16 +47,25 @@
                 </div>
             </div>
         </div>
+        <NotificationOption v-if="showToast" :visible="showToast" :type="toastType" @close="showToast = false"
+            :message="toastMessage" />
     </div>
 </template>
 
 <script>
+import NotificationOption from '@/components/NotificationOption.vue';
 export default {
+    components: {
+        NotificationOption
+    },
     data() {
         return {
             name: '',
             email: '',
-            message: ''
+            message: '',
+            showToast: false,
+            toastType: 'info',
+            toastMessage: ''
         };
     },
     methods: {
@@ -86,8 +95,10 @@ export default {
                 this.name = '';
                 this.email = '';
                 this.message = '';
-
                 loader.hide();
+                this.showToast = true;
+                this.toastType = 'success';
+                this.toastMessage = 'Gởi biểu mẫu thành công';
             } catch (error) {
                 loader.hide();
                 alert("Gởi biểu mẫu không thành công" + error);

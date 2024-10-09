@@ -16,7 +16,7 @@
               <p class="text-capitalize my-1"><router-link class="title-product"
                   :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
                     item.name }}</router-link></p>
-              <span class="price">{{ item.price }}đ</span>
+              <span class="price">{{ formatPrice(item.price) }}</span>
             </div>
           </div>
         </div>
@@ -29,11 +29,18 @@
 </template>
 
 <script>
+import { format } from 'date-fns';
+
 export default {
   props: ['keyword'],
   computed: {
     results() {
       return this.$store.getters.getSearchResults;
+    },
+  },
+  methods: {
+    formatPrice(price) {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     },
   },
 };

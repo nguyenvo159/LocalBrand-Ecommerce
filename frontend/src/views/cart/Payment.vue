@@ -55,13 +55,11 @@
                                                             <div class="col-lg-4">
                                                                 <div class="mb-4 mb-lg-0">
                                                                     <select class="form-control form-select"
-                                                                        title="province" v-model="province">
+                                                                        title="province" v-model="province"
+                                                                        @change="handleProvinceChange">
                                                                         <option value="">Tỉnh/Thành phố</option>
-                                                                        <option value="Hà Nội">Hà Nội</option>
-                                                                        <option value="Đà Nẵng">Đà Nẵng</option>
-                                                                        <option value="Bình Dương">Bình Dương</option>
-                                                                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                                                                        <option value="Cần Thơ">Cần Thơ</option>
+                                                                        <option v-for="prov in provinces" :key="prov.id"
+                                                                            :value="prov.name">{{ prov.name }}</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -69,11 +67,11 @@
                                                             <div class="col-lg-4">
                                                                 <div class="mb-4 mb-lg-0">
                                                                     <select class="form-control form-select"
-                                                                        title="district" v-model="district">
+                                                                        title="district" v-model="district"
+                                                                        @change="handleDistrictChange">
                                                                         <option value="">Quận/Huyện</option>
-                                                                        <option value="Quận 1">Quận 1</option>
-                                                                        <option value="Quận 2">Quận 2</option>
-                                                                        <option value="Quận 3">Quận 3</option>
+                                                                        <option v-for="dist in districts" :key="dist.id"
+                                                                            :value="dist.name">{{ dist.name }}</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -83,9 +81,8 @@
                                                                     <select class="form-control form-select"
                                                                         v-model="ward">
                                                                         <option value="">Xã/Phường/Thị trấn</option>
-                                                                        <option value="Xã 1">Xã 1</option>
-                                                                        <option value="Xã 2">Xã 2</option>
-                                                                        <option value="Phường 3">Phường 3</option>
+                                                                        <option v-for="ward in wards" :key="ward.id"
+                                                                            :value="ward.name">{{ ward.name }}</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -181,7 +178,7 @@
                                                         <td>
                                                             <p class="price mb-0 text-end">{{
                                                                 formatPrice(item.productPrice)
-                                                            }}đ
+                                                                }}đ
                                                                 <br> x {{ item.quantity }}
                                                             </p>
                                                         </td>
@@ -309,6 +306,10 @@ export default {
             shipType: 1,
             shipCost: [0, 35000, 50000, 25000],
             userInfo: {},
+            sortedData: [],
+            provinces: [],
+            districts: [],
+            wards: [],
             province: '',
             district: '',
             ward: '',
@@ -392,6 +393,43 @@ export default {
                 loader.hide();
             }
         },
+        // Xử lý địa chỉ
+        loadSortedData() {
+            import('@/store/sorted.json').then(data => {
+                this.sortedData = data.default;
+                this.provinces = this.sortedData.map(province => ({
+                    id: province[0],
+                    name: province[1]
+                }));
+            });
+        },
+        handleProvinceChange() {
+            this.district = '';
+            this.ward = '';
+            this.wards = [];
+
+            const selectedProvince = this.sortedData.find(prov => prov[1] === this.province);
+            if (selectedProvince) {
+                this.districts = selectedProvince[4].map(district => ({
+                    id: district[0],
+                    name: district[1]
+                }));
+            }
+        },
+        handleDistrictChange() {
+            this.ward = '';
+
+            const selectedProvince = this.sortedData.find(prov => prov[1] === this.province);
+            if (selectedProvince) {
+                const selectedDistrict = selectedProvince[4].find(dist => dist[1] === this.district);
+                if (selectedDistrict) {
+                    this.wards = selectedDistrict[4].map(ward => ({
+                        id: ward[0],
+                        name: ward[1]
+                    }));
+                }
+            }
+        }
 
     },
     mounted() {
@@ -401,6 +439,7 @@ export default {
         } else {
             this.userInfo = { ...this.$store.getters.getUser };
         }
+        this.loadSortedData();
     },
 };
 

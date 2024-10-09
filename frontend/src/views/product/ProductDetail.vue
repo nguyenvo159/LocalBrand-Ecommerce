@@ -164,7 +164,26 @@
                         <div class="col-12 p-4 row justify-content-center bg-light">
                             <p class="w-100 text-center">Hiện tại chúng tôi chưa có đánh giá nào về sản phẩm này.</p>
 
-                            <button class="btn btn-danger">Gửi đánh giá của bạn</button>
+                            <button class="btn btn-danger" @click="showCommentForm">Gửi đánh giá của bạn</button>
+                            <div v-if="showComment" class="mt-5 border-top">
+                                <div class="rating mt-3">
+                                    <p class="mt-2">Vui lòng đánh giá số sao bên dưới</p>
+                                    <span v-for="n in 5" :key="n" class="star" @click="setRating(n)"
+                                        style="cursor: pointer;">
+                                        <i :class="getStarClass(n, selectedRating)" aria-hidden="true"
+                                            style="font-size: 24px;"></i>
+                                    </span>
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <textarea v-model="newComment" class="form-control" rows="4" @focus="resetError"
+                                        placeholder="Viết đánh giá của bạn..."></textarea>
+                                    <div v-if="errorComment">
+                                        <p class="error-feedback">Vui lòng nhập đánh giá.</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger mt-2" @click="submitReview">Gửi đánh giá</button>
+                            </div>
                         </div>
 
                     </div>
@@ -226,6 +245,8 @@
 
 
                 </div>
+                <NotificationOption v-if="showToast" :visible="showToast" :type="toastType" @close="showToast = false"
+                    :message="toastMessage" />
             </div>
 
         </div>
@@ -249,6 +270,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -257,10 +279,17 @@ import { format } from 'date-fns';
 import ProductService from "@/services/product.service";
 import reviewService from "@/services/review.service";
 import CartService from "@/services/cart.service";
+import NotificationOption from '@/components/NotificationOption.vue';
 
 export default {
+    components: {
+        NotificationOption,
+    },
     data() {
         return {
+            showToast: false,
+            toastType: 'success', // Kiểu toast ('success', 'error', 'info')
+            toastMessage: '',
             product: null,
             comment: [],
             selectedSize: 'freesize',
@@ -372,6 +401,33 @@ export default {
         showCommentForm() {
             this.showComment = !this.showComment;
         },
+        async addToCart() {
+            try {
+
+                var user = this.$store.getters.getUser;
+
+                if (user) {
+                    await CartService.addProductToCart({
+                        userId: user.id,
+                        productId: this.product.id,
+                        sizeName: this.selectedSize,
+                        quantity: parseInt(document.getElementById('quantityDetail').value),
+                    })
+                }
+                else {
+                    this.$router.push('/auth/login');
+                    return;
+                }
+                this.$store.dispatch('fillCart');
+                this.showToast = true;
+                this.toastType = 'success';
+                this.toastMessage = 'Đã thêm sản phẩm vào giỏ hàng';
+                // this.$router.push('/cart');
+            }
+            catch (error) {
+                console.error(error);
+            }
+        },
         async submitReview() {
             if (!this.newComment) {
                 this.errorComment = true;
@@ -409,35 +465,11 @@ export default {
                     });
                 }
                 loader.hide();
-                this.comment = await reviewService.getByProductId(this.product.id);
+                this.comment = await reviewService.getByProductId(this.$route.params.id);
                 this.loadComment();
                 this.showComment = false;
             } catch (error) {
                 loader.hide();
-                console.error(error);
-            }
-        },
-        async addToCart() {
-            try {
-
-                var user = this.$store.getters.getUser;
-
-                if (user) {
-                    await CartService.addProductToCart({
-                        userId: user.id,
-                        productId: this.product.id,
-                        sizeName: this.selectedSize,
-                        quantity: parseInt(document.getElementById('quantityDetail').value),
-                    })
-                }
-                else {
-                    this.$router.push('/auth/login');
-                    return;
-                }
-                this.$store.dispatch('fillCart');
-                this.$router.push('/cart');
-            }
-            catch (error) {
                 console.error(error);
             }
         },
@@ -452,7 +484,7 @@ export default {
                     this.comment.unshift(this.myComment);
                 }
             }
-        }
+        },
 
     },
     async mounted() {
