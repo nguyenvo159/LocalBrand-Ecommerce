@@ -55,24 +55,24 @@ public class EmailService : IEmailService
                     <br>
                     <table style='border-collapse: collapse; width: 100%;'>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Mã đơn hàng</th>
-                            <td style='border: 1px solid #dddddd; padding: 8px;'>{(order.Id).ToString().ToUpper()}</td>
+                            <th style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>Mã đơn hàng</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>{(order.Id).ToString().ToUpper()}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Trạng thái</th>
-                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.Status.GetDescription()}</td>
+                            <th style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>Trạng thái</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>{order.Status.GetDescription()}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Số điện thoại</th>
-                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.UserPhone}</td>
+                            <th style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>Số điện thoại</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>{order.UserPhone}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Địa chỉ</th>
-                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.Address}</td>
+                            <th style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>Địa chỉ</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>{order.Address}</td>
                         </tr>
                         <tr>
-                            <th style='border: 1px solid #dddddd; padding: 8px;'>Ghi chú</th>
-                            <td style='border: 1px solid #dddddd; padding: 8px;'>{order.Note ?? "Không có ghi chú"}</td>
+                            <th style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>Ghi chú</th>
+                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>{order.Note ?? "Không có ghi chú"}</td>
                         </tr>
                         
                     </table>
@@ -88,27 +88,22 @@ public class EmailService : IEmailService
                         {string.Join("\n", orderItem.Select(item =>
                             $@"
                         <tr>
-                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: center;'>{item.ProductName}</td>
+                            <td style='border: 1px solid #dddddd; padding: 8px; text-align: start;'>{item.ProductName}</td>
                             <td style='border: 1px solid #dddddd; padding: 8px; text-align: center;'>{item.Quantity}</td>
                             <td style='border: 1px solid #dddddd; padding: 8px; text-align: center;'>{item.ProductPrice:C0}</td>
                             <td style='border: 1px solid #dddddd; padding: 8px; text-align: center;'>{(item.ProductPrice * item.Quantity):C0}</td>
                         </tr>"))}
-                        <tr>
-                            <td><b>Phí vận chuyển({order.ShipType.GetDescription()}):</b> {shipCost[(int)order.ShipType]:C0}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Giảm giá:</b> {(total + shipCost[(int)order.ShipType] - order.TotalAmount):C0}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Tổng tiền:</b> {order.TotalAmount:C0}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Hình thức thanh toán: </b> Thanh toán khi nhận hàng</td>
-                        </tr>
+                        
                     </table>
-
+                    <p><b>Phí vận chuyển({order.ShipType.GetDescription()}):</b> {shipCost[(int)order.ShipType]:C0}</p>
+                    <p><b>Giảm giá:</b> {(total + shipCost[(int)order.ShipType] - order.TotalAmount):C0}</p>
+                    <p><b>Tổng tiền:</b> {order.TotalAmount:C0}</p>
+                    <p><b>Hình thức thanh toán: </b> Thanh toán khi nhận hàng</p>
+                    
+                    <br>
                     <p>Vui lòng chuẩn bị {order.TotalAmount:C0} trước khi nhận hàng.</p>
-                    <p>Nếu bạn có bất kỳ câu hỏi hay cần sự giúp đỡ nào hãy liên hệ lại với chúng tôi.</p>
+                    <p>Nếu bạn có bất kỳ câu hỏi hay cần sự giúp đỡ nào hãy liên hệ lại với chúng tôi.</p> 
+                    <br>
                     <p>Best regards,</p>
                     <p>AMIE Fashion</p>
                 </body>

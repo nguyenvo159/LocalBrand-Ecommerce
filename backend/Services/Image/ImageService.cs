@@ -144,6 +144,7 @@ public class ImageService : IImageService
             .OrderBy(x => x.ImageVector!.L2Distance(vectorStr))
             .Take(3) // Lấy x sản phẩm gần nhất
             .ToListAsync();
+        items = items.GroupBy(x => x.ProductId).Select(x => x.First()).ToList();
         return _mapper.Map<List<ProductDto>>(items);
     }
 

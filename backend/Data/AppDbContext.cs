@@ -34,7 +34,11 @@ public class AppDbContext : DbContext
     {
         modelBuilder.HasPostgresExtension("vector");
 
-
+        modelBuilder.Entity<ProductImage>()
+                .HasIndex(i => i.ImageVector)
+                .HasMethod("ivfflat")
+                .HasOperators("vector_l2_ops")
+                .HasStorageParameter("lists", 100);
         // Quan hệ 1-1 giữa User và Cart
         modelBuilder.Entity<User>()
             .HasOne(u => u.Cart)
