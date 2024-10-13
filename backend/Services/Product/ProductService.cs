@@ -331,10 +331,6 @@ public class ProductService : IProductService
                                        || p.Description.Contains(request.Search));
         }
         var totalRecords = await query.CountAsync();
-        if (totalRecords == 0)
-        {
-            throw new ApplicationException("Product not found");
-        }
         if (!request.PageSize.HasValue || !request.PageNumber.HasValue)
         {
             var result = await query.ToListAsync();

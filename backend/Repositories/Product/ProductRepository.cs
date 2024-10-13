@@ -101,6 +101,7 @@ public class ProductRepository : IProductRepository
             .Include(p => p.Reviews)
             .Where(p => p.Reviews.Any(r => r.CreatedAt > date))
             .OrderByDescending(p => p.Reviews.Average(r => r.Rating))
+            .ThenByDescending(p => p.Reviews.Count)
             .Take(10)
             .ToListAsync();
     }
