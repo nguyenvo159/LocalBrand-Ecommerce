@@ -195,7 +195,7 @@
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price">{{ formatPrice(product.price) }}₫</span>
+              <span class="price mt-2">{{ formatPrice(product.price) }}₫</span>
             </div>
           </div>
         </div>
@@ -280,5 +280,9 @@ export default {
 #popular img {
   max-height: 86px !important;
   object-fit: contain;
+}
+
+.title-product {
+  font-size: 14px;
 }
 </style>

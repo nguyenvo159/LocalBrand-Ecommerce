@@ -17,7 +17,7 @@
 
                 </div>
 
-                <div class="py-3 px-5 d-flex align-items-center border-top">
+                <div class="py-3 px-5 d-flex justify-content-between align-items-center border-top">
                     <div class="form-group d-flex align-items-center m-0">
                         <span class="m-0 pr-3 text-muted">Sắp xếp</span>
                         <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'newest' }"
@@ -38,8 +38,26 @@
                             </select>
                         </div>
                     </div>
+                    <div class="d-flex align-items-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination m-0">
+                                <li class="page-item" @click="changePage(pageNumber - 1)"><a class="page-link" href="#">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" v-for="p in totalPage" :class="{ 'active': p == pageNumber }"
+                                    @click="changePage(p)">
+                                    <a class="page-link" href="#">{{ p }}</a>
+                                </li>
+
+                                <li class="page-item" @click="changePage(pageNumber + 1)"><a class="page-link" href="#">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </a></li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-                <div class="collection-list row gx-0 gy-1">
+                <div v-if="products.length != 0" class="collection-list row gx-0 gy-1">
                     <div v-for="item in products" :key="item.id"
                         :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 cursor-pointer', item.categoryName]">
                         <div class="collection-img position-relative">
@@ -59,8 +77,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination m-0">
+                                <li class="page-item" @click="changePage(pageNumber - 1)"><a class="page-link" href="#">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" v-for="p in totalPage" :class="{ 'active': p == pageNumber }"
+                                    @click="changePage(p)">
+                                    <a class="page-link" href="#">{{ p }}</a>
+                                </li>
+
+                                <li class="page-item" @click="changePage(pageNumber + 1)"><a class="page-link" href="#">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </a></li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-                <div v-if="products.length == 0" class="w-100 d-flex justify-content-center align-items-center py-5">
+                <div v-else class="w-100 d-flex justify-content-center align-items-center py-5">
                     <span><i>Hiện chưa có sản phẩm,...</i></span>
                 </div>
             </div>
@@ -70,6 +106,8 @@
 
 <script>
 import ProductService from '@/services/product.service';
+import { set } from 'date-fns';
+import { data } from 'isotope-layout';
 export default {
     data() {
         return {
@@ -78,6 +116,9 @@ export default {
             originalProducts: [],
             sortType: 'newest', // newest, popular, related
             sortPrice: 'price-asc', // price-asc, price-desc
+            pageNumber: 1,
+            pageSize: 5,
+            totalPage: 1,
         };
     },
     computed: {
@@ -95,22 +136,45 @@ export default {
     },
     methods: {
         async fetchCollection() {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'dots',
+                canCancel: true,
+            });
             this.category = this.$route.params.category.toLocaleLowerCase();
             let fetchedProducts = [];
-            if (this.category === 'all-collection') {
-                fetchedProducts = await ProductService.getAll();
-            } else {
-                fetchedProducts = await ProductService.getByCategory(this.category);
-            }
 
-            this.originalProducts = [...fetchedProducts];
-            this.products = [...fetchedProducts];
+            const pageQuery = this.$route.query.page ? parseInt(this.$route.query.page) : 1;
+            const sizeQuery = this.$route.query.size ? parseInt(this.$route.query.size) : this.pageSize;
+
+            this.pageNumber = pageQuery;
+            this.pageSize = sizeQuery;
+            var data = {
+                pageNumber: this.pageNumber,
+                pageSize: this.pageSize,
+                categoryName: null
+            };
+            if (this.category != 'all-collection') {
+                data.categoryName = this.category;
+            }
+            fetchedProducts = await ProductService.getPaging(data);
+            loader.hide();
+
+            this.totalPage = fetchedProducts.totalPages;
+
+            this.originalProducts = [...fetchedProducts.items];
+            this.products = [...fetchedProducts.items];
             this.sortType = 'newest';
             this.sortProducts();
-
         },
         changeCategory(category) {
+            this.pageNumber = 1;
+            this.totalPage = 1;
             this.$router.push({ name: 'ProductList', params: { category } });
+
         },
         changeSort(sort) {
             this.sortType = sort;
@@ -119,6 +183,17 @@ export default {
         changeSortByPrice(event) {
             this.sortPrice = event.target.value;
             this.sortProducts();
+        },
+        changePage(page) {
+            if (page > 0 && page <= this.totalPage) {
+                this.$router.replace({
+                    name: 'ProductList',
+                    params: { category: this.category },
+                    query: { page: page, size: this.pageSize }
+                }).then(() => {
+                    this.fetchCollection();
+                });
+            }
         },
         sortProducts() {
             this.products = [...this.originalProducts];
@@ -153,6 +228,8 @@ export default {
         if (this.categories.length === 0) {
             await this.$store.dispatch('fillCategories');
         }
+        this.pageNumber = 1;
+        this.totalPage = 1;
         await this.fetchCollection();
         window.scrollTo(0, 0);
     },
