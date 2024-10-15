@@ -18,6 +18,8 @@ import OrderDetail from "@/views/order/OrderDetail.vue";
 //Admin
 import UserManage from "@/views/admin/UserManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
+import OrderManage from "@/views/admin/OrderManage.vue";
+
 import Login from "@/views/auth/Login.vue";
 import Register from "@/views/auth/Register.vue";
 const routes = [
@@ -35,6 +37,13 @@ const routes = [
     name: "ProductManage",
     component: ProductManage,
     meta: {requiresAuth: true, requiredRole: ['Admin']},
+  },
+
+  {
+    path: "/admin/order",
+    name: "OrderManage",
+    component: OrderManage,
+    // meta: {requiresAuth: true, requiredRole: ['Admin']},
   },
   // End - Admin
 

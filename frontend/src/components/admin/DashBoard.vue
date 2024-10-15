@@ -12,7 +12,8 @@
                     class="fas fa-user"></i><span>User</span></router-link>
             <router-link :to="{ name: 'ProductManage' }" :class="{ 'active': type == 'Product' }"><i
                     class="fas fa-box"></i><span>Product</span></router-link>
-            <!-- <router-link :to="{name: 'OrderManage'}"  :class="{'active': type == 'Order'}"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></router-link> -->
+            <router-link :to="{ name: 'OrderManage' }" :class="{ 'active': type == 'Order' }"><i
+                    class="fas fa-shopping-cart"></i><span>Order</span></router-link>
         </div>
         <hr>
         <div>

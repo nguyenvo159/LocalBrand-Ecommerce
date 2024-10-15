@@ -3,6 +3,9 @@
         href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
     <section class="pt-4" style="background-color: #f1f3f7;">
         <div class="container padding-bottom-3x mb-1">
+            <button @click="pushOrderRoute" class="h1 border-0 py-2 bg-transparent"><i
+                    class="fa-solid fa-arrow-left"></i> Đơn
+                hàng</button>
             <div class="card mb-3">
                 <div class="p-4 text-center text-white text-lg bg-dark rounded-top"><span class="text-uppercase">ĐƠN
                         HÀNG SỐ - </span><span class="text-medium text-uppercase">{{ order.id }}</span>
@@ -236,6 +239,9 @@ export default {
         },
         formatPrice(price) {
             return price.toLocaleString('vi-VN');
+        },
+        pushOrderRoute() {
+            this.$router.push({ name: 'OrderList' });
         }
     }
 }

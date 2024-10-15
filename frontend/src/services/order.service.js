@@ -35,6 +35,16 @@ class OrderService {
         }
     }
 
+    async getPaging(data) {
+        try {
+            const response = await this.api.post('/paging', data);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching orders with paging:", error);
+            throw error;
+        }
+    }
+
     async create(data) {
         try {
             const response = await this.api.post('/', data);
