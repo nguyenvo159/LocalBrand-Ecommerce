@@ -21,6 +21,9 @@ public class ProductDto
     public string CategoryName { get; set; } = string.Empty;
 
     public float Rating { get; set; }
+    public int RatingCount { get; set; } = 0;
+    public int Sold { get; set; } = 0;
+
     public List<string> ImageUrls { get; set; } = new List<string>();
     public List<SizeDto> Sizes { get; set; } = new List<SizeDto>();
 }

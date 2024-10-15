@@ -1,4 +1,5 @@
 ﻿using backend.Dto.Order;
+using backend.Dtos.Order;
 using backend.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,20 @@ public class OrderController : ControllerBase
         {
 
             throw new Exception("Error:", ex);
+        }
+    }
+
+    [HttpPost("paging")]
+    public async Task<IActionResult> GetPaging(OrderGetPagingRequestDto orderPagingDto)
+    {
+        try
+        {
+            var orders = await _orderService.GetPaging(orderPagingDto);
+            return Ok(orders);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
     }
 

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using backend.Dto.Cart;
+using backend.Dto.Common;
 using backend.Dto.Order;
+using backend.Dtos.Order;
 using backend.Entity;
 using backend.Extensions;
 using backend.Repositories;
@@ -167,6 +169,45 @@ public class OrderService : IOrderService
 
     }
 
-
-
+    public Task<PageResult<OrderDto>> GetPaging(OrderGetPagingRequestDto orderPagingDto)
+    {
+        var orders = _orderRepository.AsQueryable();
+        if (orderPagingDto.Status.HasValue)
+        {
+            orders = orders.Where(o => o.Status == orderPagingDto.Status);
+        }
+        if (!string.IsNullOrEmpty(orderPagingDto.Search))
+        {
+            var searchLower = orderPagingDto.Search.ToLower();
+            orders = orders.Where(o => o.Id.ToString().ToLower().Contains(searchLower)
+                                    || o.UserPhone.ToLower().Contains(searchLower)
+                                    || o.UserEmail.ToLower().Contains(searchLower)
+                                    || o.UserName.ToLower().Contains(searchLower));
+        }
+        if (orderPagingDto.FromDate.HasValue)
+        {
+            orders = orders.Where(o => o.CreatedAt >= orderPagingDto.FromDate);
+        }
+        if (orderPagingDto.ToDate.HasValue)
+        {
+            orders = orders.Where(o => o.CreatedAt <= orderPagingDto.ToDate);
+        }
+        var totalRecords = orders.Count();
+        if (orderPagingDto.PageNumber.HasValue)
+        {
+            orders = orders.Skip((orderPagingDto.PageNumber.Value - 1) * orderPagingDto.PageSize.Value);
+        }
+        if (orderPagingDto.PageSize.HasValue)
+        {
+            orders = orders.Take(orderPagingDto.PageSize.Value);
+        }
+        var result = new PageResult<OrderDto>
+        {
+            TotalRecords = totalRecords,
+            Items = _mapper.Map<List<OrderDto>>(orders.OrderByDescending(a => a.CreatedAt).ToList()),
+            PageNumber = orderPagingDto.PageNumber ?? 1,
+            PageSize = orderPagingDto.PageSize ?? 100
+        };
+        return Task.FromResult(result);
+    }
 }

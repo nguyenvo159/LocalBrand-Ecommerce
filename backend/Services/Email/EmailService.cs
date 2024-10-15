@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using backend.Dto.Order;
+using backend.Dtos.Contact;
 using backend.Entity;
 using backend.Extensions;
 using backend.Helper.EnumHelper;
@@ -25,7 +26,87 @@ public class EmailService : IEmailService
         _smtpSettings = smtpSettings;
     }
 
+    public async Task SendEmailContact(ContactCreateDto contactCreateDto)
+    {
+        try
+        {
+            // Tạo đối tượng MimeMessage để cấu hình email
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_smtpSettings.Value.SenderName, _smtpSettings.Value.SenderEmail));
+            message.To.Add(new MailboxAddress("Contact AMIE", "nguyenvo1373.hg@gmail.com"));
+            message.To.Add(new MailboxAddress(contactCreateDto.Name, contactCreateDto.Email));
+            message.Subject = "Liên hệ từ khách hàng - AMIE Fashion";
 
+            // Tạo body HTML cho email
+            var builder = new BodyBuilder
+            {
+                HtmlBody = $@"
+            <!DOCTYPE html>
+            <html lang='vi'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>Liên hệ</title>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        padding: 20px;
+                    }}
+                    .container {{
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+                    }}
+                    h2 {{
+                        color: #333;
+                    }}
+                    p {{
+                        color: #555;
+                    }}
+                    .footer {{
+                        margin-top: 20px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: #aaa;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <h2>Liên hệ từ khách hàng</h2>
+                    <p><strong>Tên khách hàng:</strong> {contactCreateDto.Name}</p>
+                    <p><strong>Email khách hàng:</strong> {contactCreateDto.Email}</p>
+                    <p><strong>Nội dung liên hệ:</strong></p>
+                    <p>{contactCreateDto.Message}</p>
+                    <br>
+                    <p>Chúng tôi sẽ phản hồi bạn sớm nhất có thể. Cảm ơn bạn đã liên hệ với chúng tôi!</p>
+                    <div class='footer'>
+                        <p>Email này được gửi từ hệ thống tự động. Vui lòng không trả lời trực tiếp.</p>
+                    </div>
+                </div>
+            </body>
+            </html>"
+            };
+
+            message.Body = builder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                client.Connect(_smtpSettings.Value.Server, _smtpSettings.Value.Port, false);
+                client.Authenticate(_smtpSettings.Value.Username, _smtpSettings.Value.Password);
+                await client.SendAsync(message);
+                client.Disconnect(true);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Có lỗi khi gửi email liên hệ.", ex);
+        }
+    }
 
     public async Task SendOrderConfirmationEmail(Guid orderId)
     {

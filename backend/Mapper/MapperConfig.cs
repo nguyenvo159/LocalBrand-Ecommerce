@@ -6,6 +6,8 @@ using backend.Dto.Review;
 using backend.Dto.Size;
 using backend.Dto.User;
 using backend.Dtos.Category;
+using backend.Dtos.Contact;
+using backend.Entities;
 using backend.Entity;
 using backend.Helper.EnumHelper;
 
@@ -27,6 +29,8 @@ public class MapperConfig : Profile
                 CreateMap<Product, ProductDto>()
                         .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(s => s.Category != null ? s.Category.Name : string.Empty))
                         .ForMember(dest => dest.Rating, opt => opt.MapFrom(s => s.Reviews.Count > 0 ? s.Reviews.Average(r => r.Rating) : 0))
+                        .ForMember(dest => dest.RatingCount, opt => opt.MapFrom(s => s.Reviews.Count > 0 ? s.Reviews.Count : 0))
+                        .ForMember(dest => dest.Sold, opt => opt.MapFrom(s => s.OrderItems.Count > 0 ? s.OrderItems.Count(x => x.Order.Status == Text.Enums.Enums.OrderStatus.Done) : 0))
                         .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ProductImages.Select(pi => pi.ImageUrl)))
                         .ForMember(dest => dest.Sizes, opt => opt.MapFrom(src => src.Sizes.Select(s => new SizeDto
                         {
@@ -101,6 +105,15 @@ public class MapperConfig : Profile
                                 Name = s.Size != null ? s.Size.Name : string.Empty,
                                 Inventory = s.Inventory
                         }) : new List<SizeDto>()));
+
+                // Contact
+
+                CreateMap<Contact, ContactDto>();
+                CreateMap<ContactCreateDto, Contact>()
+                        .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                        .ForMember(dest => dest.UserId, opt => opt.Ignore());
+                CreateMap<ContactUpdateDto, Contact>()
+                        .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
         }
 
 }

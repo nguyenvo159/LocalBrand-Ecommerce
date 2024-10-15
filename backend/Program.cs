@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using backend.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +106,7 @@ builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<ICloudService, CloudService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IContactService, ContactService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
@@ -121,6 +123,7 @@ builder.Services.AddScoped<IRepository<User>, Repository<User>>();
 builder.Services.AddScoped<IRepository<Order>, Repository<Order>>();
 builder.Services.AddScoped<IRepository<OrderItem>, Repository<OrderItem>>();
 builder.Services.AddScoped<IRepository<Discount>, Repository<Discount>>();
+builder.Services.AddScoped<IRepository<Contact>, Repository<Contact>>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
