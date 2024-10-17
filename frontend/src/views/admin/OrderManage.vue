@@ -12,8 +12,13 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Tổng đơn hàng</p>
-                                        <h4 class="my-1 text-info">4805</h4>
-                                        <p class="mb-0 font-13">+2.5% so với 7 ngày trước</p>
+                                        <h4 class="my-1 text-info">{{ orderAnalytics?.orderCount }}</h4>
+                                        <p class="mb-0 font-13">{{
+                                            orderAnalytics?.orderCount / orderAnalytics?.orderCountLastWeek * 100 - 100
+                                            }}% so
+                                            với tuần
+                                            trước
+                                        </p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
                                         <i class="fa fa-shopping-cart"></i>
@@ -28,8 +33,10 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Tổng doanh thu</p>
-                                        <h4 class="my-1 text-danger">{{ formatPrice(10000) }}</h4>
-                                        <p class="mb-0 font-13">+5.4% so với 7 ngày trước</p>
+                                        <h4 class="my-1 text-danger">{{ formatPrice(orderAnalytics?.revenuesWeek) }}
+                                        </h4>
+                                        <p class="mb-0 font-13"> so
+                                            với tuần trước {{ formatPrice(orderAnalytics?.revenuesLastWeek) }}</p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i
                                             class="fa fa-dollar"></i>
@@ -44,8 +51,10 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Doanh thu tháng</p>
-                                        <h4 class="my-1 text-success">{{ formatPrice(21000) }}</h4>
-                                        <p class="mb-0 font-13">-4.5% so với tháng trước</p>
+                                        <h4 class="my-1 text-success">{{ formatPrice(orderAnalytics?.revenueMonth
+                                        ) }}</h4>
+                                        <p class="mb-0 font-13">so
+                                            với tháng trước {{ formatPrice(orderAnalytics?.revenueLastMonth) }} </p>
                                     </div>
                                     <div
                                         class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto">
@@ -61,8 +70,11 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Số đơn hủy</p>
-                                        <h4 class="my-1 text-warning">12</h4>
-                                        <p class="mb-0 font-13">+8.4% so với tháng trước</p>
+                                        <h4 class="my-1 text-warning">{{ orderAnalytics?.canceledOrdersThisWeek
+                                            }}</h4>
+                                        <p class="mb-0 font-13"> so với tháng trước {{
+                                            orderAnalytics?.canceledOrdersLastWeek
+                                            }} đơn</p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
                                         <i class="fa fa-users"></i>
@@ -79,8 +91,8 @@
                             <div class="mb-2">
                                 <h5>Danh sách đơn hàng</h5>
                                 <div class="row justify-content-between">
-                                    <div class="col-md-4 btn-group pull-right">
-                                        <div class="btn-group form-group d-flex align-items-center">
+                                    <div class="col-12 col-lg-8 btn-group pull-right">
+                                        <div class="btn-group form-group d-flex align-items-center justify-content-">
                                             <i class="fa-solid fa-filter mr-2"></i><span class="mr-3">Filter: </span>
                                             <select class="form-control" @change="fectchOrder" v-model="filter">
                                                 <option value="">Tất cả</option>
@@ -90,6 +102,23 @@
                                                 <option value="3">Đã giao</option>
                                                 <option value="4">Đã hủy</option>
                                             </select>
+                                            <div class="col-md-4">
+                                                <div id="search-input"
+                                                    class="w-100 input-group d-flex align-items-center">
+                                                    <span class="pr-2">From Date: </span>
+                                                    <input type="date" class="form-control rounded-0" v-model="fromDate"
+                                                        @change="fectchOrder" style="box-shadow: none;" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div id="search-input"
+                                                    class="w-100 input-group d-flex align-items-center">
+                                                    <span class="pr-2">To Date: </span>
+                                                    <input type="date" class="form-control rounded-0" v-model="toDate"
+                                                        @change="fectchOrder" style="box-shadow: none;" />
+                                                </div>
+                                            </div>
                                             <button class="btn ml-2 text-dark" style="box-shadow: none; border: none;"
                                                 @click="refreshList()">
                                                 <i class=" fa-solid fa-rotate-right"
@@ -185,7 +214,7 @@ import NotificationModal from '@/components/NotificationModal.vue';
 import DashBoard from '@/components/admin/DashBoard.vue';
 import OrderService from '@/services/order.service';
 import OrderView from '@/components/admin/OrderView.vue';
-import { formatDate } from 'date-fns';
+import { formatDate, set } from 'date-fns';
 
 export default {
     components: {
@@ -197,13 +226,16 @@ export default {
     data() {
         return {
             orders: null,
+            orderAnalytics: null,
             pageNumber: 1,
             pageSize: 20,
             totalPages: 1,
             searchKey: '',
             status: ['Đang xử lý', 'Đã xác nhận', 'Đang giao hàng', 'Đã giao', 'Đã hủy'],
             filter: '',
-            order: null
+            order: null,
+            fromDate: this.fromDate ? new Date(this.fromDate).toISOString() : null,
+            toDate: this.toDate ? new Date(this.toDate).toISOString() : null
         };
     },
     methods: {
@@ -213,7 +245,8 @@ export default {
                 pageNumber: this.pageNumber,
                 pageSize: this.pageSize,
                 search: this.searchKey,
-                fromDate: null
+                fromDate: this.fromDate,
+                toDate: this.toDate
             }
             let loader = this.$loading.show({
                 container: null,
@@ -223,9 +256,15 @@ export default {
                 loader: 'bars',
                 canCancel: true,
             });
-            this.orders = await OrderService.getPaging(data);
+            setTimeout(async () => {
+                this.orders = await OrderService.getPaging(data);
+                this.orderAnalytics = await OrderService.getOrdersAnalytics();
+            }, 500);
+            setTimeout(() => {
+                loader.hide();
+            }, 500);
+
             this.totalPages = this.orders.totalPages;
-            loader.hide();
         },
         async searchOrder() {
             this.pageNumber = 1;

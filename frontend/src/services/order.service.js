@@ -74,6 +74,16 @@ class OrderService {
             throw error;
         }
     }
+
+    async getOrdersAnalytics() {
+        try {
+            const response = await this.api.get('/analytics');
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching orders analytics:", error);
+            throw error;
+        }
+    }
 }
 
 export default new OrderService();

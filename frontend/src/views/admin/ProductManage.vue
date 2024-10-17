@@ -17,8 +17,13 @@
                             <i class=" fa-solid fa-rotate-right" style="font-size: 20px;"></i></button>
                     </div>
                     <div class="w-25">
-                        <SearchInput v-model="searchText" />
+                        <!-- <SearchInput v-model="searchText" /> -->
+                        <div id="search-input" class="w-100 input-group d-flex align-items-center">
+                            <span class="pr-2">Search: </span>
+                            <input type="text" class="form-control rounded-0" placeholder="Nhập thông tin cần tìm..."
+                                v-model="searchText" @keyup.enter="fetchProduct" style="box-shadow: none;" />
 
+                        </div>
                     </div>
                 </div>
 
@@ -139,7 +144,7 @@
 </template>
 
 <script>
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 import ProductService from '@/services/product.service';
 import SearchInput from '@/components/SearchInput.vue';
 import ProductCreateUpdate from '@/components/admin/ProductCreateUpdate.vue';
@@ -168,11 +173,7 @@ export default {
     },
     computed: {
         filteredProducts() {
-            if (!this.searchText.trim()) return this.products;
-            this.items = this.$store.getters.getProducts;
-            return this.items.filter(product =>
-                (product.name + product.categoryName + product.description).toLowerCase().includes(this.searchText.toLowerCase())
-            );
+            return this.products;
         },
     },
     methods: {
@@ -260,16 +261,29 @@ export default {
             }
         },
         async fetchProduct() {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
             try {
                 var data = {
                     pageNumber: this.page,
-                    pageSize: this.size
+                    pageSize: this.size,
+                    search: this.searchText,
                 }
                 var result = await ProductService.getPaging(data);
+                setTimeout(() => {
+                    loader.hide();
+                }, 500);
                 this.totalPage = result.totalPages;
                 this.products = result.items;
                 this.items = result.items;
             } catch (error) {
+                loader.hide();
                 console.log(error);
             }
         },

@@ -10,6 +10,11 @@
   --pink: #e5345b;
   --border: 0.1rem solid rgba(255, 255, 255, 0.3);
 }
+
+html {
+  overflow-y: scroll; /* Giữ thanh cuộn luôn hiện */
+}
+
 body {
   margin: 0;
   padding: 0;

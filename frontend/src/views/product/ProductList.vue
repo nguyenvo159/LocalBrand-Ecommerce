@@ -161,7 +161,9 @@ export default {
                 data.categoryName = this.category;
             }
             fetchedProducts = await ProductService.getPaging(data);
-            loader.hide();
+            setTimeout(() => {
+                loader.hide();
+            }, 300);
 
             this.totalPage = fetchedProducts.totalPages;
 

@@ -91,6 +91,7 @@ import SearchInput from '@/components/SearchInput.vue';
 import UserCreateUpdate from '@/components/admin/UserCreateUpdate.vue';
 import NotificationModal from '@/components/NotificationModal.vue';
 import DashBoard from '@/components/admin/DashBoard.vue';
+import { set } from 'date-fns';
 
 export default {
     components: {
@@ -144,11 +145,23 @@ export default {
         },
 
         async retrieveUsers() {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
             try {
                 this.$store.dispatch('fillUsers');
                 this.users = this.$store.getters.getUsers;
+                setTimeout(() => {
+                    loader.hide();
+                }, 500);
                 this.users.sort((a, b) => a.name.localeCompare(b.name));
             } catch (error) {
+                loader.hide();
                 console.log(error);
             }
         },
@@ -188,4 +201,9 @@ export default {
 
 };
 </script>
-<style></style>
+<style scoped>
+.btn {
+    box-shadow: none !important;
+    border: none !important;
+}
+</style>

@@ -7,7 +7,8 @@
         <hr>
         <div class="py-3">
             <h6 class="py-2 text-uppercase admin-title"><span>Manage</span></h6>
-            <!-- <router-link :to="{name: 'Analytics'}" :class="{'active': type == 'Analytics'}"><i class="fas fa-chart-bar"></i><span>Thống kê</span></router-link> -->
+            <router-link :to="{ name: 'CustumerManage' }" :class="{ 'active': type == 'Custumer' }"><i
+                    class="fas fa-chart-bar"></i><span>Custumer</span></router-link>
             <router-link :to="{ name: 'UserManage' }" :class="{ 'active': type == 'User' }"><i
                     class="fas fa-user"></i><span>User</span></router-link>
             <router-link :to="{ name: 'ProductManage' }" :class="{ 'active': type == 'Product' }"><i

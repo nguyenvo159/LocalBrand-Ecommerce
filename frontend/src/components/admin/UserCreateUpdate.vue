@@ -154,9 +154,9 @@ export default {
 </script>
 
 
-<style>
-.btn:focus {
-    outline: none !important;
+<style scoped>
+.btn {
+    border: none !important;
     box-shadow: none !important;
 }
 </style>
