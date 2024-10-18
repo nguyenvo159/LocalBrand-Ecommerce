@@ -14,5 +14,6 @@ public interface IOrderService
     Task<OrderDto> Update(OrderUpdateDto orderUpdateDto);
     Task Delete(Guid id);
 
+    Task<OrderAnalyticsDto> GetOrderAnalytics();
 
 }

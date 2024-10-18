@@ -35,4 +35,25 @@ public class Enums
 
     }
 
+    public enum SortBy
+    {
+        [Description("Mới nhất")]
+        Newest = 0,
+
+        [Description("Phổ biến")]
+        Popular = 1,
+
+        [Description("Liên quan")]
+        Related = 2,
+    }
+
+    public enum OrderByPrice
+    {
+        [Description("Giá tăng dần")]
+        Asc = 0,
+
+        [Description("Giá giảm dần")]
+        Desc = 1
+    }
+
 }

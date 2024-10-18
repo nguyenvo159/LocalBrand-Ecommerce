@@ -52,6 +52,7 @@ namespace backend.Services
                 query = query.Skip((request.PageNumber.Value - 1) * request.PageSize.Value).Take(request.PageSize.Value);
             }
             var data = query.ToList();
+            data = data.OrderByDescending(x => x.CreatedAt).ToList();
             var result = new PageResult<ContactDto>
             {
                 TotalRecords = data.Count,
@@ -59,6 +60,7 @@ namespace backend.Services
                 PageSize = request.PageSize ?? 1,
                 PageNumber = request.PageNumber ?? 1
             };
+            result.Items = result.Items.OrderByDescending(x => x.CreatedAt).ToList();
             return Task.FromResult(result);
         }
 
@@ -71,6 +73,8 @@ namespace backend.Services
             }
             data = _mapper.Map(contact, data);
             await _rpContact.UpdateAsync(data);
+            if (!string.IsNullOrEmpty(contact.Reply))
+                await _emailService.SendEmailContactReply(data, contact.Reply);
             return data.Id;
         }
     }

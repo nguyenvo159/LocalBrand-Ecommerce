@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using backend.Dto.Common;
 using backend.Dto.Review;
 using backend.Entity;
 using backend.Repositories;
@@ -72,5 +73,30 @@ public class ReviewService : IReviewService
             throw new ApplicationException("Review not found");
         }
         return Task.FromResult(_mapper.Map<ReviewDto>(review));
+    }
+
+    public Task<PageResult<ReviewDto>> GetPaging(PageRequest request)
+    {
+        var query = _reviewRepository.AsQueryable().
+        Where(x => x.Rating <= 3);
+        if (!string.IsNullOrEmpty(request.Search))
+        {
+            query = query.Where(x => x.Comment.Contains(request.Search) || x.User.Name.Contains(request.Search));
+        }
+        if (request.PageSize.HasValue && request.PageNumber.HasValue)
+        {
+            query = query.Skip((request.PageNumber.Value - 1) * request.PageSize.Value).Take(request.PageSize.Value);
+        }
+        var data = query.ToList();
+        data = data.OrderByDescending(x => x.CreatedAt).ToList();
+        var result = new PageResult<ReviewDto>
+        {
+            TotalRecords = data.Count,
+            Items = _mapper.Map<List<ReviewDto>>(data),
+            PageSize = request.PageSize ?? 1,
+            PageNumber = request.PageNumber ?? 1
+        };
+        result.Items = result.Items.OrderByDescending(x => x.CreatedAt).ToList();
+        return Task.FromResult(result);
     }
 }

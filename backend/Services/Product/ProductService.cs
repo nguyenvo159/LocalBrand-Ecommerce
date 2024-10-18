@@ -5,6 +5,7 @@ using backend.Dto.Product;
 using backend.Dto.Size;
 using backend.Entity;
 using backend.Repositories;
+using backend.Text.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -326,11 +327,41 @@ public class ProductService : IProductService
         }
         if (!string.IsNullOrEmpty(request.Search))
         {
-            query = query.Where(p => p.Name.Contains(request.Search)
-                                       || (p.Category != null && p.Category.Name.Contains(request.Search))
-                                       || p.Description.Contains(request.Search));
+            var searchTerm = request.Search.ToLower(); // Chuyển đổi từ tìm kiếm sang chữ thường
+            query = query.Where(p => p.Name.ToLower().Contains(searchTerm)
+                                       || (p.Category != null && p.Category.Name.ToLower().Contains(searchTerm))
+                                       || p.Description.ToLower().Contains(searchTerm));
         }
         var totalRecords = await query.CountAsync();
+
+        if (request.SortBy.HasValue)
+        {
+            if (request.SortBy.Value == Enums.SortBy.Newest)
+            {
+                query = query.OrderByDescending(p => p.CreatedAt);
+            }
+            else if (request.SortBy.Value == Enums.SortBy.Popular)
+            {
+                query = query.OrderByDescending(p => p.OrderItems.Count(b => b.Order != null ? b.Order.Status == Enums.OrderStatus.Done : false));
+            }
+            else if (request.SortBy.Value == Enums.SortBy.Related)
+            {
+                query = query.OrderBy(p => p.Name);
+            }
+        }
+
+        if (request.OrderByPrice.HasValue)
+        {
+            if (request.OrderByPrice.Value == Enums.OrderByPrice.Asc)
+            {
+                query = query.OrderBy(p => p.Price).ThenBy(p => p.CreatedAt);
+            }
+            else if (request.OrderByPrice.Value == Enums.OrderByPrice.Desc)
+            {
+                query = query.OrderByDescending(p => p.Price).ThenBy(p => p.CreatedAt);
+            }
+        }
+
         if (!request.PageSize.HasValue || !request.PageNumber.HasValue)
         {
             var result = await query.ToListAsync();

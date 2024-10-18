@@ -11,5 +11,6 @@ public interface IDiscountService
     Task Delete(Guid id);
     Task<byte[]> Export();
     Task<List<string>> DeleteDiscountExpired();
+    Task SendDiscount(DiscountSendReq request);
 
 }

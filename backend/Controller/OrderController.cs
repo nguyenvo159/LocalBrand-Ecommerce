@@ -158,4 +158,18 @@ public class OrderController : ControllerBase
         }
     }
 
+    [HttpGet("analytics")]
+    public async Task<IActionResult> GetOrderAnalytics()
+    {
+        try
+        {
+            var orderAnalytics = await _orderService.GetOrderAnalytics();
+            return Ok(orderAnalytics);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
 }

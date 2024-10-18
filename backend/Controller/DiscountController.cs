@@ -134,4 +134,25 @@ public class DiscountController : ControllerBase
         }
     }
 
+    [HttpPost]
+    [Route("send")]
+    public async Task<IActionResult> SendDiscount(DiscountSendReq request)
+    {
+        try
+        {
+            await _discountService.SendDiscount(request);
+            return Ok("Send discount successfully");
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+        catch (Exception ex)
+        {
+
+            throw new Exception("Error:", ex);
+        }
+    }
+
 }

@@ -186,11 +186,11 @@ public class OrderService : IOrderService
         }
         if (orderPagingDto.FromDate.HasValue)
         {
-            orders = orders.Where(o => o.CreatedAt >= orderPagingDto.FromDate);
+            orders = orders.Where(o => o.CreatedAt >= ConvertToUtc(orderPagingDto.FromDate));
         }
         if (orderPagingDto.ToDate.HasValue)
         {
-            orders = orders.Where(o => o.CreatedAt <= orderPagingDto.ToDate);
+            orders = orders.Where(o => o.CreatedAt <= ConvertToUtc(orderPagingDto.ToDate));
         }
         var totalRecords = orders.Count();
         if (orderPagingDto.PageNumber.HasValue)
@@ -210,4 +210,62 @@ public class OrderService : IOrderService
         };
         return Task.FromResult(result);
     }
+
+    public DateTime? ConvertToUtc(DateTime? dateTime)
+    {
+        if (dateTime.HasValue && dateTime.Value.Kind == DateTimeKind.Unspecified)
+        {
+            return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+        }
+        return dateTime?.ToUniversalTime();
+    }
+
+
+    public async Task<OrderAnalyticsDto> GetOrderAnalytics()
+    {
+        var now = DateTime.UtcNow;  // Ensure we are using UTC
+        var startOfThisWeek = StartOfWeek(now);
+        var startOfLastWeek = StartOfWeek(now.AddDays(-7));
+        var startOfThisMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);  // Use DateTimeKind.Utc
+        var startOfLastMonth = startOfThisMonth.AddMonths(-1);
+
+        var orders = _orderRepository.AsQueryable();
+        var ordersThisWeek = await orders.Where(o => o.UpdatedAt >= startOfThisWeek
+                                    && o.Status == Text.Enums.Enums.OrderStatus.Done).CountAsync();
+        var ordersLastWeek = await orders.Where(o => o.UpdatedAt >= startOfLastWeek
+                                    && o.UpdatedAt < startOfThisWeek
+                                    && o.Status == Text.Enums.Enums.OrderStatus.Done).CountAsync();
+        var revenueThisWeek = await orders.Where(o => o.UpdatedAt >= startOfThisWeek
+                                    && o.Status == Text.Enums.Enums.OrderStatus.Done).SumAsync(o => o.TotalAmount);
+        var revenueLastWeek = await orders.Where(o => o.UpdatedAt >= startOfLastWeek
+                                    && o.UpdatedAt < startOfThisWeek
+                                    && o.Status == Text.Enums.Enums.OrderStatus.Done).SumAsync(o => o.TotalAmount);
+        var revenueMonth = await orders.Where(o => o.CreatedAt >= startOfThisMonth && o.Status == Text.Enums.Enums.OrderStatus.Done)
+                                    .SumAsync(o => o.TotalAmount);
+        var revenueLastMonth = await orders.Where(o => o.CreatedAt >= startOfLastMonth && o.CreatedAt < startOfThisMonth
+                                    && o.Status == Text.Enums.Enums.OrderStatus.Done).SumAsync(o => o.TotalAmount);
+
+        var orderCancelThisWeek = await orders.Where(o => o.UpdatedAt >= startOfThisWeek && o.Status == Text.Enums.Enums.OrderStatus.Cancelled).CountAsync();
+        var orderCancelLastWeek = await orders.Where(o => o.UpdatedAt >= startOfLastWeek && o.UpdatedAt < startOfThisWeek && o.Status == Text.Enums.Enums.OrderStatus.Cancelled).CountAsync();
+
+        var orderAnalytics = new OrderAnalyticsDto
+        {
+            OrderCount = ordersThisWeek,
+            OrderCountLastWeek = ordersLastWeek,
+            RevenuesWeek = revenueThisWeek,
+            RevenuesLastWeek = revenueLastWeek,
+            RevenueMonth = revenueMonth,
+            RevenueLastMonth = revenueLastMonth,
+            CanceledOrdersThisWeek = orderCancelThisWeek,
+            CanceledOrdersLastWeek = orderCancelLastWeek
+        };
+        return orderAnalytics;
+    }
+
+    private DateTime StartOfWeek(DateTime dt)
+    {
+        var diff = (7 + (dt.DayOfWeek - DayOfWeek.Monday)) % 7;
+        return dt.AddDays(-1 * diff).Date.ToUniversalTime();  // Ensure the DateTime is in UTC
+    }
+
 }

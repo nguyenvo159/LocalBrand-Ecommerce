@@ -108,7 +108,8 @@ public class MapperConfig : Profile
 
                 // Contact
 
-                CreateMap<Contact, ContactDto>();
+                CreateMap<Contact, ContactDto>()
+                        .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty));
                 CreateMap<ContactCreateDto, Contact>()
                         .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
                         .ForMember(dest => dest.UserId, opt => opt.Ignore());

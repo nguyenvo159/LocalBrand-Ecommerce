@@ -1,4 +1,5 @@
-﻿using backend.Dto.Review;
+﻿using backend.Dto.Common;
+using backend.Dto.Review;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -93,6 +94,28 @@ public class ReviewController : ControllerBase
         try
         {
             var review = await _reviewService.GetByProductId(productId);
+            return Ok(review);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+        catch (Exception ex)
+        {
+
+            throw new Exception("Error:", ex);
+        }
+
+    }
+
+    [HttpPost]
+    [Route("paging")]
+    public async Task<IActionResult> GetPaging([FromBody] PageRequest request)
+    {
+        try
+        {
+            var review = await _reviewService.GetPaging(request);
             return Ok(review);
         }
         catch (ApplicationException ex)

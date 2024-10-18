@@ -14,12 +14,15 @@ public class DiscountService : IDiscountService
 {
     private readonly IMapper _mapper;
     private readonly IRepository<Discount> _discountRepository;
+    private readonly IEmailService _emailService;
 
-    public DiscountService(IMapper mapper, IRepository<Discount> discountRepository)
+    public DiscountService(IMapper mapper, IRepository<Discount> discountRepository, IEmailService emailService)
     {
         _mapper = mapper;
         _discountRepository = discountRepository;
+        _emailService = emailService;
     }
+
 
     public async Task<List<Discount>> GetAll()
     {
@@ -36,7 +39,7 @@ public class DiscountService : IDiscountService
         var discount = await _discountRepository.FindAsync(d => d.Code == code && d.IsActived);
         if (discount == null)
         {
-            return null;
+            throw new ApplicationException("Discount not found");
         }
         return discount;
     }
@@ -146,6 +149,16 @@ public class DiscountService : IDiscountService
         await _discountRepository.DeleteListAsync(discounts);
         return discounts.Select(a => a.Code).ToList();
 
+    }
+
+    public async Task SendDiscount(DiscountSendReq request)
+    {
+        var discount = await GetByCode(request.Code);
+        if (discount == null)
+        {
+            throw new ApplicationException("Discount not found");
+        }
+        await _emailService.SendEmailDiscount(discount, request.Email);
     }
 }
 
