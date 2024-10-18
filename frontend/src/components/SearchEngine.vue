@@ -53,7 +53,6 @@ export default {
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
-
         try {
           let loader = this.$loading.show({
             container: null,
@@ -67,7 +66,7 @@ export default {
           this.$store.commit('setSearchResults', response);
           loader.hide();
           this.$emit('image-search-complete');
-          this.$router.push({ path: '/search', query: { keyword: 'search-by-image' } });
+          this.$router.push({ path: '/search' });
         } catch (error) {
           console.error('Lỗi khi tìm kiếm sản phẩm bằng hình ảnh:', error);
         }

@@ -54,6 +54,7 @@
 
 <script>
 import NotificationOption from '@/components/NotificationOption.vue';
+import ContactService from '@/services/contact.service';
 export default {
     components: {
         NotificationOption
@@ -86,11 +87,11 @@ export default {
                 canCancel: true,
             });
             try {
-
+                await ContactService.create({ name: this.name, email: this.email, message: this.message });
                 const response = await fetch(formUrl, {
                     method: "POST",
                     body: formData,
-                    mode: "no-cors" // Google Forms does not return CORS headers
+                    mode: "no-cors"
                 });
                 this.name = '';
                 this.email = '';

@@ -52,7 +52,24 @@ class DiscountService {
 
     async export() {
         try {
-            const response = await this.api.get("/export");
+            const response = await this.api.get("/export", {
+                responseType: 'blob', 
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Discounts.xlsx'); 
+            document.body.appendChild(link);
+            link.click(); 
+            document.body.removeChild(link); 
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async sendMail(data) {
+        try {
+            const response = await this.api.post("/send", data);
             return response.data;
         } catch (error) {
             throw error;

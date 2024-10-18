@@ -44,6 +44,17 @@ class ReviewService {
             throw error;
         }
     }
+
+    async getPaging(data){
+        try {
+            const response = await this.api.post('/paging', data);
+            return response.data;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+
     async delete(id){
         try {
             const response = await this.api.delete(`/${id}`);

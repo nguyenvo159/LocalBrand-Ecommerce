@@ -22,7 +22,7 @@
                     <div class="col-md-12 mb-3">
                         <div class="card">
                             <div class="card-header">
-                                <span><i class="bi bi-table me-2"></i></span> Data Table
+                                <span><i class="bi bi-table me-2"></i></span> Danh sách người dùng
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">

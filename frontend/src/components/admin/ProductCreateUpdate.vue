@@ -281,7 +281,7 @@ export default {
         },
         async submitImage(productId) {
             if (this.imageFiles.length === 0) {
-                alert('Chưa có ảnh nào để upload.');
+                // alert('Chưa có ảnh nào để upload.');
                 return;
             }
             const formData = new FormData();

@@ -91,7 +91,7 @@
                                                     <td colspan="2">Vận chuyển</td>
                                                     <td class="text-end price">{{
                                                         formatPrice(shipCost[orderLocal.shipType])
-                                                        }}đ</td>
+                                                    }}đ</td>
                                                 </tr>
                                                 <tr v-if="discount">
                                                     <td colspan="2">Discount <span>(Code: {{ discount.code }})</span>

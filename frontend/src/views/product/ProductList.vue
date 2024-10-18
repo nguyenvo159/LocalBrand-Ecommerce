@@ -20,21 +20,21 @@
                 <div class="py-3 px-5 d-flex justify-content-between align-items-center border-top">
                     <div class="form-group d-flex align-items-center m-0">
                         <span class="m-0 pr-3 text-muted">Sắp xếp</span>
-                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'newest' }"
-                            @click="changeSort('newest')">Mới
+                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 0 }"
+                            @click="changeSort(0)">Mới
                             nhất</button>
-                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'popular' }"
-                            @click="changeSort('popular')">Phổ
+                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 1 }"
+                            @click="changeSort(1)">Phổ
                             biến</button>
-                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 'related' }"
-                            @click="changeSort('related')">Liên
+                        <button class="btn mr-3" :class="{ 'active-sort-btn': this.sortType == 2 }"
+                            @click="changeSort(2)">Liên
                             quan</button>
                         <div>
                             <select class="form-control" id="sortProduct" placeholder="Giá"
                                 @change="changeSortByPrice($event)">
-                                <option>Giá</option>
-                                <option value="price-asc">Giá: Thấp đến Cao</option>
-                                <option value="price-desc">Giá: Cao đến Thấp</option>
+                                <option value="">Giá</option>
+                                <option value="0">Giá: Thấp đến Cao</option>
+                                <option value="1">Giá: Cao đến Thấp</option>
                             </select>
                         </div>
                     </div>
@@ -114,10 +114,10 @@ export default {
             category: null,
             products: [],
             originalProducts: [],
-            sortType: 'newest', // newest, popular, related
-            sortPrice: 'price-asc', // price-asc, price-desc
+            sortType: 0,
+            sortPrice: '',
             pageNumber: 1,
-            pageSize: 5,
+            pageSize: 8,
             totalPage: 1,
         };
     },
@@ -155,7 +155,9 @@ export default {
             var data = {
                 pageNumber: this.pageNumber,
                 pageSize: this.pageSize,
-                categoryName: null
+                categoryName: null,
+                sortBy: this.sortType,
+                orderByPrice: this.sortPrice
             };
             if (this.category != 'all-collection') {
                 data.categoryName = this.category;
@@ -169,8 +171,6 @@ export default {
 
             this.originalProducts = [...fetchedProducts.items];
             this.products = [...fetchedProducts.items];
-            this.sortType = 'newest';
-            this.sortProducts();
         },
         changeCategory(category) {
             this.pageNumber = 1;
@@ -180,11 +180,11 @@ export default {
         },
         changeSort(sort) {
             this.sortType = sort;
-            this.sortProducts();
+            this.fetchCollection();
         },
         changeSortByPrice(event) {
             this.sortPrice = event.target.value;
-            this.sortProducts();
+            this.fetchCollection();
         },
         changePage(page) {
             if (page > 0 && page <= this.totalPage) {
@@ -195,19 +195,6 @@ export default {
                 }).then(() => {
                     this.fetchCollection();
                 });
-            }
-        },
-        sortProducts() {
-            this.products = [...this.originalProducts];
-            if (this.sortType === 'newest') {
-                this.products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            } else if (this.sortType === 'popular') {
-                this.products.sort((a, b) => b.rating - a.rating);
-            }
-            if (this.sortPrice === 'price-asc') {
-                this.products.sort((a, b) => a.price - b.price);
-            } else if (this.sortPrice === 'price-desc') {
-                this.products.sort((a, b) => b.price - a.price);
             }
         },
         formatPrice(price) {
@@ -232,6 +219,7 @@ export default {
         }
         this.pageNumber = 1;
         this.totalPage = 1;
+        this.sortType = 0;
         await this.fetchCollection();
         window.scrollTo(0, 0);
     },

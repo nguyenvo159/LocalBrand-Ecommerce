@@ -249,6 +249,10 @@
                     :message="toastMessage" />
             </div>
 
+            <div class="col-12">
+                <ProductRecomendation :category="product.categoryName" />
+            </div>
+
         </div>
         <div v-else>
             <p>Loading...</p>
@@ -280,10 +284,12 @@ import ProductService from "@/services/product.service";
 import reviewService from "@/services/review.service";
 import CartService from "@/services/cart.service";
 import NotificationOption from '@/components/NotificationOption.vue';
+import ProductRecomendation from '@/components/product/ProductRecomendation.vue';
 
 export default {
     components: {
         NotificationOption,
+        ProductRecomendation
     },
     data() {
         return {
@@ -305,18 +311,6 @@ export default {
         };
     },
     methods: {
-        translatedCategory() {
-            switch (this.product.categoryName) {
-                case 'shirt':
-                    return 'Áo';
-                case 'pant':
-                    return 'Quần';
-                case 'polo':
-                    return 'Phụ kiện';
-                default:
-                    return this.product.categoryName;
-            }
-        },
         countStar(i) {
             let count = 0;
             this.comment.forEach((c) => {
@@ -466,14 +460,16 @@ export default {
                 }
                 loader.hide();
                 this.comment = await reviewService.getByProductId(this.$route.params.id);
-                this.loadComment();
+                this.product = await ProductService.getById(this.$route.params.id);
+
+                // this.loadComment();
                 this.showComment = false;
             } catch (error) {
                 loader.hide();
                 console.error(error);
             }
         },
-        loadComment() {
+        async loadComment() {
             if (this.$store.getters.getUser) {
                 this.user = this.$store.getters.getUser;
                 this.myComment = this.comment.find(cmt => cmt.userId === this.user.id);

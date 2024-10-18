@@ -4,7 +4,73 @@
             <DashBoard type="Product" />
             <div id="dv" class="col-lg-10 offset-lg-2 col-11 offset-1 admin-content">
                 <h3 class="mb-4 text-uppercase">Quản lý Sản Phẩm </h3>
-
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+                    <div class="col  mb-3">
+                        <div class="card radius-10 border-start border-0 border-3 border-info">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Tổng sản phẩm</p>
+                                        <h4 class="my-1 text-info">15</h4>
+                                        <p class="mb-0 font-13"></p>
+                                    </div>
+                                    <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col  mb-3">
+                        <div class="card radius-10 border-start border-0 border-3 border-danger">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Tổng sản phẩm tồn kho</p>
+                                        <h4 class="my-1 text-danger">{{ formatPrice(10000) }}</h4>
+                                        <p class="mb-0 font-13">+5.4% so với 7 ngày trước</p>
+                                    </div>
+                                    <div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i
+                                            class="fa fa-dollar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col  mb-3">
+                        <div class="card radius-10 border-start border-0 border-3 border-success">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Doanh thu tháng</p>
+                                        <h4 class="my-1 text-success">{{ formatPrice(21000) }}</h4>
+                                        <p class="mb-0 font-13">-4.5% so với tháng trước</p>
+                                    </div>
+                                    <div
+                                        class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col  mb-3">
+                        <div class="card radius-10 border-start border-0 border-3 border-warning">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <p class="mb-0 text-secondary">Số đơn hủy</p>
+                                        <h4 class="my-1 text-warning">12</h4>
+                                        <p class="mb-0 font-13">+8.4% so với tháng trước</p>
+                                    </div>
+                                    <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="d-flex justify-content-between mb-3">
                     <div class="">
                         <button class="btn btn-primary mb-2 mr-3" data-toggle="modal" data-target="#add-product">
@@ -20,7 +86,7 @@
                         <!-- <SearchInput v-model="searchText" /> -->
                         <div id="search-input" class="w-100 input-group d-flex align-items-center">
                             <span class="pr-2">Search: </span>
-                            <input type="text" class="form-control rounded-0" placeholder="Nhập thông tin cần tìm..."
+                            <input type="text" class="form-control rounded-pill" placeholder="Nhập thông tin cần tìm..."
                                 v-model="searchText" @keyup.enter="fetchProduct" style="box-shadow: none;" />
 
                         </div>
@@ -31,10 +97,10 @@
                     <div class="col-md-12 mb-3">
                         <div class="card">
                             <div class="card-header">
-                                <span><i class="bi bi-table me-2"></i></span> Data Table
+                                <span><i class="bi bi-table "></i></span> Danh sách sản phẩm
                             </div>
                             <div class="d-flex align-items-center px-3 pt-3">
-                                <label class="m-0 pr-2">Show </label>
+                                <label class="m-0 pr-2">Hiển thị </label>
                                 <select name="example_length" aria-controls="example" class="form-select form-select-sm"
                                     v-model="size" @change="fetchProduct" style="max-width: 70px;">
                                     <option value="10">10</option>
@@ -169,6 +235,7 @@ export default {
             message: "",
             productToDelete: null,
             product: null,
+
         };
     },
     computed: {
@@ -187,6 +254,9 @@ export default {
         formatDate(date) {
             const formattedDate = format(new Date(date), "HH:mm dd/MM/yyyy");
             return formattedDate;
+        },
+        formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
         },
         capitalizeFirstLetter(text) {
             if (!text) return '';
@@ -317,15 +387,16 @@ export default {
         if (this.$store.getters.getCategories.length == 0) {
             this.$store.dispatch('fillCategories');
         }
-        if (this.$store.getters.getProducts.length == 0) {
-            this.$store.dispatch('fillProducts');
-        }
     }
 }
 </script>
-<style>
+<style scoped>
 .page-link {
     outline: none !important;
     box-shadow: none !important;
+}
+
+.card {
+    box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%);
 }
 </style>

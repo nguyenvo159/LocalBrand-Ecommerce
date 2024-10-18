@@ -13,11 +13,11 @@
                                     <div>
                                         <p class="mb-0 text-secondary">Tổng đơn hàng</p>
                                         <h4 class="my-1 text-info">{{ orderAnalytics?.orderCount }}</h4>
-                                        <p class="mb-0 font-13">{{
-                                            orderAnalytics?.orderCount / orderAnalytics?.orderCountLastWeek * 100 - 100
-                                            }}% so
+                                        <p class="mb-0 font-13">so
                                             với tuần
-                                            trước
+                                            trước {{
+                                                orderAnalytics?.orderCountLastWeek
+                                            }} đơn
                                         </p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
@@ -94,7 +94,8 @@
                                     <div class="col-12 col-lg-8 btn-group pull-right">
                                         <div class="btn-group form-group d-flex align-items-center justify-content-">
                                             <i class="fa-solid fa-filter mr-2"></i><span class="mr-3">Filter: </span>
-                                            <select class="form-control" @change="fectchOrder" v-model="filter">
+                                            <select class="form-control rounded-pill" @change="fectchOrder"
+                                                v-model="filter">
                                                 <option value="">Tất cả</option>
                                                 <option value="0">Đang xử lý</option>
                                                 <option value="1">Đã xác nhận</option>
@@ -105,21 +106,23 @@
                                             <div class="col-md-4">
                                                 <div id="search-input"
                                                     class="w-100 input-group d-flex align-items-center">
-                                                    <span class="pr-2">From Date: </span>
-                                                    <input type="date" class="form-control rounded-0" v-model="fromDate"
-                                                        @change="fectchOrder" style="box-shadow: none;" />
+                                                    <span class="pr-2">Từ: </span>
+                                                    <input type="date" class="form-control rounded-pill"
+                                                        v-model="fromDate" @change="fectchOrder"
+                                                        style="box-shadow: none;" />
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <div id="search-input"
                                                     class="w-100 input-group d-flex align-items-center">
-                                                    <span class="pr-2">To Date: </span>
-                                                    <input type="date" class="form-control rounded-0" v-model="toDate"
-                                                        @change="fectchOrder" style="box-shadow: none;" />
+                                                    <span class="pr-2">Đến: </span>
+                                                    <input type="date" class="form-control rounded-pill"
+                                                        v-model="toDate" @change="fectchOrder"
+                                                        style="box-shadow: none;" />
                                                 </div>
                                             </div>
-                                            <button class="btn ml-2 text-dark" style="box-shadow: none; border: none;"
+                                            <button class="btn text-dark" style="box-shadow: none; border: none;"
                                                 @click="refreshList()">
                                                 <i class=" fa-solid fa-rotate-right"
                                                     style="font-size: 20px;"></i></button>
@@ -128,7 +131,7 @@
                                     <div class="col col-md-4">
                                         <div id="search-input" class="w-100 input-group d-flex align-items-center">
                                             <span class="pr-2">Search: </span>
-                                            <input type="text" class="form-control rounded-0"
+                                            <input type="text" class="form-control rounded-pill"
                                                 placeholder="Nhập thông tin cần tìm..." v-model="searchKey"
                                                 @keyup.enter="searchOrder" style="box-shadow: none;" />
                                         </div>
@@ -144,7 +147,7 @@
                                         <div class="row">
                                             <div class="col-md-12 mt-3">
                                                 <div class="status-order btn-group form-group">
-                                                    <select class="form-control text-white"
+                                                    <select class="form-control text-white rounded-pill"
                                                         :class="getStatusClass(order.status)" v-model="order.status"
                                                         @change="updateStatus(order)">
                                                         <option class="bg-white text-dark" value="0">Đang xử lý</option>
