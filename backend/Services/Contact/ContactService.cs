@@ -47,6 +47,7 @@ namespace backend.Services
             {
                 query = query.Where(x => x.Name.Contains(request.Search) || x.Email.Contains(request.Search));
             }
+            var totalRecords = query.Count();
             if (request.PageSize.HasValue && request.PageNumber.HasValue)
             {
                 query = query.Skip((request.PageNumber.Value - 1) * request.PageSize.Value).Take(request.PageSize.Value);
@@ -55,7 +56,7 @@ namespace backend.Services
             data = data.OrderByDescending(x => x.CreatedAt).ToList();
             var result = new PageResult<ContactDto>
             {
-                TotalRecords = data.Count,
+                TotalRecords = totalRecords,
                 Items = _mapper.Map<List<ContactDto>>(data),
                 PageSize = request.PageSize ?? 1,
                 PageNumber = request.PageNumber ?? 1

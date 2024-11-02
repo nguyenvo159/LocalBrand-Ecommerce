@@ -1,4 +1,5 @@
-﻿using backend.Services;
+﻿using backend.Dto.Common;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controller;
@@ -62,6 +63,26 @@ public class DiscountController : ControllerBase
         {
             var discount = await _discountService.GetByCode(code);
             return Ok(discount);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+        catch (Exception ex)
+        {
+
+            throw new Exception("Error:", ex);
+        }
+    }
+
+    [HttpPost("paging")]
+    public async Task<IActionResult> GetPaging(PageRequest request)
+    {
+        try
+        {
+            var discounts = await _discountService.GetPaging(request);
+            return Ok(discounts);
         }
         catch (ApplicationException ex)
         {

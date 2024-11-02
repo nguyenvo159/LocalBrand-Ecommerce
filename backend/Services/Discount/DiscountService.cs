@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using AutoMapper;
 using backend.Data;
+using backend.Dto.Common;
 using backend.Entity;
 using backend.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -159,6 +160,30 @@ public class DiscountService : IDiscountService
             throw new ApplicationException("Discount not found");
         }
         await _emailService.SendEmailDiscount(discount, request.Email);
+    }
+
+    public Task<PageResult<Discount>> GetPaging(PageRequest request)
+    {
+        var query = _discountRepository.AsQueryable();
+        if (!string.IsNullOrEmpty(request.Search))
+        {
+            query = query.Where(x => x.Code.Contains(request.Search));
+        }
+        var data = query.ToList();
+
+        if (request.PageSize.HasValue && request.PageNumber.HasValue)
+        {
+            query = query.Skip((request.PageNumber.Value - 1) * request.PageSize.Value).Take(request.PageSize.Value);
+        }
+        data = data.OrderBy(x => x.ExpiryDate).ToList();
+        var result = new PageResult<Discount>
+        {
+            TotalRecords = data.Count,
+            Items = data,
+            PageSize = request.PageSize ?? 1,
+            PageNumber = request.PageNumber ?? 1
+        };
+        return Task.FromResult(result);
     }
 }
 
