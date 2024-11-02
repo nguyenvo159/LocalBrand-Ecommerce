@@ -39,7 +39,7 @@ export default {
         startAutoClose() {
             setTimeout(() => {
                 this.hideToast();
-            }, 2000); // 2000ms = 2 giây
+            }, 1000);
         }
     },
     mounted() {

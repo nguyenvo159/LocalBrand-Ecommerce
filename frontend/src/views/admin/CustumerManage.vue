@@ -138,8 +138,8 @@
                                             <i class="fa-solid fa-chevron-left"></i>
                                         </a>
                                     </li>
-                                    <li class="page-item" v-for="p in totalPages" :class="{ 'active': p == pageNumber }"
-                                        @click="changePage(p)">
+                                    <li class="page-item border-0" v-for="p in totalPages"
+                                        :class="{ 'active': p == pageNumber }" @click="changePage(p)">
                                         <a class="page-link" href="#">{{ p }}</a>
                                     </li>
 
@@ -177,18 +177,38 @@
                             </div>
 
                         </div>
+                        <div class="my-3 px-4">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item" @click="changePageReview(pageNumberReview - 1)"><a
+                                            class="page-link" href="#">
+                                            <i class="fa-solid fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item border-0" v-for="p in totalPagesReview"
+                                        :class="{ 'active': p == pageNumberReview }" @click="changePageReview(p)">
+                                        <a class="page-link" href="#">{{ p }}</a>
+                                    </li>
 
+                                    <li class="page-item" @click="changePageReview(pageNumberReview + 1)"><a
+                                            class="page-link" href="#">
+                                            <i class="fa-solid fa-chevron-right"></i>
+                                        </a></li>
+                                </ul>
+                            </nav>
+                        </div>
 
                     </div>
                     <div v-if="display == 'discount'">
                         <div class="col-12">
                             <div class="mb-3 d-flex">
-                                <button class="btn btn-primary"><i class="fa-solid fa-plus mr-1"></i> Thêm</button>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#create-discount"><i
+                                        class="fa-solid fa-plus mr-1"></i> Thêm</button>
                                 <button @click="exportDiscount" class="btn btn-success ml-3"><i
                                         class="fa-solid fa-file-export mr-1"></i>
                                     Export</button>
                             </div>
-                            <div v-for="d in discounts"
+                            <div v-for="d in discounts.items"
                                 class="card mb-3 radius-10 border-start border-0 border-5 border-success">
                                 <div class="card-body" @click="toggleFooter(d.id, null)">
                                     <div class="d-flex align-items-center">
@@ -212,11 +232,83 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="my-3 px-4">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item" @click="changePageDiscount(pageNumberDiscount - 1)"><a
+                                            class="page-link" href="#">
+                                            <i class="fa-solid fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item border-0" v-for="p in totalPagesDiscount"
+                                        :class="{ 'active': p == pageNumberDiscount }" @click="changePageDiscount(p)">
+                                        <a class="page-link" href="#">{{ p }}</a>
+                                    </li>
 
+                                    <li class="page-item" @click="changePageDiscount(pageNumberDiscount + 1)"><a
+                                            class="page-link" href="#">
+                                            <i class="fa-solid fa-chevron-right"></i>
+                                        </a></li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="create-discount" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Thêm Mã Giảm Giá</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label for="amount">Số Lượng</label>
+                                                <input v-model="discount.amount" type="text" class="form-control"
+                                                    id="amount">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="discountPercentage">Phần trăm giảm giá</label>
+                                                <input v-model="discount.discountPercentage" type="text"
+                                                    class="form-control" id="discountPercentage">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="requireMoney">Số tiền tối thiểu</label>
+                                                <input v-model="discount.requireMoney" type="text" class="form-control"
+                                                    id="requireMoney">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="maximumDiscount">Số tiền tối đa</label>
+                                                <input v-model="discount.maximumDiscount" type="text"
+                                                    class="form-control" id="maximumDiscount">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="expiryDate">Ngày hết hạn</label>
+                                                <input v-model="discount.expiryDate" type="date" class="form-control"
+                                                    id="expiryDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Hủy</button>
+                                        <button type="button" @click="createDiscount"
+                                            class="btn btn-primary">Tạo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <NotificationOption v-if="showToast" :visible="showToast" :type="toastType"
+                        @close="showToast = false" :message="toastMessage" />
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -225,13 +317,18 @@ import DashBoard from '@/components/admin/DashBoard.vue';
 import contactService from '@/services/contact.service';
 import reviewService from '@/services/review.service';
 import discountService from '@/services/discount.service';
+import NotificationOption from '@/components/NotificationOption.vue';
 import { formatDate, set } from 'date-fns';
 export default {
     components: {
         DashBoard,
+        NotificationOption
     },
     data() {
         return {
+            showToast: false,
+            toastType: 'success', // Kiểu toast ('success', 'error', 'info')
+            toastMessage: '',
             display: 'contact',
             contacts: null,
             contactNoReply: 0,
@@ -240,7 +337,20 @@ export default {
             pageNumber: 1,
             pageSize: 10,
             totalPages: 1,
-            showFooter: {}
+            pageNumberReview: 1,
+            pageSizeReview: 10,
+            totalPagesReview: 1,
+            pageNumberDiscount: 1,
+            pageSizeDiscount: 10,
+            totalPagesDiscount: 1,
+            showFooter: {},
+            discount: {
+                amount: 0,
+                discountPercentage: 0,
+                requireMoney: 0,
+                maximumDiscount: 0,
+                expiryDate: null
+            }
         }
     },
     methods: {
@@ -269,6 +379,18 @@ export default {
             if (page > 0 && page <= this.totalPages) {
                 this.pageNumber = page;
                 this.fetchContacts();
+            }
+        },
+        changePageReview(page) {
+            if (page > 0 && page <= this.totalPagesReview) {
+                this.pageNumberReview = page;
+                this.fetchReviews();
+            }
+        },
+        changePageDiscount(page) {
+            if (page > 0 && page <= this.totalPagesDiscount) {
+                this.pageNumberDiscount = page;
+                this.fetchDiscounts();
             }
         },
         toggleFooter(contactId, userId) {
@@ -312,18 +434,23 @@ export default {
         async fetchReviews() {
             try {
                 var data = {
-                    pageNumber: this.pageNumner,
-                    pageSize: this.pageSize
+                    pageNumber: this.pageNumberReview,
+                    pageSize: this.pageSizeReview
                 }
                 this.reviews = await reviewService.getPaging(data);
-                this.totalPages = this.reviews.totalPages;
+                this.totalPagesReview = this.reviews.totalPages;
             } catch (error) {
                 console.error('Lỗi khi lấy danh sách đánh giá:', error);
             }
         },
         async fetchDiscounts() {
             try {
-                this.discounts = await discountService.getAll();
+                var data = {
+                    pageNumber: this.pageNumberDiscount,
+                    pageSize: this.pageSizeDiscount
+                }
+                this.discounts = await discountService.getPaging(data);
+                this.totalPagesDiscount = this.discounts.totalPages;
             } catch (error) {
                 console.error('Lỗi khi lấy danh sách mã giảm giá:', error);
             }
@@ -373,6 +500,29 @@ export default {
                 await discountService.export();
             } catch (error) {
                 console.error('Lỗi khi xuất file:', error);
+            }
+        },
+        async createDiscount() {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
+            try {
+                this.discount.expiryDate = new Date(this.discount.expiryDate).toISOString();
+                await discountService.create(this.discount);
+                this.showToast = true;
+                this.toastType = 'success';
+                this.toastMessage = "Đã tạo thành công " + this.discount.amount + " mã giảm giá";
+                loader.hide();
+                this.fetchDiscounts();
+                $('#create-discount').modal('hide');
+            } catch (error) {
+                loader.hide();
+                console.error('Lỗi khi tạo mã giảm giá:', error);
             }
         }
     },

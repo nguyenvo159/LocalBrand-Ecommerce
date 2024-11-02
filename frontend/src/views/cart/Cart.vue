@@ -120,8 +120,9 @@
                                             </h5>
                                         </div>
 
-                                        <button type="button" class="btn btn-dark btn-block btn-lg text-uppercase">
-                                            <a class="text-white main-hover" @click="pushPayment">Thanh
+                                        <button type="button" @click="pushPayment"
+                                            class="btn btn-dark btn-block btn-lg text-uppercase">
+                                            <a class="text-white main-hover">Thanh
                                                 toán</a></button>
                                     </div>
                                 </div>
@@ -252,5 +253,10 @@ export default {
 
 .card-registration .select-arrow {
     top: 13px;
+}
+
+.btn {
+    outline: none !important;
+    box-shadow: none !important;
 }
 </style>

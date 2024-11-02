@@ -69,7 +69,7 @@
                                     class="nav-link text-uppercase text-dark nav-text">Contact</router-link>
                             </li>
                             <li v-if="isAdmin" class="nav-item px-2 py-1">
-                                <router-link :to="{ name: 'UserManage' }"
+                                <router-link :to="{ name: 'CustumerManage' }"
                                     class="nav-link text-uppercase text-dark nav-text">Admin</router-link>
                             </li>
                         </ul>

@@ -133,6 +133,21 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div>
+                                                        <label class="card-radio-label">
+                                                            <input type="radio" name="pay-method" id="pay-methodoption3"
+                                                                class="card-radio-input">
+
+                                                            <span class="card-radio py-3 text-center text-truncate">
+                                                                <i
+                                                                    class="fa-regular fa-credit-card d-block h2 mb-3"></i>
+                                                                <span>Pay by VNPAY</span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -383,6 +398,7 @@ export default {
                     canCancel: true,
                 });
                 var order = await orderService.create(data);
+                this.$store.dispatch('fillCart');
                 loader.hide();
                 this.$router.push({ name: 'OrderDetail', params: { id: order.id } }); s
             } catch (error) {
