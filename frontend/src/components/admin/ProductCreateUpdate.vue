@@ -90,7 +90,8 @@
                                 <div class="form-check d-flex align-items-center">
                                     <input type="checkbox" id="vector" class="form-check-input"
                                         v-model="isVectorized" />
-                                    <label for="vector" class="form-check-label p-2">Vector hóa</label>
+                                    <label for="vector" class="form-check-label p-2">Hỗ trợ tìm kiếm bằng hình
+                                        ảnh</label>
                                 </div>
                                 <small class="text-muted"><i>Tối đa 4 ảnh.</i></small>
                             </div>
@@ -280,10 +281,10 @@ export default {
             this.imageFiles.splice(index, 1);
         },
         async submitImage(productId) {
-            if (this.imageFiles.length === 0) {
-                // alert('Chưa có ảnh nào để upload.');
-                return;
-            }
+            // if (this.imageFiles.length === 0) {
+            //     // alert('Chưa có ảnh nào để upload.');
+            //     return;
+            // }
             const formData = new FormData();
             this.imageFiles.forEach(file => {
                 formData.append('files', file);

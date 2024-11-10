@@ -13,6 +13,36 @@
                         {{ step.title }}
                     </button>
                 </div>
+                <div class="d-md-flex align-items-center justify-content-between">
+                    <div class="input-group d-flex align-items-center mb-3">
+                        <span class="pr-2">Hiển thị</span>
+                        <select class="form-control rounded-0" name="" v-model="pageSize" style="max-width: 70px;"
+                            @change="changePage(1)">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="my-3 px-4">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item" @click="changePage(pageNumber - 1)"><a class="page-link" href="#">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" v-for="p in totalPages" :class="{ 'active': p == pageNumber }"
+                                    @click="changePage(p)">
+                                    <a class="page-link" href="#">{{ p }}</a>
+                                </li>
+
+                                <li class="page-item" @click="changePage(pageNumber + 1)"><a class="page-link" href="#">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
                 <div class="col-xs-12" v-for="order in filteredOrders" :key="order.id">
                     <div class="grid invoice">
                         <div class="grid-body">
@@ -47,7 +77,7 @@
                                 <div class="col-md-6">
                                     <address>
                                         <strong>Phương thức thanh toán</strong><br>
-                                        <span>Thanh toán khi nhận hàng</span>
+                                        <span>{{ payType[order.payType] ?? "Thanh toán khi nhận hàng" }}</span>
                                     </address>
                                 </div>
                             </div>
@@ -96,6 +126,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="my-3 px-4">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" @click="changePage(pageNumber - 1)"><a class="page-link" href="#">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item" v-for="p in totalPages" :class="{ 'active': p == pageNumber }"
+                                @click="changePage(p)">
+                                <a class="page-link" href="#">{{ p }}</a>
+                            </li>
+
+                            <li class="page-item" @click="changePage(pageNumber + 1)"><a class="page-link" href="#">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </a></li>
+                        </ul>
+                    </nav>
+                </div>
                 <NotificationModal modalId="cancel-order" title="Hủy đơn hàng"
                     message="Bạn có chắc chắn muốn hủy đơn hàng này không?" :confirmAction="cancelOrder"
                     :idToDelete="idDelete" />
@@ -122,25 +170,45 @@ export default {
                 { title: 'Đã xác nhận', icon: 'pe-7s-check' },
                 { title: 'Đang vận chuyển', icon: 'pe-7s-car' },
                 { title: 'Đã vận chuyển', icon: 'pe-7s-home' },
-                { title: 'Đã hủy', icon: 'pe-7s-home' },
+                { title: 'Đã hủy', icon: 'pe-7s-home' }
             ],
+            payType: ['COD', 'MoMo', 'MoMo'],
             idDelete: null,
+            pageSize: 10,
+            pageNumber: 1,
+            totalPages: 1,
+
         };
     },
     computed: {
         filteredOrders() {
-            if (this.filter === -1) return this.orders;
-            return this.orders.filter(order => order.status === this.filter);
+            return this.orders.items;
         },
     },
     methods: {
         async retrieveOrder() {
-            this.orders = await orderService.getByUserId(this.user.id);
+            var status = this.filter == -1 ? null : this.filter;
+
+            var data = {
+                userId: this.user.id,
+                pageSize: this.pageSize,
+                pageNumber: this.pageNumber,
+                status: status
+            }
+            this.orders = await orderService.getPaging(data);
+            this.totalPages = this.orders.totalPages;
             console.log(this.orders);
             console.log(this.user.id);
         },
+        changePage(page) {
+            if (page > 0 && page <= this.totalPages) {
+                this.pageNumber = page;
+                this.retrieveOrder();
+            }
+        },
         changeFilter(index) {
             this.filter = index;
+            this.retrieveOrder();
         },
         formatDate(date) {
             return format(new Date(date), 'hh:mm dd/MM/yyyy');

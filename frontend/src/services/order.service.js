@@ -84,6 +84,16 @@ class OrderService {
             throw error;
         }
     }
+
+    async createPaymentOnline(data){
+        try {
+            const response = await this.api.post('/createPayment', data);
+            return response.data;
+        } catch (error) {
+            console.error("Error creating online payment:", error);
+            throw error;
+        }
+    }
 }
 
 export default new OrderService();

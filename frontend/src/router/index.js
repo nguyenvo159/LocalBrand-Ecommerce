@@ -11,6 +11,7 @@ import ProductList from "@/views/product/ProductList.vue";
 
 import Cart from "@/views/cart/Cart.vue";
 import Payment from "@/views/cart/Payment.vue";
+import PaymentResult from "@/views/cart/PaymentResult.vue";
 import Profile from "@/views/auth/Profile.vue";
 import OrderList from "@/views/order/OrderList.vue";
 import OrderDetail from "@/views/order/OrderDetail.vue";
@@ -120,8 +121,15 @@ const routes = [
     path: "/payment",
     name: "Payment",
     component: Payment,
-    meta: {requiresAuth: true},
+    // meta: {requiresAuth: true},
   },
+
+  {
+    path: "/payment-result",
+    name: "PaymentResult",
+    component: PaymentResult,
+  },
+  
 
   {
     path: "/profile",
@@ -140,7 +148,6 @@ const routes = [
     path: "/order/:id",
     name: "OrderDetail",
     component: OrderDetail,
-    // meta: {requiresAuth: true},
   }
 
 

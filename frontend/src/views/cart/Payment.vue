@@ -61,7 +61,13 @@
                                                                         <option v-for="prov in provinces" :key="prov.id"
                                                                             :value="prov.name">{{ prov.name }}</option>
                                                                     </select>
+                                                                    <div v-if="provinceError">
+                                                                        <p class="text-danger px-2 mt-1"><i>Vui lòng
+                                                                                chọn
+                                                                                Tỉnh/Thành phố</i></p>
+                                                                    </div>
                                                                 </div>
+
                                                             </div>
 
                                                             <div class="col-lg-4">
@@ -73,17 +79,27 @@
                                                                         <option v-for="dist in districts" :key="dist.id"
                                                                             :value="dist.name">{{ dist.name }}</option>
                                                                     </select>
+                                                                    <div v-if="districtError">
+                                                                        <p class="text-danger px-2 mt-1"><i>Vui lòng
+                                                                                chọn
+                                                                                Quận/Huyện</i></p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-lg-4">
                                                                 <div class="mb-0">
                                                                     <select class="form-control form-select"
-                                                                        v-model="ward">
+                                                                        v-model="ward" @change="wardError = false">
                                                                         <option value="">Xã/Phường/Thị trấn</option>
                                                                         <option v-for="ward in wards" :key="ward.id"
                                                                             :value="ward.name">{{ ward.name }}</option>
                                                                     </select>
+                                                                    <div v-if="wardError">
+                                                                        <p class="text-danger px-2 mt-1"><i>Vui lòng
+                                                                                chọn
+                                                                                Xã/Phường/Thị trấn</i></p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -92,6 +108,11 @@
                                                             <textarea class="form-control" id="address" rows="3"
                                                                 name="address" v-model="addressForm"
                                                                 placeholder="Nhập địa chỉ cụ thể"></textarea>
+                                                            <div v-if="addressError">
+                                                                <p class="text-danger px-2 mt-1"><i>Vui lòng
+                                                                        nhập
+                                                                        địa chỉ cụ thể</i></p>
+                                                            </div>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label" for="address">Ghi chú</label>
@@ -121,9 +142,9 @@
                                             <div class="row">
                                                 <div class="col-lg-3 col-sm-6">
                                                     <div>
-                                                        <label class="card-radio-label">
+                                                        <label class="card-radio-label" @click="payType = 0">
                                                             <input type="radio" name="pay-method" id="pay-methodoption3"
-                                                                class="card-radio-input">
+                                                                class="card-radio-input" :checked="payType == 0">
 
                                                             <span class="card-radio py-3 text-center text-truncate">
                                                                 <i class="fa-solid fa-money-bill d-block h2 mb-3"></i>
@@ -135,14 +156,14 @@
 
                                                 <div class="col-lg-3 col-sm-6">
                                                     <div>
-                                                        <label class="card-radio-label">
+                                                        <label class="card-radio-label" @click="payType = 2">
                                                             <input type="radio" name="pay-method" id="pay-methodoption3"
-                                                                class="card-radio-input">
+                                                                class="card-radio-input" :checked="payType == 2">
 
                                                             <span class="card-radio py-3 text-center text-truncate">
                                                                 <i
                                                                     class="fa-regular fa-credit-card d-block h2 mb-3"></i>
-                                                                <span>Pay by VNPAY</span>
+                                                                <span>Pay by MoMo</span>
                                                             </span>
                                                         </label>
                                                     </div>
@@ -193,7 +214,7 @@
                                                         <td>
                                                             <p class="price mb-0 text-end">{{
                                                                 formatPrice(item.productPrice)
-                                                                }}đ
+                                                            }}đ
                                                                 <br> x {{ item.quantity }}
                                                             </p>
                                                         </td>
@@ -326,9 +347,14 @@ export default {
             districts: [],
             wards: [],
             province: '',
+            provinceError: false,
             district: '',
+            districtError: false,
             ward: '',
+            wardError: false,
             addressForm: '',
+            addressError: false,
+            payType: 0,
         };
     },
     computed: {
@@ -376,6 +402,9 @@ export default {
             this.$refs.myForm.submit();
         },
         async handleSubmit() {
+            if (!this.checkValid()) {
+                return;
+            }
             let loader = this.$loading;
             try {
                 var address = [this.addressForm, this.ward, this.district, this.province].filter(e => e).join(', ');
@@ -387,7 +416,8 @@ export default {
                     address: address,
                     shipType: this.shipType,
                     note: '',
-                    code: this.code ?? ''
+                    code: this.code ?? '',
+                    payType: this.payType,
                 };
                 loader = loader.show({
                     container: null,
@@ -400,7 +430,22 @@ export default {
                 var order = await orderService.create(data);
                 this.$store.dispatch('fillCart');
                 loader.hide();
-                this.$router.push({ name: 'OrderDetail', params: { id: order.id } }); s
+                if (this.payType != 0) {
+                    var total = this.cart.total +
+                        this.shipCost[this.shipType] -
+                        this.discount;
+                    var dataReq = {
+                        fullName: this.userInfo.name,
+                        orderId: order.id,
+                        amount: total,
+                        orderInfo: 'Thanh toán đơn hàng',
+                    }
+                    var url = await orderService.createPaymentOnline(dataReq);
+                    window.location.href = url;
+                }
+                else {
+                    this.$router.push({ name: 'OrderDetail', params: { id: order.id } });
+                }
             } catch (error) {
                 loader.hide();
                 console.log(error);
@@ -408,6 +453,24 @@ export default {
             finally {
                 loader.hide();
             }
+        },
+        checkValid() {
+            if (this.province && this.district && this.ward && this.addressForm) {
+                return true;
+            }
+            if (!this.province) {
+                this.provinceError = true;
+            }
+            if (!this.district) {
+                this.districtError = true;
+            }
+            if (!this.ward) {
+                this.wardError = true;
+            }
+            if (!this.addressForm) {
+                this.addressError = true;
+            }
+            return false;
         },
         // Xử lý địa chỉ
         loadSortedData() {
@@ -420,6 +483,7 @@ export default {
             });
         },
         handleProvinceChange() {
+            this.provinceError = false;
             this.district = '';
             this.ward = '';
             this.wards = [];
@@ -433,6 +497,7 @@ export default {
             }
         },
         handleDistrictChange() {
+            this.districtError = false;
             this.ward = '';
 
             const selectedProvince = this.sortedData.find(prov => prov[1] === this.province);
@@ -462,6 +527,11 @@ export default {
 </script>
 
 <style scoped>
+.text-danger {
+    font-size: .8rem !important;
+
+}
+
 .card {
     margin-bottom: 24px;
     -webkit-box-shadow: 0 2px 3px #e4e8f0;

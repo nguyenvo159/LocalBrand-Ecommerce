@@ -74,7 +74,7 @@
                                             }}</h4>
                                         <p class="mb-0 font-13"> so với tháng trước {{
                                             orderAnalytics?.canceledOrdersLastWeek
-                                        }} đơn</p>
+                                            }} đơn</p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
                                         <i class="fa fa-users"></i>
@@ -283,7 +283,8 @@ export default {
             var data = {
                 id: order.id,
                 userPhone: order.userPhone,
-                status: order.status
+                status: order.status,
+                payType: order.payType
             }
             await OrderService.update(data);
             this.fectchOrder();

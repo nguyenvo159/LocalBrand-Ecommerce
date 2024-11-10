@@ -11,7 +11,8 @@
                         HÀNG SỐ - </span><span class="text-medium text-uppercase">{{ order.id }}</span>
                 </div>
                 <div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary">
-                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">Hình thức thanh toán:</span> COD
+                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">Hình thức thanh toán:</span> {{
+                        payType[order.payType] ?? 'COD' }}
                     </div>
                     <div class="w-100 text-center py-1 px-2"><span class="text-medium">Trạng thái:</span>
                         {{ steps[order.status].title }}
@@ -131,10 +132,11 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <h3 class="h6">Hình thức thanh toán <span class="badge bg-success rounded-pill">COD
+                                    <h3 class="h6">Hình thức thanh toán <span class="badge bg-success rounded-pill">{{
+                                        payType[order.payType] ?? 'COD' }}
                                         </span></h3>
                                     <p class="text-muted">
-                                        <i>Thanh toán khi nhận hàng</i>
+                                        <i>{{ method[order.payType] ?? 'Thanh toán khi nhận hàng' }}</i>
                                         <br>
                                         <i>Total: <span class="text-danger">{{ formatPrice(order.totalAmount) }}đ
                                             </span></i>
@@ -203,6 +205,8 @@ export default {
                 { title: 'Đã hủy', icon: 'pe-7s-close' },
             ],
             shipCost: [0, 35000, 50000, 25000],
+            payType: ['COD', 'MoMo', 'MoMo'],
+            method: ['Thanh toán khi nhận hàng', 'Đã thanh toán', 'Chờ thanh toán'],
             discount: null,
             priceReduceDiscount: 0
         };
