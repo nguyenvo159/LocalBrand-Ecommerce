@@ -5,6 +5,7 @@ namespace backend.Dtos.Order;
 
 public class OrderGetPagingRequestDto
 {
+    public Guid? UserId { get; set; }
     public string? Search { get; set; }
     public Enums.OrderStatus? Status { get; set; }
     public int? PageNumber { get; set; } = 1;

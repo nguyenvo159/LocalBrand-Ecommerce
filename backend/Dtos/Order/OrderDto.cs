@@ -16,6 +16,7 @@ public class OrderDto
 
     public Enums.OrderStatus Status { get; set; }
     public Enums.ShipType ShipType { get; set; }
+    public Enums.PayType? PayType { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

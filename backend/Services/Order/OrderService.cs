@@ -131,8 +131,13 @@ public class OrderService : IOrderService
         {
             throw new ApplicationException("Order not found");
         }
+        var oldData = order;
 
         order = _mapper.Map(orderUpdateDto, order);
+        if (oldData.PayType.HasValue)
+        {
+            order.PayType = oldData.PayType.Value;
+        }
         await _orderRepository.UpdateAsync(order);
         order.UpdatedAt = DateTime.UtcNow;
         return _mapper.Map<OrderDto>(order);
@@ -172,6 +177,10 @@ public class OrderService : IOrderService
     public Task<PageResult<OrderDto>> GetPaging(OrderGetPagingRequestDto orderPagingDto)
     {
         var orders = _orderRepository.AsQueryable();
+        if (orderPagingDto.UserId.HasValue)
+        {
+            orders = orders.Where(o => o.UserId == orderPagingDto.UserId);
+        }
         if (orderPagingDto.Status.HasValue)
         {
             orders = orders.Where(o => o.Status == orderPagingDto.Status);

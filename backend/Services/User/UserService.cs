@@ -167,7 +167,7 @@ public class UserService : IUserService
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddYears(5),
             signingCredentials: creds
         );
 

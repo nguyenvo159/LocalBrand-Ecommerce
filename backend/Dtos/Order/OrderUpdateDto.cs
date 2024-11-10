@@ -12,4 +12,5 @@ public class OrderUpdateDto
     public string UserPhone { get; set; } = string.Empty;
     [Required]
     public Enums.OrderStatus Status { get; set; }
+    public Enums.PayType? PayType { get; set; }
 }

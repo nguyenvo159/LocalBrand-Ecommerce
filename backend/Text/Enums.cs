@@ -34,6 +34,18 @@ public class Enums
         Save = 3
 
     }
+    public enum PayType
+    {
+        [Description("Thanh toán khi nhận hàng")]
+        COD = 0,
+
+        [Description("Thanh toán MoMo")]
+        Momo = 1,
+
+        [Description("Chờ thanh toán")]
+        Waiting = 2
+
+    }
 
     public enum SortBy
     {

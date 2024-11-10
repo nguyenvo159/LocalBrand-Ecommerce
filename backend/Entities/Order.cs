@@ -25,6 +25,7 @@ public record class Order
 
     public Enums.OrderStatus Status { get; set; } = Enums.OrderStatus.Pending;
     public Enums.ShipType ShipType { get; set; } = Enums.ShipType.Standard;
+    public Enums.PayType? PayType { get; set; } = Enums.PayType.COD;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public Guid? DiscountId { get; set; }

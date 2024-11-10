@@ -21,6 +21,7 @@ public class OrderCreateDto
     public string Address { get; set; } = string.Empty;
     [Required]
     public Enums.ShipType ShipType { get; set; } = Enums.ShipType.Standard;
+    public Enums.PayType PayType { get; set; } = Enums.PayType.COD;
 
     public string? Note { get; set; } = string.Empty;
 
