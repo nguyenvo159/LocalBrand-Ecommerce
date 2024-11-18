@@ -32,6 +32,15 @@ class ProductImageService {
         }
     }
 
+    async update(data){
+        try {
+            const response = await this.api.put("/update", data);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async searchByImage(image){
         try {
             const response = await this.api.post("/search-by-image", image, {

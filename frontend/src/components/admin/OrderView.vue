@@ -32,7 +32,8 @@
                                                 <span class="me-3">{{
                                                     formatDate(orderLocal.createdAt) }}</span>
                                                 <span class="me-3 text-uppercase">#{{ orderLocal.id }}</span>
-                                                <span class="me-3">COD</span>
+                                                <span class="me-3">{{ orderLocal.payType ? payType[orderLocal.payType] :
+                                                    "COD" }}</span>
                                                 <span class="badge rounded-pill bg-info">{{ steps[orderLocal.status]
                                                     }}</span>
                                             </div>
@@ -91,7 +92,7 @@
                                                     <td colspan="2">Vận chuyển</td>
                                                     <td class="text-end price">{{
                                                         formatPrice(shipCost[orderLocal.shipType])
-                                                    }}đ</td>
+                                                        }}đ</td>
                                                 </tr>
                                                 <tr v-if="discount">
                                                     <td colspan="2">Discount <span>(Code: {{ discount.code }})</span>
@@ -129,10 +130,14 @@
                                             </div>
                                             <div class="col">
                                                 <h3 class="h6">Hình thức thanh toán <span
-                                                        class="badge bg-success rounded-pill">COD
+                                                        class="badge bg-success rounded-pill">
+                                                        {{ orderLocal.payType ? payType[orderLocal.payType] : "COD" }}
                                                     </span></h3>
                                                 <p class="text-muted">
-                                                    <i>Thanh toán khi nhận hàng</i>
+                                                    <span>
+                                                        {{ orderLocal.payType ?
+                                                            method[orderLocal.payType] : "Thanh toán khi nhận hàng" }}
+                                                    </span>
                                                     <br>
                                                     <i>Total: <span class="text-danger">{{
                                                         formatPrice(orderLocal.totalAmount) }}đ
@@ -166,6 +171,8 @@ export default {
                 'Đã hủy'
             ],
             shipCost: [0, 35000, 50000, 25000],
+            payType: ['COD', 'MoMo', 'MoMo'],
+            method: ['Thanh toán khi nhận hàng', 'Đã thanh toán', 'Chờ thanh toán'],
             discount: null,
             priceReduceDiscount: 0,
             orderLocal: { ...this.order },
@@ -194,6 +201,9 @@ export default {
         }
     },
     methods: {
+        getMethod(type) {
+            return type ? method[type] : "Thanh toán khi nhận hàng";
+        },
         async getDiscount() {
             try {
                 if (this.order.discountId) {

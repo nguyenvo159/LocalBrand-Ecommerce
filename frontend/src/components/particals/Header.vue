@@ -5,7 +5,7 @@
                 <div class="container">
                     <a class="navbar-brand d-flex justify-content-between align-items-center order-lg-0" href="/"
                         style="letter-spacing: 10px;">
-                        <span class="text-uppercase fw-lighter ms-2"><b>AMIE</b></span>
+                        <span class="text-uppercase fw-lighter ms-2"><b>AMIRI</b></span>
                     </a>
                     <div class="order-lg-2 nav-btns">
                         <button type="button" class="btn position-relative">

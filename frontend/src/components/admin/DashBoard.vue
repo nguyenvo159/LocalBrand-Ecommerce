@@ -15,6 +15,8 @@
                     class="fas fa-box"></i><span>Product</span></router-link>
             <router-link :to="{ name: 'OrderManage' }" :class="{ 'active': type == 'Order' }"><i
                     class="fas fa-shopping-cart"></i><span>Order</span></router-link>
+            <a class="">
+                <i class="fas fa-chart-bar"></i><span>Analytics</span></a>
         </div>
         <hr>
         <div>

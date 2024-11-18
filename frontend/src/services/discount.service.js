@@ -59,6 +59,15 @@ class DiscountService {
         }
     }
 
+    async deleteExpired(){
+        try {
+            const response = await this.api.delete("/delete-expired");
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async export() {
         try {
             const response = await this.api.get("/export", {

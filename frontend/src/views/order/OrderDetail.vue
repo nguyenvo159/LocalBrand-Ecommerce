@@ -65,9 +65,10 @@
                                     <span class="badge rounded-pill bg-info">{{ steps[order.status].title }}</span>
                                 </div>
                                 <div class="d-flex">
-                                    <button class="btn p-0 me-3 d-none d-lg-block btn-icon-text">
-                                        <a class="text" style="text-decoration: none;"><i class="pe-7s-eyedropper"></i>
-                                            Sửa</a>
+                                    <button class="btn p-0 me-3 d-lg-block ">
+                                        <a class="text-danger" style="text-decoration: none;" data-toggle="modal"
+                                            data-target="#cancel-order"><i class="fa-solid fa-trash-can"></i>
+                                            Hủy đơn hàng</a>
                                     </button>
                                 </div>
                             </div>
@@ -141,6 +142,10 @@
                                         <i>Total: <span class="text-danger">{{ formatPrice(order.totalAmount) }}đ
                                             </span></i>
                                     </p>
+                                    <!-- <div v-if="order.payType == 2">
+                                        <button @click="createPayment" class="btn btn-primary btn-sm">Thanh toán
+                                            ngay</button>
+                                    </div> -->
                                 </div>
                                 <div class="col-lg-6">
                                     <h3 class="h6">Ngày đặt: <i class="text-muted">{{ formatFullDate(order.createdAt)
@@ -185,6 +190,9 @@
                     </div>
                 </div>
             </div>
+            <NotificationModal modalId="cancel-order" title="Hủy đơn hàng"
+                message="Bạn có chắc chắn muốn hủy đơn hàng này không?" :confirmAction="cancelOrder"
+                :idToDelete="order.id" />
         </div>
     </section>
 </template>
@@ -193,7 +201,11 @@
 import OrderService from '@/services/order.service';
 import DiscountService from '@/services/discount.service';
 import { formatDate } from 'date-fns';
+import NotificationModal from '@/components/NotificationModal.vue';
 export default {
+    components: {
+        NotificationModal
+    },
     data() {
         return {
             order: null,
@@ -232,6 +244,31 @@ export default {
                 }
             }
             catch (error) {
+                console.log(error);
+            }
+        },
+        async cancelOrder(id) {
+            try {
+                await OrderService.delete(id);
+                this.getOrder();
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async createPayment() {
+            try {
+                if (this.order != null) {
+
+                    var dataReq = {
+                        fullName: this.order.userName,
+                        orderId: this.order.id,
+                        amount: this.order.totalAmount,
+                        orderInfo: 'Thanh toán đơn hàng',
+                    }
+                    var url = await OrderService.createPaymentOnline(dataReq);
+                    console.log(url);
+                }
+            } catch (error) {
                 console.log(error);
             }
         },

@@ -34,4 +34,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.modal,
+.modal-open {
+    padding: 0 !important;
+    padding-right: 0 !important;
+}
+</style>

@@ -30,7 +30,7 @@
                             @click="changeSort(2)">Liên
                             quan</button>
                         <div>
-                            <select class="form-control" id="sortProduct" placeholder="Giá"
+                            <select class="form-control" id="sortProduct" placeholder="Giá" v-model="sortPrice"
                                 @change="changeSortByPrice($event)">
                                 <option value="">Giá</option>
                                 <option value="0">Giá: Thấp đến Cao</option>
@@ -180,10 +180,11 @@ export default {
         },
         changeSort(sort) {
             this.sortType = sort;
+            this.sortPrice = '';
             this.fetchCollection();
         },
         changeSortByPrice(event) {
-            this.sortPrice = event.target.value;
+            this.sortPrice = this.sortPrice;
             this.fetchCollection();
         },
         changePage(page) {

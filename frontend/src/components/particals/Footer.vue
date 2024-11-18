@@ -4,7 +4,7 @@
             <div class="row text-white g-4">
                 <div class="col-md-6 col-lg-3">
                     <a class="text-uppercase text-decoration-none brand text-white" href="index.html"
-                        style="letter-spacing: 10px;">AMIE</a>
+                        style="letter-spacing: 10px;">AMIRI</a>
                     <p class="text-white mt-3"></p>
                 </div>
 

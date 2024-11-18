@@ -220,8 +220,8 @@ export default {
             this.idDelete = id;
         },
         async cancelOrder(orderId) {
-            await orderService.cancel(orderId);
-            this.orders = this.orders.filter(order => order.id !== orderId);
+            await orderService.delete(orderId);
+            this.retrieveOrder();
         },
     },
     async mounted() {

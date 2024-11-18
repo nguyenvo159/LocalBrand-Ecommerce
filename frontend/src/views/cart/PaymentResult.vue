@@ -47,7 +47,7 @@ export default {
             this.$router.push({ name: 'OrderDetail', params: { id: this.orderId } });
         },
         retryPayment() {
-            this.$router.push({ name: 'Payment' });
+            this.$router.push({ name: 'OrderDetail', params: { id: this.orderId } });
         },
         startCountdown() {
             const interval = setInterval(() => {
@@ -58,18 +58,24 @@ export default {
                 }
             }, 1000);
         },
-        checkPaymentStatus() {
+        async checkPaymentStatus() {
             const urlParams = new URLSearchParams(window.location.search);
             this.errorCode = urlParams.get('errorCode');
             this.orderId = urlParams.get('orderId');
 
-            if (this.errorCode === '0') {
+            if (this.errorCode == '0') {
                 this.status = "success";
+                var data = {
+                    id: this.orderId,
+                    status: 1,
+                    payType: 1
+                }
+                await orderService.update(data);
             } else {
                 this.status = "failed";
             }
         },
-    },
+    }
 
 }
 </script>

@@ -43,7 +43,7 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Mã giảm giá chưa sử dụng</p>
-                                        <h4 class="my-1 text-success">{{ discounts.length }}</h4>
+                                        <h4 class="my-1 text-success">{{ 10 }}</h4>
                                         <p class="mb-0 font-13">+ mã đã dùng 24 giờ qua</p>
                                     </div>
                                     <div
@@ -207,10 +207,13 @@
                                 <button @click="exportDiscount" class="btn btn-success ml-3"><i
                                         class="fa-solid fa-file-export mr-1"></i>
                                     Export</button>
+                                <button @click="deleteDiscountExpired" class="btn btn-danger ml-3">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    Xóa mã hết hạn</button>
                             </div>
                             <div v-for="d in discounts.items"
                                 class="card mb-3 radius-10 border-start border-0 border-5 border-success">
-                                <div class="card-body" @click="toggleFooter(d.id, null)">
+                                <div class="card-body" @click="toggleFooter(d.id)">
                                     <div class="d-flex align-items-center">
                                         <div>
                                             <h5 class="my-1 text-info">Mã: {{ d.code }} </h5>
@@ -225,10 +228,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-show="showFooter[d.id]" class="card-footer d-flex align-items-center">
+                                <div v-show="showFooter[d.id]"
+                                    class="card-footer bg-transparent d-flex align-items-center">
                                     <input class="form-control w-50" type="email" v-model="d.email"
                                         placeholder="Nhập email người nhận...">
-                                    <button class="my-2 ml-3 btn btn-primary" @click="sendDiscount(d)">Gởi</button>
+                                    <button class="my-2 ml-3 btn btn-primary" @click="sendDiscount(d)">Gửi</button>
                                 </div>
                             </div>
                         </div>
@@ -523,6 +527,28 @@ export default {
             } catch (error) {
                 loader.hide();
                 console.error('Lỗi khi tạo mã giảm giá:', error);
+            }
+        },
+        async deleteDiscountExpired() {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
+            try {
+                await discountService.deleteExpired();
+                setTimeout(() => {
+                    loader.hide();
+                }, 500);
+                this.fetchDiscounts();
+            } catch (error) {
+                console.error('Lỗi khi xóa mã giảm giá:', error);
+                setTimeout(() => {
+                    loader.hide();
+                }, 500);
             }
         }
     },

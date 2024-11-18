@@ -74,7 +74,7 @@
                                             }}</h4>
                                         <p class="mb-0 font-13"> so với tháng trước {{
                                             orderAnalytics?.canceledOrdersLastWeek
-                                            }} đơn</p>
+                                        }} đơn</p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
                                         <i class="fa fa-users"></i>
@@ -149,6 +149,7 @@
                                                 <div class="status-order btn-group form-group">
                                                     <select class="form-control text-white rounded-pill"
                                                         :class="getStatusClass(order.status)" v-model="order.status"
+                                                        :disabled="order.status == 3 || order.status == 4"
                                                         @change="updateStatus(order)">
                                                         <option class="bg-white text-dark" value="0">Đang xử lý</option>
                                                         <option class="bg-white text-dark" value="1">Đã xác nhận
@@ -282,7 +283,6 @@ export default {
         async updateStatus(order) {
             var data = {
                 id: order.id,
-                userPhone: order.userPhone,
                 status: order.status,
                 payType: order.payType
             }
@@ -303,7 +303,7 @@ export default {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
         },
         formatDate(date) {
-            return formatDate(new Date(date), 'mm:hh dd/MM/yyyy');
+            return formatDate(new Date(date), 'hh:mm dd/MM/yyyy');
         },
         filterOrder() {
             this.orders
