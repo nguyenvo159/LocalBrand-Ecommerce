@@ -14,4 +14,6 @@ public record class ProductInventory
     public virtual Size? Size { get; set; }
 
     public int Inventory { get; set; } = 999;
+
+    public virtual List<InventoryLog> InventoryLogs { get; set; } = new List<InventoryLog>();
 }

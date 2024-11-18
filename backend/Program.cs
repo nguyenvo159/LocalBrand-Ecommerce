@@ -99,6 +99,8 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 //MoMo
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
+builder.Services.AddHttpContextAccessor();
+
 
 //Service
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -113,6 +115,7 @@ builder.Services.AddScoped<ICloudService, CloudService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IInventoryLogService, InventoryLogService>();
 
 //Repository
 builder.Services.AddScoped(typeof(Repository<>), typeof(Repository<>));
@@ -130,6 +133,7 @@ builder.Services.AddScoped<IRepository<Order>, Repository<Order>>();
 builder.Services.AddScoped<IRepository<OrderItem>, Repository<OrderItem>>();
 builder.Services.AddScoped<IRepository<Discount>, Repository<Discount>>();
 builder.Services.AddScoped<IRepository<Contact>, Repository<Contact>>();
+builder.Services.AddScoped<IRepository<InventoryLog>, Repository<InventoryLog>>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 

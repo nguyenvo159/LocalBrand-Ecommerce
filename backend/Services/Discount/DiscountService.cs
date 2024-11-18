@@ -142,7 +142,7 @@ public class DiscountService : IDiscountService
     }
     public async Task<List<string>> DeleteDiscountExpired()
     {
-        var discounts = await _discountRepository.AsQueryable().Where(a => a.ExpiryDate < DateTime.Now && a.IsActived).ToListAsync();
+        var discounts = await _discountRepository.AsQueryable().Where(a => a.ExpiryDate < DateTime.UtcNow && a.IsActived).ToListAsync();
         if (discounts == null || !discounts.Any())
         {
             throw new ApplicationException("No discounts found");
@@ -164,7 +164,7 @@ public class DiscountService : IDiscountService
 
     public Task<PageResult<Discount>> GetPaging(PageRequest request)
     {
-        var query = _discountRepository.AsQueryable();
+        var query = _discountRepository.AsQueryable().Where(d => d.IsActived);
         if (!string.IsNullOrEmpty(request.Search))
         {
             query = query.Where(x => x.Code.Contains(request.Search));

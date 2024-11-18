@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
+using AutoMapper;
 using backend.Dto.Common;
 using backend.Dto.Review;
 using backend.Entity;
@@ -40,6 +42,7 @@ public class ReviewService : IReviewService
             throw new ApplicationException("User is voted product");
         }
         var review = _mapper.Map<Review>(reviewCreateDto);
+        review.Comment = FilterBadWords(review.Comment);
         await _reviewRepository.AddAsync(review);
         return _mapper.Map<ReviewDto>(review);
     }
@@ -51,6 +54,7 @@ public class ReviewService : IReviewService
             throw new ApplicationException("Review not found");
         }
         _mapper.Map(reviewUpdateDto, existReview);
+        existReview.Comment = FilterBadWords(existReview.Comment);
         await _reviewRepository.UpdateAsync(existReview);
         return _mapper.Map<ReviewDto>(existReview);
     }
@@ -99,5 +103,31 @@ public class ReviewService : IReviewService
         };
         result.Items = result.Items.OrderByDescending(x => x.CreatedAt).ToList();
         return Task.FromResult(result);
+    }
+    private string FilterBadWords(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input ?? string.Empty;
+        }
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "backend", "Text", "BadWord.json");
+
+        if (!File.Exists(filePath))
+        {
+            return input;
+        }
+
+        var jsonContent = File.ReadAllText(filePath);
+        var badWordsData = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(jsonContent);
+        var badWords = badWordsData?["badwords"] ?? new List<string>();
+
+        foreach (var word in badWords)
+        {
+            var pattern = @"\b" + Regex.Escape(word) + @"\b";
+            input = Regex.Replace(input, pattern, new string('*', word.Length), RegexOptions.IgnoreCase);
+        }
+
+        return input;
     }
 }

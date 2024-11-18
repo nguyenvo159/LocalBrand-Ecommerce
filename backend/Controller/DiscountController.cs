@@ -140,6 +140,26 @@ public class DiscountController : ControllerBase
         }
     }
 
+    [HttpDelete("delete-expired")]
+    public async Task<IActionResult> DeleteDiscountExpired()
+    {
+        try
+        {
+            await _discountService.DeleteDiscountExpired();
+            return Ok("Discount deleted successfully");
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+        catch (Exception ex)
+        {
+
+            throw new Exception("Error:", ex);
+        }
+    }
+
     [HttpGet("export")]
     public async Task<IActionResult> ExportDiscounts()
     {

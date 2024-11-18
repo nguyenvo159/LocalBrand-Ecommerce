@@ -7,6 +7,7 @@ using backend.Dto.Size;
 using backend.Dto.User;
 using backend.Dtos.Category;
 using backend.Dtos.Contact;
+using backend.Dtos.InventoryLog;
 using backend.Entities;
 using backend.Entity;
 using backend.Helper.EnumHelper;
@@ -115,6 +116,13 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.UserId, opt => opt.Ignore());
                 CreateMap<ContactUpdateDto, Contact>()
                         .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+                //InventoryLog
+                CreateMap<InventoryLog, InventoryLogDto>()
+                        .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductInventory != null ? src.ProductInventory.Product.Name : string.Empty))
+                        .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.ProductInventory != null ? src.ProductInventory.Size.Name : string.Empty))
+                        .ForMember(dest => dest.ByName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : src.ByName))
+                        .ForMember(dest => dest.Message, opt => opt.Ignore());
         }
 
 }

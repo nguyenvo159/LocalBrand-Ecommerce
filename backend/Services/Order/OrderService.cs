@@ -32,6 +32,7 @@ public class OrderService : IOrderService
     ICartService cartService,
     IEmailService emailService,
     IRepository<Discount> discountRepository,
+    IRepository<ProductInventory> productInventoryRepository,
     IMapper mapper)
     {
         _orderRepository = orderRepository;
@@ -41,6 +42,7 @@ public class OrderService : IOrderService
         _cartService = cartService;
         _emailService = emailService;
         _discountRepository = discountRepository;
+        _productInventoryRepository = productInventoryRepository;
         _mapper = mapper;
     }
 
@@ -138,16 +140,39 @@ public class OrderService : IOrderService
         {
             order.PayType = oldData.PayType.Value;
         }
-        await _orderRepository.UpdateAsync(order);
         order.UpdatedAt = DateTime.UtcNow;
+        await _orderRepository.UpdateAsync(order);
+
+        if (order.Status == Text.Enums.Enums.OrderStatus.Cancelled)
+        {
+            // Xử lý discount nếu có
+            if (order.DiscountId != null)
+            {
+                var discount = await _discountRepository.FindAsync(d => d.Id == order.DiscountId);
+                if (discount != null)
+                {
+                    discount.IsActived = true;
+                    await _discountRepository.UpdateAsync(discount);
+                }
+            }
+            foreach (var item in order.OrderItems)
+            {
+
+                var inventory = await _productInventoryRepository.FindAsync(i => i.ProductId == item.ProductId && i.SizeId == item.SizeId);
+                if (inventory != null)
+                {
+                    inventory.Inventory += item.Quantity;
+                    await _productInventoryRepository.UpdateAsync(inventory);
+                }
+            }
+        }
         return _mapper.Map<OrderDto>(order);
     }
 
     public async Task Delete(Guid id)
     {
-        // Load order và bao gồm OrderItems
-        var order = await _orderRepository
-            .FindAsync(o => o.Id == id && o.IsActived);
+        var order = await _orderRepository.AsQueryable().Include(o => o.OrderItems)
+            .Where(o => o.Id == id && o.IsActived).FirstOrDefaultAsync();
         if (order == null)
         {
             throw new ApplicationException("Order not found");
@@ -166,6 +191,19 @@ public class OrderService : IOrderService
             {
                 discount.IsActived = true;
                 await _discountRepository.UpdateAsync(discount);
+            }
+        }
+        if (order.OrderItems != null && order.OrderItems.Count > 0)
+        {
+            foreach (var item in order.OrderItems.ToList())
+            {
+
+                var inventory = await _productInventoryRepository.FindAsync(i => i.ProductId == item.ProductId && i.SizeId == item.SizeId);
+                if (inventory != null)
+                {
+                    inventory.Inventory += item.Quantity;
+                    await _productInventoryRepository.UpdateAsync(inventory);
+                }
             }
         }
 
@@ -202,6 +240,7 @@ public class OrderService : IOrderService
             orders = orders.Where(o => o.CreatedAt <= ConvertToUtc(orderPagingDto.ToDate));
         }
         var totalRecords = orders.Count();
+        orders = orders.OrderByDescending(a => a.CreatedAt);
         if (orderPagingDto.PageNumber.HasValue)
         {
             orders = orders.Skip((orderPagingDto.PageNumber.Value - 1) * orderPagingDto.PageSize.Value);
@@ -213,7 +252,7 @@ public class OrderService : IOrderService
         var result = new PageResult<OrderDto>
         {
             TotalRecords = totalRecords,
-            Items = _mapper.Map<List<OrderDto>>(orders.OrderByDescending(a => a.CreatedAt).ToList()),
+            Items = _mapper.Map<List<OrderDto>>(orders.ToList()),
             PageNumber = orderPagingDto.PageNumber ?? 1,
             PageSize = orderPagingDto.PageSize ?? 100
         };

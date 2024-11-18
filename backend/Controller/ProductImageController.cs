@@ -1,3 +1,4 @@
+using backend.Dtos;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,21 @@ public class ProductImageController : ControllerBase
         }
 
     }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateImage([FromBody] ImageRequest request)
+    {
+        try
+        {
+            await _imageService.UpdateImage(request);
+            return Ok("Updated image successfully");
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
     [HttpPost("search-by-image")]
     public async Task<IActionResult> SearchByImage(IFormFile file)
     {

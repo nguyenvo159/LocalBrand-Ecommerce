@@ -19,13 +19,14 @@ public class PaymentService : IPaymentService
 
     public async Task<PaymentResponse> CreatePayment(PaymentCreateRequest request)
     {
+        var requestId = Guid.NewGuid();
         request.OrderInfo = "Khách hàng: " + request.FullName + " đã đặt hàng với mã đơn hàng " + request.OrderId + " với số tiền "
             + request.Amount + ". Thông tin đơn hàng: " + request.OrderInfo;
-        var returnUrl = _settings.Value.ReturnUrl + "?orderId=" + request.OrderId;
+        var returnUrl = _settings.Value.ReturnUrl;
         var rawData =
             $"partnerCode={_settings.Value.PartnerCode}" +
             $"&accessKey={_settings.Value.AccessKey}" +
-            $"&requestId={request.OrderId}" +
+            $"&requestId={requestId}" +
             $"&amount={request.Amount}" +
             $"&orderId={request.OrderId}" +
             $"&orderInfo={request.OrderInfo}" +
@@ -49,7 +50,7 @@ public class PaymentService : IPaymentService
             orderId = request.OrderId.ToString(),
             amount = request.Amount.ToString(),
             orderInfo = request.OrderInfo,
-            requestId = request.OrderId.ToString(),
+            requestId = requestId.ToString(),
             extraData = "",
             signature = signature
         };

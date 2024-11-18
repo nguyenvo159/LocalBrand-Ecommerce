@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<Contact> Contacts { get; set; }
+    public DbSet<InventoryLog> InventoryLogs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -114,5 +115,18 @@ public class AppDbContext : DbContext
             .HasMany(c => c.CartItems)
             .WithOne(ci => ci.Cart)
             .HasForeignKey(ci => ci.CartId);
+
+        // Quan hệ 1-n giữa ProductInventory và InventoryLog
+        modelBuilder.Entity<InventoryLog>()
+            .HasOne(il => il.ProductInventory)
+            .WithMany(il => il.InventoryLogs)
+            .HasForeignKey(il => il.ProductInventoryId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<InventoryLog>()
+            .HasOne(il => il.User)
+            .WithMany()
+            .HasForeignKey(il => il.UpdatedBy)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

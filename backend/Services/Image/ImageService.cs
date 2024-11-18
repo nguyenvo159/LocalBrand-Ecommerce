@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using AutoMapper;
 using backend.Dto.Product;
+using backend.Dtos;
 using backend.Entity;
 using backend.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -148,5 +149,19 @@ public class ImageService : IImageService
         return _mapper.Map<List<ProductDto>>(items);
     }
 
+    public async Task UpdateImage(ImageRequest request)
+    {
+        var entity = await _productImageRepository.FindAllAsync(a => a.ProductId == request.ProductId);
+        if (entity.Count == 0)
+        {
+            throw new ApplicationException("Product has no image");
+        }
 
+        var deleteList = entity.Where(x => !request.ImageUrls.Contains(x.ImageUrl)).ToList();
+        await _productImageRepository.DeleteListAsync(deleteList);
+        foreach (var e in deleteList)
+        {
+            await _cloudService.DeleteImageAsync(e.ImageUrl);
+        }
+    }
 }

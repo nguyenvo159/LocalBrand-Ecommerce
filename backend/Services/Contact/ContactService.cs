@@ -61,7 +61,11 @@ namespace backend.Services
                 PageSize = request.PageSize ?? 1,
                 PageNumber = request.PageNumber ?? 1
             };
-            result.Items = result.Items.OrderByDescending(x => x.CreatedAt).ToList();
+            result.Items = result.Items
+                .OrderBy(x => x.UserId.HasValue) // Sắp xếp để các mục có UserId = null được ưu tiên trước (false đứng trước true)
+                .ThenByDescending(x => x.CreatedAt) // Sau đó sắp xếp theo CreatedAt giảm dần
+                .ToList();
+
             return Task.FromResult(result);
         }
 
