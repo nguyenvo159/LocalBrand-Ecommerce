@@ -15,5 +15,5 @@ public interface IOrderService
     Task Delete(Guid id);
 
     Task<OrderAnalyticsDto> GetOrderAnalytics();
-
+    Task<AnalyticsDto> GetAnalytics(int month, int year);
 }

@@ -6,6 +6,7 @@ using backend.Dtos.Order;
 using backend.Entity;
 using backend.Extensions;
 using backend.Repositories;
+using backend.Text.Enums;
 using MailKit.Net.Smtp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -316,4 +317,46 @@ public class OrderService : IOrderService
         return dt.AddDays(-1 * diff).Date.ToUniversalTime();  // Ensure the DateTime is in UTC
     }
 
+    public async Task<AnalyticsDto> GetAnalytics(int month, int year)
+    {
+        var orders = await _orderRepository.AsQueryable()
+        .Where(o => o.CreatedAt.Month == month && o.CreatedAt.Year == year && o.Status == Enums.OrderStatus.Done)
+        .ToListAsync();
+        var orderItems = orders.SelectMany(o => o.OrderItems);
+
+        var totalProducts = orderItems.Count();
+        var categoryCounts = orderItems
+            .Where(oi => oi.Product != null && oi.Product.Category != null)
+            .GroupBy(oi => new { oi.Product.CategoryId, oi.Product.Category.Name })
+            .Select(g => new CategoryCountDto
+            {
+                Id = g.Key.CategoryId,
+                Name = g.Key.Name,
+                Count = g.Count(),
+                Percentage = (float)g.Count() / totalProducts * 100
+            })
+            .ToList();
+        var revenues = orders
+            .GroupBy(o => o.CreatedAt.Day)
+            .Select(g => new RevenueDto
+            {
+                Day = g.Key,
+                OrderCount = g.Count(),
+                Revenue = g.Sum(o => o.TotalAmount)
+            })
+            .OrderBy(r => r.Day)
+            .ToList();
+
+
+        var result = new AnalyticsDto
+        {
+            TotalOrders = orders.Count,
+            TotalRevenue = orders.Sum(o => o.TotalAmount),
+            TotalProducts = orders.Sum(o => o.OrderItems.Count),
+            TotalCustomers = orders.Select(o => o.UserId).Distinct().Count(),
+            Categories = categoryCounts,
+            Revenues = revenues
+        };
+        return result;
+    }
 }

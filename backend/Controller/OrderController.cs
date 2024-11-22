@@ -191,4 +191,18 @@ public class OrderController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("total-analytics")]
+    public async Task<IActionResult> GetAnalytics(int month, int year)
+    {
+        try
+        {
+            var orderAnalytics = await _orderService.GetAnalytics(month, year);
+            return Ok(orderAnalytics);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
 }
