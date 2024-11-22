@@ -184,4 +184,11 @@ public class OrderController : ControllerBase
         return Ok(result.PayUrl);
     }
 
+    [HttpPost("createPaymentUrlVNPAY")]
+    public async Task<IActionResult> CreatePaymentUrlVNPAY([FromBody] PaymentWithVNPAY model)
+    {
+        var result = _paymentService.CreatePaymentUrlVNPAY(model, HttpContext);
+        return Ok(result);
+    }
+
 }
