@@ -85,6 +85,16 @@ class OrderService {
         }
     }
 
+    async getAnalytics(month, year) {
+        try {
+            const response = await this.api.get(`/total-analytics`, { params: { month, year } });
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching analytics:", error);
+            throw error;
+        }
+    }
+
     async createPaymentOnline(data){
         try {
             const response = await this.api.post('/createPayment', data);

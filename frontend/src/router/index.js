@@ -21,6 +21,7 @@ import UserManage from "@/views/admin/UserManage.vue";
 import ProductManage from "@/views/admin/ProductManage.vue";
 import OrderManage from "@/views/admin/OrderManage.vue";
 import CustumerManage from "@/views/admin/CustumerManage.vue";
+import AnalyticsManage from "@/views/admin/AnalyticsManage.vue";
 
 import Login from "@/views/auth/Login.vue";
 import Register from "@/views/auth/Register.vue";
@@ -54,6 +55,14 @@ const routes = [
     component: CustumerManage,
     // meta: {requiresAuth: true, requiredRole: ['Admin']},
   },
+
+  {
+    path: "/admin/analytics",
+    name: "AnalyticsManage",
+    component: AnalyticsManage,
+    // meta: {requiresAuth: true, requiredRole: ['Admin']},
+  },
+
   // End - Admin
 
   // Guess
