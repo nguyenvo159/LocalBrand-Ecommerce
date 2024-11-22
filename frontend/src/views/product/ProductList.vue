@@ -117,7 +117,7 @@ export default {
             sortType: 0,
             sortPrice: '',
             pageNumber: 1,
-            pageSize: 8,
+            pageSize: 20,
             totalPage: 1,
         };
     },

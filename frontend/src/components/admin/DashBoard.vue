@@ -14,12 +14,14 @@
             <router-link :to="{ name: 'ProductManage' }" :class="{ 'active': type == 'Product' }"><i
                     class="fas fa-box"></i><span>Product</span></router-link>
             <router-link :to="{ name: 'OrderManage' }" :class="{ 'active': type == 'Order' }"><i
-                    class="fas fa-shopping-cart"></i><span>Order</span></router-link>
+                    class="fa-solid fa-receipt"></i><span>Order</span></router-link>
             <a class="">
-                <i class="fas fa-chart-bar"></i><span>Analytics</span></a>
+                <i class="fa-solid fa-chart-line"></i><span>Analytics</span></a>
         </div>
         <hr>
         <div>
+            <a class="">
+                <i class="fa-solid fa-clock-rotate-left"></i><span>Log</span></a>
             <router-link :to="{ name: 'Home' }" class=""><i
                     class="fas fa-sign-out-alt"></i><span>Exit</span></router-link>
         </div>

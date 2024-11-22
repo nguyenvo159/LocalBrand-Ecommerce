@@ -171,8 +171,8 @@ export default {
                 'Đã hủy'
             ],
             shipCost: [0, 35000, 50000, 25000],
-            payType: ['COD', 'MoMo', 'MoMo'],
-            method: ['Thanh toán khi nhận hàng', 'Đã thanh toán', 'Chờ thanh toán'],
+            payType: ['COD', 'VNPAY', 'VNPAY'],
+            method: ['Thanh toán khi nhận hàng', 'Chờ thanh toán', 'Đã thanh toán'],
             discount: null,
             priceReduceDiscount: 0,
             orderLocal: { ...this.order },

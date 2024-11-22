@@ -156,14 +156,14 @@
 
                                                 <div class="col-lg-3 col-sm-6">
                                                     <div>
-                                                        <label class="card-radio-label" @click="payType = 2">
+                                                        <label class="card-radio-label" @click="payType = 1">
                                                             <input type="radio" name="pay-method" id="pay-methodoption3"
-                                                                class="card-radio-input" :checked="payType == 2">
+                                                                class="card-radio-input" :checked="payType == 1">
 
                                                             <span class="card-radio py-3 text-center text-truncate">
                                                                 <i
                                                                     class="fa-regular fa-credit-card d-block h2 mb-3"></i>
-                                                                <span>Pay by MoMo</span>
+                                                                <span>VNPAY</span>
                                                             </span>
                                                         </label>
                                                     </div>
@@ -214,7 +214,7 @@
                                                         <td>
                                                             <p class="price mb-0 text-end">{{
                                                                 formatPrice(item.productPrice)
-                                                            }}đ
+                                                                }}đ
                                                                 <br> x {{ item.quantity }}
                                                             </p>
                                                         </td>
@@ -435,12 +435,12 @@ export default {
                         this.shipCost[this.shipType] -
                         this.discount;
                     var dataReq = {
-                        fullName: this.userInfo.name,
+                        name: this.userInfo.name,
                         orderId: order.id,
                         amount: total,
-                        orderInfo: 'Thanh toán đơn hàng',
+                        orderType: 'shopping',
                     }
-                    var url = await orderService.createPaymentOnline(dataReq);
+                    var url = await orderService.createPaymentByVnPay(dataReq);
                     window.location.href = url;
                 }
                 else {

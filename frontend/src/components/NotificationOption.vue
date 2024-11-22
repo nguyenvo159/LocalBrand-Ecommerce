@@ -2,7 +2,7 @@
     <div v-if="visible" class="shadow  alert-custom"
         :class="['alert-custom-' + type, { 'alert-custom-show': visible }]">
         <div class="alert-body d-flex justify-content-between">
-            <span class="fs-4">{{ message }}</span>
+            <span class="fs-5">{{ message }}</span>
             <button type="button" class="btn-close d-flex align-items-center" @click="hideToast"><i
                     class="fa-solid fa-xmark"></i></button>
         </div>
@@ -39,7 +39,7 @@ export default {
         startAutoClose() {
             setTimeout(() => {
                 this.hideToast();
-            }, 1000);
+            }, 2500);
         }
     },
     mounted() {
@@ -69,16 +69,16 @@ export default {
 
 .alert-custom {
     position: fixed;
-    top: 20px;
+    bottom: 20px;
     right: 20px;
     background-color: #fff;
-    border-left: 5px solid;
+    border-left: 10px solid;
     border-radius: 5px;
     padding: 30px 20px;
     min-width: 300px;
     max-width: 400px;
     align-items: center;
-    z-index: 1050;
+    z-index: 9999999999;
     opacity: 0;
     transform: translateY(-20px);
     transition: opacity 0.3s ease, transform 0.3s ease;

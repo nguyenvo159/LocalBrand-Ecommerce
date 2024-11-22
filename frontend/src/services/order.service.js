@@ -94,6 +94,16 @@ class OrderService {
             throw error;
         }
     }
+
+    async createPaymentByVnPay(data){
+        try {
+            const response = await this.api.post('/createPaymentUrlVNPAY', data);
+            return response.data;
+        } catch (error) {
+            console.error("Error creating online payment:", error);
+            throw error;
+        }
+    }
 }
 
 export default new OrderService();

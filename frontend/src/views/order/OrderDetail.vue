@@ -142,10 +142,10 @@
                                         <i>Total: <span class="text-danger">{{ formatPrice(order.totalAmount) }}đ
                                             </span></i>
                                     </p>
-                                    <!-- <div v-if="order.payType == 2">
+                                    <div v-if="order.payType == 1">
                                         <button @click="createPayment" class="btn btn-primary btn-sm">Thanh toán
                                             ngay</button>
-                                    </div> -->
+                                    </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <h3 class="h6">Ngày đặt: <i class="text-muted">{{ formatFullDate(order.createdAt)
@@ -217,8 +217,8 @@ export default {
                 { title: 'Đã hủy', icon: 'pe-7s-close' },
             ],
             shipCost: [0, 35000, 50000, 25000],
-            payType: ['COD', 'MoMo', 'MoMo'],
-            method: ['Thanh toán khi nhận hàng', 'Đã thanh toán', 'Chờ thanh toán'],
+            payType: ['COD', 'VNPAY', 'VNPAY'],
+            method: ['Thanh toán khi nhận hàng', 'Chờ thanh toán', 'Đã thanh toán'],
             discount: null,
             priceReduceDiscount: 0
         };
@@ -260,12 +260,12 @@ export default {
                 if (this.order != null) {
 
                     var dataReq = {
-                        fullName: this.order.userName,
+                        name: this.order.userName,
                         orderId: this.order.id,
                         amount: this.order.totalAmount,
-                        orderInfo: 'Thanh toán đơn hàng',
+                        orderType: 'shopping',
                     }
-                    var url = await OrderService.createPaymentOnline(dataReq);
+                    var url = await OrderService.createPaymentByVnPay(dataReq);
                     console.log(url);
                 }
             } catch (error) {

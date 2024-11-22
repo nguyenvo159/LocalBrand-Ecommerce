@@ -77,7 +77,8 @@
                                 <div class="col-md-6">
                                     <address>
                                         <strong>Phương thức thanh toán</strong><br>
-                                        <span>{{ payType[order.payType] ?? "Thanh toán khi nhận hàng" }}</span>
+                                        <span class="text-muted">{{ payType[order.payType] ?? "COD" }}
+                                            - {{ method[order.payType] ?? "Thanh toán khi nhận hàng" }}</span>
                                     </address>
                                 </div>
                             </div>
@@ -172,7 +173,8 @@ export default {
                 { title: 'Đã vận chuyển', icon: 'pe-7s-home' },
                 { title: 'Đã hủy', icon: 'pe-7s-home' }
             ],
-            payType: ['COD', 'MoMo', 'MoMo'],
+            payType: ['COD', 'VNPAY', 'VNPAY'],
+            method: ['Thanh toán khi nhận hàng', 'Chờ thanh toán', 'Đã thanh toán'],
             idDelete: null,
             pageSize: 10,
             pageNumber: 1,

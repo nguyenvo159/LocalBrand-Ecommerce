@@ -34,6 +34,7 @@ export default {
             countdown: 15,
             errorCode: null, // Lưu giá trị errorCode từ URL
             orderId: null,
+            vnp_ResponseCode: null
         };
     },
     created() {
@@ -61,14 +62,15 @@ export default {
         async checkPaymentStatus() {
             const urlParams = new URLSearchParams(window.location.search);
             this.errorCode = urlParams.get('errorCode');
-            this.orderId = urlParams.get('orderId');
+            this.orderId = urlParams.get('vnp_OrderInfo');
+            this.vnp_ResponseCode = urlParams.get('vnp_ResponseCode');
 
-            if (this.errorCode == '0') {
+            if (this.errorCode == '0' || this.vnp_ResponseCode == '00') {
                 this.status = "success";
                 var data = {
                     id: this.orderId,
                     status: 1,
-                    payType: 1
+                    payType: 2
                 }
                 await orderService.update(data);
             } else {
