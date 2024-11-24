@@ -23,6 +23,7 @@ public class ProductDto
     public float Rating { get; set; }
     public int RatingCount { get; set; } = 0;
     public int Sold { get; set; } = 0;
+    public int Percentage { get; set; }
 
     public List<string> ImageUrls { get; set; } = new List<string>();
     public List<SizeDto> Sizes { get; set; } = new List<SizeDto>();

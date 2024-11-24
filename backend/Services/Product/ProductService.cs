@@ -3,6 +3,7 @@ using AutoMapper;
 using backend.Dto.Common;
 using backend.Dto.Product;
 using backend.Dto.Size;
+using backend.Dtos.Product;
 using backend.Entity;
 using backend.Repositories;
 using backend.Text.Enums;
@@ -20,6 +21,7 @@ public class ProductService : IProductService
     private readonly IRepository<ProductImage> _productImageRepository;
     private readonly IRepository<Size> _sizeRepository;
     private readonly IRepository<ProductInventory> _productInventoryRepository;
+    private readonly IRepository<OrderItem> _rpOrderItem;
     private readonly ICloudService _cloudinaryService;
 
     private readonly IMapper _mapper;
@@ -29,6 +31,7 @@ public class ProductService : IProductService
         IRepository<ProductImage> productImageRepository,
         IRepository<Size> sizeRepository1,
         IRepository<ProductInventory> productInventoryRepository,
+        IRepository<OrderItem> rpOrderItem,
         ICloudService cloudinaryService,
         IMapper mapper)
     {
@@ -37,6 +40,7 @@ public class ProductService : IProductService
         _productImageRepository = productImageRepository;
         _sizeRepository = sizeRepository1;
         _productInventoryRepository = productInventoryRepository;
+        _rpOrderItem = rpOrderItem;
         _cloudinaryService = cloudinaryService;
         _mapper = mapper;
     }
@@ -321,6 +325,10 @@ public class ProductService : IProductService
     public async Task<PageResult<ProductDto>> GetPagingProduct(ProductPagingDto request)
     {
         var query = _productRepository.AsQueryable();
+        if (request.Special.HasValue)
+        {
+            query = query.Where(p => p.Percentage != null || p.Percentage > 0);
+        }
         if (!string.IsNullOrEmpty(request.CategoryName))
         {
             query = query.Where(p => p.Category != null && p.Category.Name == request.CategoryName);
@@ -360,6 +368,14 @@ public class ProductService : IProductService
             {
                 query = query.OrderByDescending(p => p.Price).ThenBy(p => p.CreatedAt);
             }
+            else if (request.OrderByPrice.Value == Enums.OrderByPrice.InUp)
+            {
+                query = query.OrderBy(p => p.Sizes.Sum(s => s.Inventory)).ThenBy(p => p.CreatedAt);
+            }
+            else if (request.OrderByPrice.Value == Enums.OrderByPrice.InDown)
+            {
+                query = query.OrderByDescending(p => p.Sizes.Sum(s => s.Inventory)).ThenBy(p => p.CreatedAt);
+            }
         }
 
         if (!request.PageSize.HasValue || !request.PageNumber.HasValue)
@@ -381,6 +397,26 @@ public class ProductService : IProductService
             PageSize = request.PageSize.Value,
             TotalRecords = totalRecords
         };
+    }
+
+    public Task<ProductAnalytics> ProductAnalytics()
+    {
+        var products = _productRepository.AsQueryable();
+        var totalProducts = products.Count();
+        var now = DateTime.UtcNow;
+        var items = _rpOrderItem.AsQueryable()
+        .Where(x => x.Order.Status != Enums.OrderStatus.Done && x.Product != null);
+        var totalProductsSold = items.Where(x => x.Order.CreatedAt.Date == now.Date).Sum(x => x.Quantity);
+        var totalProductSoldForWeek = items.Where(x => x.Order.CreatedAt.Date >= now.Date.AddDays(-7)).Sum(x => x.Quantity);
+        var totalProductSoldForMonth = items.Where(x => x.Order.CreatedAt.Date >= now.Date.AddMonths(-1)).Sum(x => x.Quantity);
+        var result = new ProductAnalytics
+        {
+            TotalProduct = totalProducts,
+            TotalProductSold = totalProductsSold,
+            TotalProductSoldForWeek = totalProductSoldForWeek,
+            TotalProductSoldForMonth = totalProductSoldForMonth
+        };
+        return Task.FromResult(result);
     }
 }
 

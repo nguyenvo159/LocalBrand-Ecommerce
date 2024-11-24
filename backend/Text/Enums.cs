@@ -64,7 +64,12 @@ public class Enums
         Asc = 0,
 
         [Description("Giá giảm dần")]
-        Desc = 1
+        Desc = 1,
+
+        [Description("Tồn kho tăng dần")]
+        InUp = 2,
+        [Description("Tồn kho giảm dần")]
+        InDown = 3
     }
 
 }

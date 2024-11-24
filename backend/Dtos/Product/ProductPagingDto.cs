@@ -9,4 +9,5 @@ public class ProductPagingDto
     public string? CategoryName { get; set; }
     public Enums.SortBy? SortBy { get; set; }
     public Enums.OrderByPrice? OrderByPrice { get; set; }
+    public int? Special { get; set; }
 }

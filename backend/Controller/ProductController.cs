@@ -258,6 +258,21 @@ public class ProductController : ControllerBase
         }
     }
 
+    [HttpGet("analytics")]
+    public async Task<IActionResult> ProductAnalytics()
+    {
+        try
+        {
+            var productAnalytics = await _productService.ProductAnalytics();
+            return Ok(productAnalytics);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
 }
 // [
 //   "https://res.cloudinary.com/dmmdx9nao/image/upload/v1723126959/utibqxplzd3jcnac0jkh.webp",

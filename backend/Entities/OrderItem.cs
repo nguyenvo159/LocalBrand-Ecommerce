@@ -12,10 +12,14 @@ public record class OrderItem
     public Guid? ProductId { get; set; }
 
     public virtual Product? Product { get; set; }
+    public string ProductName { get; set; }
+    public decimal ProductPrice { get; set; }
+    public string ProductImg { get; set; }
 
     public Guid SizeId { get; set; }
 
     public virtual Size? Size { get; set; }
+    public string SizeName { get; set; }
 
     public int Quantity { get; set; }
 

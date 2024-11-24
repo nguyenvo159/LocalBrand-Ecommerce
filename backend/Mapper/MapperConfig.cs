@@ -32,6 +32,7 @@ public class MapperConfig : Profile
                         .ForMember(dest => dest.Rating, opt => opt.MapFrom(s => s.Reviews.Count > 0 ? s.Reviews.Average(r => r.Rating) : 0))
                         .ForMember(dest => dest.RatingCount, opt => opt.MapFrom(s => s.Reviews.Count > 0 ? s.Reviews.Count : 0))
                         .ForMember(dest => dest.Sold, opt => opt.MapFrom(s => s.OrderItems.Count > 0 ? s.OrderItems.Count(x => x.Order.Status == Text.Enums.Enums.OrderStatus.Done) : 0))
+                        .ForMember(dest => dest.Percentage, opt => opt.MapFrom(s => s.Percentage ?? 0))
                         .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ProductImages.Select(pi => pi.ImageUrl)))
                         .ForMember(dest => dest.Sizes, opt => opt.MapFrom(src => src.Sizes.Select(s => new SizeDto
                         {
@@ -62,7 +63,8 @@ public class MapperConfig : Profile
                 //Cart
                 CreateMap<CartItem, CartItemDto>()
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
-                        .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+                        .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ?
+                        (src.Product.Percentage != null ? src.Product.Price - (src.Product.Price * src.Product.Percentage / 100) : src.Product.Price) : 0))
                         .ForMember(dest => dest.ProductImg, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductImages.Select(a => a.ImageUrl).FirstOrDefault() : string.Empty))
                         .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
                 CreateMap<Cart, CartDto>();
@@ -71,7 +73,8 @@ public class MapperConfig : Profile
                 //Order
                 CreateMap<OrderItem, OrderItemDto>()
                         .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
-                        .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ? src.Product.Price : 0))
+                        .ForMember(dest => dest.ProductPrice, opt => opt.MapFrom(src => src.Product != null ?
+                        (src.Product.Percentage != null ? src.Product.Price - (src.Product.Price * src.Product.Percentage / 100) : src.Product.Price) : 0))
                         .ForMember(dest => dest.ProductImg, opt => opt.MapFrom(src => src.Product != null ? src.Product.ProductImages.Select(a => a.ImageUrl).FirstOrDefault() : string.Empty))
                         .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size != null ? src.Size.Name : string.Empty));
                 CreateMap<Order, OrderDto>()
