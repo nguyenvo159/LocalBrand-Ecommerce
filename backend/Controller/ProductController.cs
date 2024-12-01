@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using backend.Data;
 using backend.Dto.Product;
+using backend.Dtos.Product;
 using backend.Entity;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -267,6 +268,26 @@ public class ProductController : ControllerBase
             return Ok(productAnalytics);
         }
         catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+    }
+
+    [HttpPost("special")]
+    public async Task<IActionResult> UpdateSpecial(ProductSpecialUpdate request)
+    {
+        try
+        {
+            await _productService.UpdateSpecial(request);
+            return Ok("Updated special successfully");
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+
+        }
+        catch (Exception ex)
         {
             return BadRequest(new { Message = ex.Message });
 

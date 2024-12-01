@@ -79,15 +79,26 @@ public class ReviewService : IReviewService
         return Task.FromResult(_mapper.Map<ReviewDto>(review));
     }
 
-    public Task<PageResult<ReviewDto>> GetPaging(PageRequest request)
+    public Task<PageResult<ReviewDto>> GetPaging(ReviewGetPagingReq request)
     {
-        var query = _reviewRepository.AsQueryable()
-            .Where(x => x.Rating <= 3);
+        var query = _reviewRepository.AsQueryable();
         if (!string.IsNullOrEmpty(request.Search))
         {
             query = query.Where(x => x.Comment.Contains(request.Search) || x.User.Name.Contains(request.Search));
         }
+        if (request.Filter.HasValue)
+        {
+            if (request.Filter.Value == 0)
+            {
+                query = query.Where(x => x.Rating >= 4);
+            }
+            else if (request.Filter.Value == 1)
+            {
+                query = query.Where(x => x.Rating < 4);
+            }
+        }
         var totalRecords = query.Count();
+        query = query.OrderByDescending(x => x.CreatedAt);
         if (request.PageSize.HasValue && request.PageNumber.HasValue)
         {
             query = query.Skip((request.PageNumber.Value - 1) * request.PageSize.Value).Take(request.PageSize.Value);

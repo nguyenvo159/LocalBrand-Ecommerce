@@ -60,15 +60,6 @@ public class ImageService : IImageService
             };
             count.Add(await _productImageRepository.AddAsync(productImage));
         }
-        if (count.Count > 0)
-        {
-            await _productImageRepository.DeleteListAsync(entities);
-            foreach (var e in entities)
-            {
-                if (e.ImageUrl != null)
-                    await _cloudService.DeleteImageAsync(e.ImageUrl);
-            }
-        }
     }
 
     public async Task UploadImageNoVector(List<IFormFile> files, Guid productId)
@@ -92,15 +83,6 @@ public class ImageService : IImageService
 
             count.Add(await _productImageRepository.AddAsync(productImage));
 
-        }
-        if (count.Count > 0)
-        {
-            await _productImageRepository.DeleteListAsync(entities);
-            foreach (var e in entities)
-            {
-                if (e.ImageUrl != null)
-                    await _cloudService.DeleteImageAsync(e.ImageUrl);
-            }
         }
     }
 
@@ -152,10 +134,6 @@ public class ImageService : IImageService
     public async Task UpdateImage(ImageRequest request)
     {
         var entity = await _productImageRepository.FindAllAsync(a => a.ProductId == request.ProductId);
-        if (entity.Count == 0)
-        {
-            throw new ApplicationException("Product has no image");
-        }
 
         var deleteList = entity.Where(x => !request.ImageUrls.Contains(x.ImageUrl)).ToList();
         await _productImageRepository.DeleteListAsync(deleteList);

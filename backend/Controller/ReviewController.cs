@@ -111,7 +111,7 @@ public class ReviewController : ControllerBase
 
     [HttpPost]
     [Route("paging")]
-    public async Task<IActionResult> GetPaging([FromBody] PageRequest request)
+    public async Task<IActionResult> GetPaging([FromBody] ReviewGetPagingReq request)
     {
         try
         {

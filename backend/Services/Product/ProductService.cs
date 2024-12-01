@@ -17,6 +17,7 @@ namespace backend.Services;
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
+    private readonly IRepository<Product> _rpProduct;
     private readonly IRepository<Category> _categoryRepository;
     private readonly IRepository<ProductImage> _productImageRepository;
     private readonly IRepository<Size> _sizeRepository;
@@ -33,6 +34,7 @@ public class ProductService : IProductService
         IRepository<ProductInventory> productInventoryRepository,
         IRepository<OrderItem> rpOrderItem,
         ICloudService cloudinaryService,
+        IRepository<Product> rpProduct,
         IMapper mapper)
     {
         _productRepository = productRepository;
@@ -42,6 +44,7 @@ public class ProductService : IProductService
         _productInventoryRepository = productInventoryRepository;
         _rpOrderItem = rpOrderItem;
         _cloudinaryService = cloudinaryService;
+        _rpProduct = rpProduct;
         _mapper = mapper;
     }
 
@@ -327,7 +330,7 @@ public class ProductService : IProductService
         var query = _productRepository.AsQueryable();
         if (request.Special.HasValue)
         {
-            query = query.Where(p => p.Percentage != null || p.Percentage > 0);
+            query = query.Where(p => p.Percentage > 0);
         }
         if (!string.IsNullOrEmpty(request.CategoryName))
         {
@@ -341,20 +344,22 @@ public class ProductService : IProductService
                                        || p.Description.ToLower().Contains(searchTerm));
         }
         var totalRecords = await query.CountAsync();
+        query = query.OrderByDescending(p => p.CreatedAt);
 
         if (request.SortBy.HasValue)
         {
             if (request.SortBy.Value == Enums.SortBy.Newest)
             {
-                query = query.OrderByDescending(p => p.CreatedAt);
+                query = query.OrderByDescending(p => p.UpdatedAt);
             }
             else if (request.SortBy.Value == Enums.SortBy.Popular)
             {
-                query = query.OrderByDescending(p => p.OrderItems.Count(b => b.Order != null ? b.Order.Status == Enums.OrderStatus.Done : false));
+                query = query.OrderByDescending(p => p.OrderItems.Count(b => b.Order != null ? b.Order.Status == Enums.OrderStatus.Done : false))
+                .ThenByDescending(p => p.UpdatedAt);
             }
             else if (request.SortBy.Value == Enums.SortBy.Related)
             {
-                query = query.OrderBy(p => p.Name);
+                query = query.OrderBy(p => p.Name); // need action
             }
         }
 
@@ -362,19 +367,19 @@ public class ProductService : IProductService
         {
             if (request.OrderByPrice.Value == Enums.OrderByPrice.Asc)
             {
-                query = query.OrderBy(p => p.Price).ThenBy(p => p.CreatedAt);
+                query = query.OrderBy(p => p.Price).ThenByDescending(p => p.UpdatedAt);
             }
             else if (request.OrderByPrice.Value == Enums.OrderByPrice.Desc)
             {
-                query = query.OrderByDescending(p => p.Price).ThenBy(p => p.CreatedAt);
+                query = query.OrderByDescending(p => p.Price).ThenByDescending(p => p.UpdatedAt);
             }
             else if (request.OrderByPrice.Value == Enums.OrderByPrice.InUp)
             {
-                query = query.OrderBy(p => p.Sizes.Sum(s => s.Inventory)).ThenBy(p => p.CreatedAt);
+                query = query.OrderBy(p => p.Sizes.Sum(s => s.Inventory)).ThenByDescending(p => p.UpdatedAt);
             }
             else if (request.OrderByPrice.Value == Enums.OrderByPrice.InDown)
             {
-                query = query.OrderByDescending(p => p.Sizes.Sum(s => s.Inventory)).ThenBy(p => p.CreatedAt);
+                query = query.OrderByDescending(p => p.Sizes.Sum(s => s.Inventory)).ThenByDescending(p => p.UpdatedAt);
             }
         }
 
@@ -417,6 +422,19 @@ public class ProductService : IProductService
             TotalProductSoldForMonth = totalProductSoldForMonth
         };
         return Task.FromResult(result);
+    }
+
+    public async Task UpdateSpecial(ProductSpecialUpdate request)
+    {
+        foreach (var productId in request.ProductIds)
+        {
+            var product = await _rpProduct.AsQueryable().FirstOrDefaultAsync(x => x.Id == productId);
+            if (product != null)
+            {
+                product.Percentage = request.Percentage;
+                await _rpProduct.UpdateAsync(product);
+            }
+        }
     }
 }
 

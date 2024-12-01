@@ -1,6 +1,7 @@
 ﻿using backend.Dto.Common;
 using backend.Dto.Product;
 using backend.Dtos.Product;
+using backend.Entity;
 
 namespace backend.Services;
 
@@ -15,6 +16,7 @@ public interface IProductService
     Task<PageResult<ProductDto>> GetPagingProduct(ProductPagingDto productPagingDto);
     Task<ProductDto> Create(ProductCreateDto productDto);
     Task<ProductDto> Update(ProductUpdateDto productDto);
+    Task UpdateSpecial(ProductSpecialUpdate request);
     Task<bool> Delete(Guid id);
     Task<List<ProductDto>> Search(string keyword);
 
