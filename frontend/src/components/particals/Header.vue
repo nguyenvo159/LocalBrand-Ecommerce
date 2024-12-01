@@ -26,8 +26,8 @@
                                 <a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                     {{ user.name }}
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-right mt-4 p-0 border-0 shadow">
-                                    <router-link :to="{ name: 'Profile' }" class="dropdown-item py-2">
+                                <div class="dropdown-menu dropdown-menu-right mt-4 p-0 border-0 shadow rounded-0">
+                                    <router-link :to="{ name: 'Profile' }" class="dropdown-item py-2 ">
                                         <i class="fa-solid fa-user mr-2"></i>
                                         Thông tin cá nhân</router-link>
                                     <router-link :to="{ name: 'OrderList' }" class="dropdown-item py-2">
@@ -58,7 +58,12 @@
                                     class="nav-link text-uppercase text-dark nav-text">collection</router-link>
                             </li>
                             <li class="nav-item px-2 py-1">
-                                <a class="nav-link text-uppercase text-dark nav-text" href="#special">specials</a>
+                                <router-link :to="{ name: 'ProductSpecial', params: { category: 'all-collection' } }"
+                                    class="nav-link text-uppercase text-dark nav-text" href="#special">
+                                    <span class="fire-icon">
+                                        <i class="fa-solid fa-fire"></i>
+                                    </span> specials</router-link>
+
                             </li>
                             <li class="nav-item px-2 py-1">
                                 <router-link :to="{ name: 'About' }" class="nav-link text-uppercase text-dark nav-text"

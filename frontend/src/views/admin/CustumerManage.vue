@@ -11,8 +11,8 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Tổng số liên hệ</p>
-                                        <h4 class="my-1 text-info">{{ contacts?.totalRecords }}</h4>
-                                        <p class="mb-0 font-13">+ liên hệ trong 24 giờ qua</p>
+                                        <h4 class="my-1 text-info">
+                                            {{ contacts != null ? contacts.totalRecords : 0 }}</h4>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
                                         <i class="fa fa-shopping-cart"></i>
@@ -26,9 +26,8 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <p class="mb-0 text-secondary">Chưa phản hồi</p>
+                                        <p class="mb-0 text-secondary">Liên hệ chưa phản hồi</p>
                                         <h4 class="my-1 text-danger">{{ contactNoReply }}</h4>
-                                        <p class="mb-0 font-13">+ phản hồi trong 24 giờ qua</p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i
                                             class="fa fa-dollar"></i>
@@ -43,8 +42,9 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Mã giảm giá chưa sử dụng</p>
-                                        <h4 class="my-1 text-success">{{ 10 }}</h4>
-                                        <p class="mb-0 font-13">+ mã đã dùng 24 giờ qua</p>
+                                        <h4 class="my-1 text-success">
+                                            {{ discounts != null ? discounts.totalRecords : 0 }}
+                                        </h4>
                                     </div>
                                     <div
                                         class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto">
@@ -60,8 +60,7 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Đánh giá tiêu cực</p>
-                                        <h4 class="my-1 text-success">{{ reviews?.totalRecords }}</h4>
-                                        <p class="mb-0 font-13">+ đánh giá tiêu cực 24 giờ qua</p>
+                                        <h4 class="my-1 text-success">{{ reviewHate }}</h4>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
                                         <i class="fa fa-users"></i>
@@ -153,10 +152,21 @@
                     </div>
                     <div v-if="display == 'review'">
                         <div class="col-12">
+                            <div class="d-flex align-items-center">
+                                <div class="btn-group form-group d-flex align-items-center justify-content-">
+                                    <i class="fa-solid fa-filter mr-2"></i><span class="mr-3">Filter: </span>
+                                    <select class="form-control rounded-pill" @change="fetchReviews"
+                                        v-model="filterReview">
+                                        <option value="">Tất cả</option>
+                                        <option value="0">Tích cực</option>
+                                        <option value="1">Tiêu cực</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div v-if="reviews" v-for="cmt in reviews.items"
                                 class="card mb-3 radius-10 border-start border-0 border-5 border-warning">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center justify-content-between">
                                         <div>
                                             <p class="text-muted border-bottom">Ngày tạo: {{ formatDate(cmt.createdAt)
                                                 }} </p>
@@ -172,6 +182,9 @@
                                                 {{ cmt.comment }}
                                             </p>
                                         </div>
+                                        <span v-if="cmt.rating < 4" class="fs-3 pr-5 cursor-pointer"
+                                            @click="delteReview(cmt.id)">
+                                            <i class="fa-solid fa-trash text-danger"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -337,13 +350,15 @@ export default {
             contacts: null,
             contactNoReply: 0,
             reviews: null,
-            discounts: [],
+            reviewHate: 0,
+            discounts: null,
             pageNumber: 1,
             pageSize: 10,
             totalPages: 1,
             pageNumberReview: 1,
             pageSizeReview: 10,
             totalPagesReview: 1,
+            filterReview: '',
             pageNumberDiscount: 1,
             pageSizeDiscount: 10,
             totalPagesDiscount: 1,
@@ -439,14 +454,36 @@ export default {
             try {
                 var data = {
                     pageNumber: this.pageNumberReview,
-                    pageSize: this.pageSizeReview
+                    pageSize: this.pageSizeReview,
+                    filter: this.filterReview
                 }
                 this.reviews = await reviewService.getPaging(data);
                 this.totalPagesReview = this.reviews.totalPages;
+                this.reviewHate = this.reviews.items.filter(r => r.rating < 3).length;
             } catch (error) {
                 console.error('Lỗi khi lấy danh sách đánh giá:', error);
             }
         },
+        async delteReview(id) {
+            let loader = this.$loading.show({
+                container: null,
+                width: 100,
+                height: 100,
+                color: '#808EF4',
+                loader: 'bars',
+                canCancel: true,
+            });
+            try {
+                setTimeout(async () => {
+                    await reviewService.delete(id);
+                    this.fetchReviews();
+                    loader.hide();
+                }, 500);
+            } catch (error) {
+                console.error('Lỗi khi xóa đánh giá:', error);
+            }
+        },
+
         async fetchDiscounts() {
             try {
                 var data = {

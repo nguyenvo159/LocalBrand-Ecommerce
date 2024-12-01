@@ -50,7 +50,7 @@
                                                 <tr>
                                                     <th>Sản phẩm</th>
                                                     <th class="text-center">Số lượng</th>
-                                                    <th class="text-end">Thành tiền</th>
+                                                    <th class="text-center">Giá</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -77,8 +77,7 @@
                                                         </div>
                                                     </td>
                                                     <td class="text-center">{{ item.quantity }}</td>
-                                                    <td class="text-end price">{{ formatPrice(item.productPrice *
-                                                        item.quantity) }}đ
+                                                    <td class="text-center price">{{ formatPrice(item.productPrice) }}đ
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -92,7 +91,7 @@
                                                     <td colspan="2">Vận chuyển</td>
                                                     <td class="text-end price">{{
                                                         formatPrice(shipCost[orderLocal.shipType])
-                                                        }}đ</td>
+                                                    }}đ</td>
                                                 </tr>
                                                 <tr v-if="discount">
                                                     <td colspan="2">Discount <span>(Code: {{ discount.code }})</span>

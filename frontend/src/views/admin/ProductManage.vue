@@ -11,8 +11,8 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <p class="mb-0 text-secondary">Tổng sản phẩm</p>
-                                        <h4 class="my-1 text-info">15</h4>
-                                        <p class="mb-0 font-13"></p>
+                                        <h4 class="my-1 text-info">{{ analytics.totalProduct }}</h4>
+                                        <p class="mb-0 font-13 text-muted"><i>tồn tại trong kho</i></p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto">
                                         <i class="fa fa-shopping-cart"></i>
@@ -26,8 +26,9 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <p class="mb-0 text-secondary">Tổng sản phẩm tồn kho</p>
-                                        <h4 class="my-1 text-danger">123</h4>
+                                        <p class="mb-0 text-secondary">Tổng sản phẩm</p>
+                                        <h4 class="my-1 text-danger">{{ analytics.totalProductSold }}</h4>
+                                        <p class="mb-0 font-13 text-muted"><i>đã bán trong hôm nay</i></p>
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i
                                             class="fa fa-dollar"></i>
@@ -41,8 +42,10 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <p class="mb-0 text-secondary">Doanh thu tháng</p>
-                                        <h4 class="my-1 text-success">{{ formatPrice(21000) }}</h4>
+                                        <p class="mb-0 text-secondary">Tổng sản phẩm</p>
+                                        <h4 class="my-1 text-success">{{ analytics.totalProductSoldForWeek }}</h4>
+                                        <p class="mb-0 font-13 text-muted"><i>đã bán trong 7 ngày qua</i></p>
+
                                     </div>
                                     <div
                                         class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto">
@@ -57,8 +60,10 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <p class="mb-0 text-secondary">Số đơn hủy</p>
-                                        <h4 class="my-1 text-warning">12</h4>
+                                        <p class="mb-0 text-secondary">Tổng sản phẩm</p>
+                                        <h4 class="my-1 text-warning">{{ analytics.totalProductSoldForMonth }}</h4>
+                                        <p class="mb-0 font-13 text-muted"><i>đã bán trong 30 ngày qua</i></p>
+
                                     </div>
                                     <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto">
                                         <i class="fa fa-users"></i>
@@ -68,7 +73,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-between mb-3">
+
+                <div class="d-flex justify-content-between mb-1">
                     <div class="">
                         <button class="btn btn-primary mb-2 mr-3" data-toggle="modal" data-target="#add-product">
                             <i class="fa-solid fa-plus"></i> Thêm mới</button>
@@ -89,6 +95,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="input-group">
+                    <input type="number" class="form-control d-inline-block" v-model="discountPercentage"
+                        placeholder="Phần trăm giảm giá" style="max-width: 80px;" />
+                    <div class="input-group-append">
+                        <button class="btn btn-danger mb-2" @click="confirmDiscount"> Áp dụng giảm giá</button>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -99,18 +112,35 @@
                             <div class="d-flex align-items-center px-3 pt-3">
                                 <label class="m-0 pr-2">Hiển thị </label>
                                 <select name="example_length" aria-controls="example" class="form-select form-select-sm"
-                                    v-model="size" @change="fetchProduct" style="max-width: 70px;">
+                                    v-model="size" @change="changePage(1)" style="max-width: 70px;">
                                     <option value="10">10</option>
                                     <option value="25">25</option>
                                     <option value="50">50</option>
                                     <option value="100">100</option>
                                 </select>
+                                <div class="btn-group form-group d-flex align-items-center m-0 pl-3">
+                                    <i class="fa-solid fa-filter mr-2"></i><span class="mr-3">Filter: </span>
+                                    <select class="form-control rounded-pill" @change="fetchProduct" v-model="sortBy">
+                                        <option value="">Mặc định</option>
+                                        <option value="0">Giá: Tăng dần</option>
+                                        <option value="1">Giá: Giảm dần</option>
+                                        <option value="2">Kho: Tăng dần</option>
+                                        <option value="3">Kho: Giảm dần</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover table-striped bg-white">
                                         <thead class="">
                                             <tr>
+                                                <th class="border-0">
+                                                    <div class="form-check d-flex align-items-center">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            @click="toggleSelectAll" :checked="isAllSelected" />
+                                                    </div>
+                                                </th>
+
                                                 <th class="border-0 align-middle text-center">STT</th>
                                                 <th class="border-0 align-middle cursor-pointer"
                                                     style="user-select: none;" @click="sortProductsByName()">Tên</th>
@@ -131,13 +161,27 @@
 
                                             <tr v-for="(product, index) in filteredProducts" :key="product.id"
                                                 class="product-item">
+                                                <td>
+                                                    <div class="form-check d-flex align-items-center">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            v-model="selectedProducts" :value="product.id" />
+                                                    </div>
+                                                </td>
                                                 <td class="align-middle text-center">{{ index + 1 }}</td>
                                                 <td class="align-middle">
                                                     {{ product.name }}
+                                                    <span v-if="product.percentage != 0"
+                                                        class="fire-animation px-2 py-1 rounded">
+                                                        - {{ product.percentage }}%
+                                                    </span>
                                                 </td>
                                                 <td class="align-middle">{{ capitalizeFirstLetter(product.categoryName)
                                                     }}</td>
-                                                <td class="align-middle">{{ product.price }}</td>
+                                                <td class="align-middle">
+                                                    {{ formatPrice(product.price - product.price *
+                                                        product.percentage /
+                                                        100) }}
+                                                </td>
                                                 <!-- <td class="align-middle">{{ formatDate(product.createdAt) }}</td> -->
                                                 <td class="align-middle">{{ formatDate(product.updatedAt) }}</td>
 
@@ -232,20 +276,38 @@ export default {
             message: "",
             productToDelete: null,
             product: null,
-
+            analytics: {
+                totalProduct: 0,
+                totalProductSold: 0,
+                totalProductSoldForWeek: 0,
+                totalProductSoldForMonth: 0
+            },
+            sortBy: '',
+            selectedProducts: [], // Danh sách sản phẩm được chọn
+            discountPercentage: 0,
         };
     },
     computed: {
         filteredProducts() {
             return this.products;
         },
+        isAllSelected() {
+            return this.selectedProducts.length === this.filteredProducts.length && this.filteredProducts.length > 0;
+        },
     },
     methods: {
         refreshList() {
             this.searchText = "";
-            this.fetchProduct();
             this.page = 1;
+            this.fetchProduct();
             // this.retrieveProducts();
+        },
+        toggleSelectAll(event) {
+            if (event.target.checked) {
+                this.selectedProducts = this.filteredProducts.map(product => product.id);
+            } else {
+                this.selectedProducts = [];
+            }
         },
 
         formatDate(date) {
@@ -341,17 +403,34 @@ export default {
                     pageNumber: this.page,
                     pageSize: this.size,
                     search: this.searchText,
+                    orderByPrice: this.sortBy
                 }
                 var result = await ProductService.getPaging(data);
+                this.analytics = await ProductService.analytics();
                 setTimeout(() => {
                     loader.hide();
                 }, 500);
                 this.totalPage = result.totalPages;
                 this.products = result.items;
                 this.items = result.items;
+                this.selectedProducts = [];
+                this.discountPercentage = 0;
+
             } catch (error) {
                 loader.hide();
                 console.log(error);
+            }
+        },
+        async confirmDiscount() {
+            try {
+                var data = {
+                    productIds: this.selectedProducts,
+                    percentage: this.discountPercentage
+                }
+                await ProductService.updateSpecial(data);
+                this.fetchProduct();
+            } catch (error) {
+                console.error(error);
             }
         },
 
@@ -395,5 +474,32 @@ export default {
 
 .card {
     box-shadow: 0 2px 6px 0 rgb(218 218 253 / 65%), 0 2px 6px 0 rgb(206 206 238 / 54%);
+}
+
+.fire-animation {
+    animation: flicker 1s infinite;
+}
+
+@keyframes flicker {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        background-color: #ff4500;
+        color: white;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+        background-color: #f8b500;
+        color: white;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        background-color: #a52c00;
+        color: white;
+    }
 }
 </style>

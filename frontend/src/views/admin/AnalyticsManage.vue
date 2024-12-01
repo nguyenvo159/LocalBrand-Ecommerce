@@ -165,10 +165,11 @@ export default {
         DashBoard
     },
     data() {
+        const today = new Date();
         return {
             result: null,
-            month: 11,
-            year: 2024,
+            month: today.getMonth() + 1,
+            year: today.getFullYear(),
             areaChartData: {},
             areaChart: null,
             barChart: null,

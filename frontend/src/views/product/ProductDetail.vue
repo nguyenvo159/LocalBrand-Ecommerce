@@ -44,7 +44,18 @@
                 </div>
                 <hr>
 
-                <h4><span class="price">{{ formatPrice(product.price) }}₫</span></h4> <br>
+                <h4 class="d-flex align-items-center">
+                    <span class="price mr-4">
+                        {{ formatPrice(product.price - product.price * product.percentage / 100) }}₫
+                    </span>
+                    <span v-if="product.percentage != 0" class="price-old text-muted mr-3">
+                        {{ formatPrice(product.price) }}₫
+                    </span>
+                    <span v-if="product.percentage != 0" class="px-2 py-1 bg-danger text-white fw-bold"
+                        style="font-size: 14px;">-
+                        {{ product.percentage
+                        }}%</span>
+                </h4> <br>
                 <div class="d-flex justify-content-around">
                     <div class="item-policy text-muted"><i class="fa-solid fa-repeat"></i> Đổi trả dễ dàng</div>
                     <div class="item-policy text-muted"><i class="fa-solid fa-check"></i> Chính hãng 100%</div>
@@ -84,7 +95,7 @@
                         class="cursor-pointer text-decoration-none error-feedback"> + Hướng dẫn chọn size</a></p>
 
                 <p class="w-100 text-muted font-italic"><i class="fa-solid fa-truck-fast"></i> Miễn phí giao hàng cho
-                    tất cả đơn hàng từ 300.000₫</p>
+                    tất cả đơn hàng từ 600.000₫</p>
 
                 <p>Số lượng:</p>
                 <div class="row d-flex justify-content-center">

@@ -8,6 +8,7 @@ import About from "@/views/AboutUs.vue";
 import NotFound404 from "@/views/NotFound404.vue";
 import ProductDetail from "@/views/product/ProductDetail.vue";
 import ProductList from "@/views/product/ProductList.vue";
+import ProductSpecial from "@/views/product/ProductSpecial.vue";
 
 import Cart from "@/views/cart/Cart.vue";
 import Payment from "@/views/cart/Payment.vue";
@@ -116,6 +117,12 @@ const routes = [
     path: "/product/:category",
     name: "ProductList",
     component: ProductList,
+  },
+
+  {
+    path: "/product/special/:category",
+    name: "ProductSpecial",
+    component: ProductSpecial,
   },
 
   //Authorized

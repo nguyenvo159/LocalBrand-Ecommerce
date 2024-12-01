@@ -47,12 +47,22 @@
             :class="['collection-item col-md-6 col-lg-4 col-xl-3 p-2 mb-3', item.categoryName]">
             <div class="collection-img position-relative" @click="goToDetail(item.id)" style="min-height: 308px;">
               <img :src="item.imageUrls[0]" class="w-100 cursor-pointer">
+              <div v-if="item.percentage != 0" class="discount-label">
+                - {{ item.percentage }}%
+              </div>
             </div>
             <div class="text-center">
               <p class="text-capitalize my-1"><router-link class="title-product"
                   :to="{ name: 'ProductDetail', params: { id: item.id } }">{{
                     item.name }}</router-link></p>
-              <span class="price">{{ formatPrice(item.price) }}₫</span>
+              <div class="d-flex justify-content-around">
+                <span class="price">
+                  {{ formatPrice(item.price - (item.price * item.percentage / 100)) }}₫
+                </span>
+                <span v-if="item.percentage != 0" class="price-old">
+                  {{ formatPrice(item.price) }}₫
+                </span>
+              </div>
             </div>
           </div>
         </transition-group>
@@ -171,7 +181,14 @@
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price">{{ formatPrice(product.price) }}₫</span>
+              <div class="">
+                <span class="price">
+                  {{ formatPrice(product.price - (product.price * product.percentage / 100)) }}₫
+                </span>
+                <span v-if="product.percentage != 0" class="price-old px-3">
+                  {{ formatPrice(product.price) }}₫
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -183,7 +200,14 @@
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price">{{ formatPrice(product.price) }}₫</span>
+              <div class="">
+                <span class="price">
+                  {{ formatPrice(product.price - (product.price * product.percentage / 100)) }}₫
+                </span>
+                <span v-if="product.percentage != 0" class="price-old px-3">
+                  {{ formatPrice(product.price) }}₫
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -195,7 +219,14 @@
             <img :src="product.imageUrls[0]" alt="" class="img-fluid pe-3 w-25">
             <div style="font-size: 12px; text-align: justify;">
               <p class="mb-0 title-product">{{ product.name }}</p>
-              <span class="price mt-2">{{ formatPrice(product.price) }}₫</span>
+              <div class="">
+                <span class="price">
+                  {{ formatPrice(product.price - (product.price * product.percentage / 100)) }}₫
+                </span>
+                <span v-if="product.percentage != 0" class="price-old px-3">
+                  {{ formatPrice(product.price) }}₫
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -254,7 +285,7 @@ export default {
       }, []);
       this.bestRate = await productService.getBestRate();
       this.bestSeller = await productService.getBestSeller();
-      this.lastest = this.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+      this.lastest = this.collections.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6);
     },
     goToDetail(id) {
       this.$router.push({ name: 'ProductDetail', params: { id } });

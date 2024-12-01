@@ -45,7 +45,7 @@
                                             </div>
                                             <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                                                 <h6 class="mb-0 price">
-                                                    {{ formatPrice(item.productPrice * item.quantity) }}đ
+                                                    {{ formatPrice(item.productPrice) }}đ
                                                 </h6>
                                             </div>
                                             <div class="col-md-1 col-lg-1 col-xl-1 text-end cursor-pointer">

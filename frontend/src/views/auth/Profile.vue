@@ -50,7 +50,7 @@
                                     <h6 class="mb-0">Full Name</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input type="text" class="form-control" v-model="user.name">
+                                    <input type="text" class="form-control" v-model="userLocal.name">
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -58,7 +58,7 @@
                                     <h6 class="mb-0">Email</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input type="text" class="form-control" v-model="user.email">
+                                    <input type="text" class="form-control" v-model="userLocal.email">
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -66,7 +66,7 @@
                                     <h6 class="mb-0">Phone</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input type="text" class="form-control" v-model="user.phone">
+                                    <input type="text" class="form-control" v-model="userLocal.phone">
                                 </div>
                             </div>
                             <div id="change-password"></div>
@@ -159,6 +159,7 @@ export default {
     },
     data() {
         return {
+            userLocal: {},
             password: '',
             newPassword: '',
             rePassword: '',
@@ -184,6 +185,8 @@ export default {
             this.user = await UserService.profile();
             this.$store.commit('setUser', this.user);
 
+            this.userLocal = { ...this.user };
+
         },
         async update() {
             let loader = this.$loading.show({
@@ -195,11 +198,13 @@ export default {
                 height: 100,
             });;
             try {
-                await UserService.update(this.user);
+                await UserService.update(this.userLocal);
                 loader.hide();
                 this.toastType = 'success';
                 this.toastMessage = 'Cập nhật thành công!';
-                this.refresh();
+                this.user = { ...this.userLocal };
+                this.$store.dispatch('loadUser');
+                // this.refresh();
             } catch (error) {
                 loader.hide();
                 this.toastType = 'error';

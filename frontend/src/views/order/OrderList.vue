@@ -16,7 +16,7 @@
                 <div class="d-md-flex align-items-center justify-content-between">
                     <div class="input-group d-flex align-items-center mb-3">
                         <span class="pr-2">Hiển thị</span>
-                        <select class="form-control rounded-0" name="" v-model="pageSize" style="max-width: 70px;"
+                        <select class="form-control rounded-pill" name="" v-model="pageSize" style="max-width: 70px;"
                             @change="changePage(1)">
                             <option value="10">10</option>
                             <option value="20">20</option>

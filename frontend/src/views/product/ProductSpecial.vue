@@ -128,6 +128,7 @@ export default {
             pageNumber: 1,
             pageSize: 20,
             totalPage: 1,
+            special: 1
         };
     },
     computed: {
@@ -166,7 +167,8 @@ export default {
                 pageSize: this.pageSize,
                 categoryName: null,
                 sortBy: this.sortType,
-                orderByPrice: this.sortPrice
+                orderByPrice: this.sortPrice,
+                special: this.special
             };
             if (this.category != 'all-collection') {
                 data.categoryName = this.category;
@@ -184,7 +186,7 @@ export default {
         changeCategory(category) {
             this.pageNumber = 1;
             this.totalPage = 1;
-            this.$router.push({ name: 'ProductList', params: { category } });
+            this.$router.push({ name: 'ProductSpecial', params: { category } });
 
         },
         changeSort(sort) {

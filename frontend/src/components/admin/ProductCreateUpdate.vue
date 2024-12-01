@@ -215,6 +215,7 @@ export default {
                 }
                 if (newVal && newVal.imageUrls) {
                     this.imagePreviews = newVal.imageUrls;
+                    console.log(this.imagePreviews);
                 }
             },
             deep: true
@@ -243,7 +244,7 @@ export default {
                 if (this.modalId == 'add-product') {
                     product = await ProductService.create(this.productLocal);
                 }
-                if (this.modalId == 'update-product') {
+                else if (this.modalId == 'update-product') {
                     product = await ProductService.update(this.productLocal);
                 }
                 if (!product && this.modalId == 'add-product') {
@@ -292,17 +293,18 @@ export default {
 
             try {
                 if (this.modalId == 'update-product') {
+                    if (this.productLocal.imageUrls.length > 0) {
+                        var data = {
+                            productId: productId,
+                            imageUrls: this.imagePreviews
+                        }
+                        await ProductImageService.update(data);
+                    }
                     if (this.isVectorized) {
                         await ProductImageService.uploadImage(formData, productId);
                     } else {
                         await ProductImageService.uploadImagesNoVector(formData, productId);
                     }
-
-                    var data = {
-                        productId: productId,
-                        imageUrls: this.imagePreviews
-                    }
-                    await ProductImageService.update(data);
                 }
                 else {
                     if (this.isVectorized) {

@@ -116,6 +116,24 @@ class ProductService {
             throw error;
         }
     }
+
+    async analytics (){
+        try {
+            const response = await this.api.get("/analytics");
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateSpecial(data){
+        try {
+            const response = await this.api.post("/special", data);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default new ProductService();
